@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>JSON 表格工具</title>
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; height: 100vh; display: flex; }
+    #left, #right { height: 100%; overflow: auto; }
+    #left { width: 40%; min-width: 300px; border-right: 3px solid #ddd; padding: 10px; box-sizing: border-box; }
+    #right { flex: 1; padding: 10px; box-sizing: border-box; }
+    #divider { width: 5px; background: #ccc; cursor: col-resize; }
+    textarea { width: 100%; height: calc(100% - 120px); resize: none; }
+    button { margin: 5px 5px 5px 0; }
+    table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+    table, th, td { border: 1px solid #888; padding: 4px; }
+    pre { background: #f5f5f5; padding: 10px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div id="left">
+    <textarea id="jsonInput" placeholder="请输入 JSON..."></textarea>
+    <div>
+      <button onclick="validateJson()">校验</button>
+      <button onclick="formatJson()">格式化</button>
+      <button onclick="renderJson()">渲染</button>
+    </div>
+  </div>
+
+  <div id="divider"></div>
+
+  <div id="right">
+    <h3>展示区域</h3>
+    <div id="output"></div>
+    <div id="copyArea" style="margin-top:20px;"></div>
+  </div>
+
+  <script>
+    // 分栏拖拽
+    const divider = document.getElementById('divider');
+    const left = document.getElementById('left');
+    let dragging = false;
+
+    divider.addEventListener('mousedown', () => dragging = true);
+    document.addEventListener('mousemove', e => {
+      if (dragging) left.style.width = e.clientX + 'px';
+    });
+    document.addEventListener('mouseup', () => dragging = false);
+
+    function validateJson() {
+      try {
+        JSON.parse(jsonInput.value);
+        alert('JSON 校验成功');
+      } catch (e) {
+        alert('JSON 格式错误: ' + e.message);
+      }
+    }
+
+    function formatJson() {
+      try {
+        jsonInput.value = JSON.stringify(JSON.parse(jsonInput.value), null, 2);
+      } catch (e) { alert('无法格式化: ' + e.message); }
+    }
+
+    function renderJson() {
+      let data;
+      try { data = JSON.parse(jsonInput.value); } 
+      catch (e) { alert('JSON 无法解析'); return; }
+
+      const out = document.getElementById('output');
+      out.innerHTML = '';
+
+      if (Array.isArray(data)) {
+        renderTable(data);
+      } else if (typeof data === 'object') {
+        renderObject(data);
+      } else {
+        out.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+      }
+    }
+
+    function renderTable(arr) {
+      if (arr.length === 0) return;
+
+      const keys = Object.keys(arr[0]);
+      let html = '<table><thead><tr>' + keys.map(k => `<th>${k}</th>`).join('') + '</tr></thead><tbody>';
+
+      arr.forEach(row => {
+        html += '<tr>' + keys.map(k => `<td>${row[k]}</td>`).join('') + '</tr>';
+      });
+      html += '</tbody></table>';
+
+      document.getElementById('output').innerHTML = html;
+
+      buildCopyTools(arr, keys);
+    }
+
+    function renderObject(obj) {
+      let html = '<table><tbody>';
+      for (const k in obj) {
+        html += `<tr><th>${k}</th><td>${JSON.stringify(obj[k])}</td></tr>`;
+      }
+      html += '</tbody></table>';
+      document.getElementById('output').innerHTML = html;
+      document.getElementById('copyArea').innerHTML = '';
+    }
+
+    function buildCopyTools(arr, keys) {
+      const copyArea = document.getElementById('copyArea');
+      
+      const toCSV = () => arr.map(r => keys.map(k => r[k]).join(',')).join('\n');
+      const toCSVWithQuotes = () => arr.map(r => keys.map(k => `'${r[k]}'`).join(',')).join('\n');
+      const toMarkdown = () => {
+        let h = '|' + keys.join('|') + '|\n|' + keys.map(()=>'---').join('|') + '|\n';
+        h += arr.map(r => '|' + keys.map(k => r[k]).join('|') + '|').join('\n');
+        return h;
+      };
+      const toTSV = () => arr.map(r => keys.map(k => r[k]).join('\t')).join('\n');
+
+      copyArea.innerHTML = `
+        <h4>复制选项</h4>
+        <button onclick="copyText(toCSV())">复制 CSV</button>
+        <button onclick="copyText(toCSVWithQuotes())">复制 CSV (含单引号)</button>
+        <button onclick="copyText(toMarkdown())">复制 Markdown 表格</button>
+        <button onclick="copyText(toTSV())">复制 Excel / TSV</button>
+        <pre id="preview"></pre>
+      `;
+
+      window.toCSV = toCSV;
+      window.toCSVWithQuotes = toCSVWithQuotes;
+      window.toMarkdown = toMarkdown;
+      window.toTSV = toTSV;
+    }
+
+    function copyText(txt) {
+      navigator.clipboard.writeText(txt);
+      document.getElementById('preview').textContent = txt;
+      alert('已复制');
+    }
+  </script>
+</body>
+</html>

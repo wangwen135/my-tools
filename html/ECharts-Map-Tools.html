@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECharts测试地图</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .uploader {
+            margin: 10px;
+        }
+
+        #main {
+            flex: 1;
+            width: 100%;
+        }
+
+        #output {
+            position: fixed;
+            left: 10px;
+            bottom: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            /* 半透明背景 */
+            border: 2px solid #ccc;
+            max-width: 500px;
+            max-height: 300px;
+            overflow-y: auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            /* 添加阴影 */
+            z-index: 1000;
+            /* 确保浮动框在最上层 */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="uploader">
+        <label for="geojsonFile">请选择地图文件（.geojson）:</label>
+        <input type="file" id="geojsonFile" accept=".json, .geojson">
+    </div>
+    <div id="main"></div>
+    <div id="output">点击地图属性将显示在这里</div>
+
+    <script>
+        const chartDom = document.getElementById('main');
+        const myChart = echarts.init(chartDom);
+
+        // 默认的echarts选项
+        const defaultOption = {
+            title: {
+                text: '地图渲染',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: function (params) {
+                    if (params.data && params.data.value) {
+                        const { id, name } = params.data.value;
+                        let tips = `<strong>${name || id || '未命名'}</strong><br/>`;
+
+                        // 循环遍历并输出所有属性
+                        let data = params.data.value;
+                        for (const key in data) {
+                            if (data.hasOwnProperty(key)) {
+                                tips += `${key}: ${data[key] || 'N/A'}<br/>`;
+                            }
+                        }
+                        return tips;
+                    }
+                    return '无数据';
+                }
+            },
+            series: []
+        };
+
+        myChart.setOption(defaultOption);
+
+
+
+        document.getElementById('geojsonFile').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    try {
+                        const geoJson = JSON.parse(e.target.result);
+                        echarts.registerMap('customMap', geoJson); // 注册地图
+
+                        const seriesData = geoJson.features.map(feature => {
+                            return {
+                                name: feature.properties.name || '未命名',
+                                value: feature.properties,
+                                itemStyle: {
+                                    areaColor: feature.properties.color || '#CCCCCC'
+                                }
+                            };
+                        });
+
+                        const seriesOption = {
+                            name: '自定义地图',
+                            type: 'map',
+                            map: 'customMap', // 使用注册的地图
+                            roam: true, // 支持放大缩小和拖动
+                            label: {
+                                show: true,
+                                formatter: '{b}'
+                            },
+                            emphasis: {
+                                label: {
+                                    show: true,
+                                    color: '#fff'
+                                },
+                                itemStyle: {
+                                    areaColor: '#f00'
+                                }
+                            },
+                            data: seriesData
+                        };
+
+                        myChart.setOption({
+                            series: [seriesOption]
+                        });
+                    } catch (error) {
+                        alert('加载失败，请确保文件格式正确！\n\n' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        // 监听点击事件
+        myChart.on('click', function (params) {
+            const outputDiv = document.getElementById('output');
+
+            if (params.data && params.data.value) {
+                const { id, name } = params.data.value;
+                let outputHtml = `<strong>${name || id || '未命名'}</strong><br/>`;
+
+                // 循环遍历并输出所有属性
+                let data = params.data.value;
+                for (const key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        outputHtml += `${key}: ${data[key] || 'N/A'}<br/>`;
+                    }
+                }
+                // 显示输出
+                outputDiv.innerHTML = outputHtml;
+
+            } else {
+                outputDiv.innerHTML = '无数据';
+            }
+        });
+
+        window.addEventListener('resize', function () {
+            myChart.resize();
+        });
+    </script>
+</body>
+
+</html>
