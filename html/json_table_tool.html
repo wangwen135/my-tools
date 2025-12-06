@@ -1,141 +1,540 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <title>JSON 表格工具</title>
-  <style>
-    body { margin: 0; font-family: Arial, sans-serif; height: 100vh; display: flex; }
-    #left, #right { height: 100%; overflow: auto; }
-    #left { width: 40%; min-width: 300px; border-right: 3px solid #ddd; padding: 10px; box-sizing: border-box; }
-    #right { flex: 1; padding: 10px; box-sizing: border-box; }
-    #divider { width: 5px; background: #ccc; cursor: col-resize; }
-    textarea { width: 100%; height: calc(100% - 120px); resize: none; }
-    button { margin: 5px 5px 5px 0; }
-    table { border-collapse: collapse; width: 100%; margin-top: 10px; }
-    table, th, td { border: 1px solid #888; padding: 4px; }
-    pre { background: #f5f5f5; padding: 10px; border-radius: 4px; }
-  </style>
+    <meta charset="UTF-8"/>
+    <title>JSON转表格工具</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <style>
+        :root {
+            --bg: #f7f8fa;
+            --panel: #fff;
+            --muted: #6b7280;
+            --accent: #2563eb;
+            --danger: #dc2626;
+            --success: #16a34a
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg);
+            height: 100vh;
+            display: flex
+        }
+
+        /* buttons */
+        button {
+            background: var(--panel);
+            border: 1px solid #d1d5db;
+            padding: 8px 10px;
+            margin-right: 8px;
+            border-radius: 6px;
+            cursor: pointer
+        }
+
+        button.primary {
+            background: var(--accent);
+            color: #fff;
+            border-color: transparent
+        }
+
+        /* container */
+        #left {
+            width: 42%;
+            border-right: 1px solid #e6e9ee;
+            padding: 16px;
+            background: var(--panel);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden
+        }
+
+        #right {
+            flex: 1;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden
+        }
+
+        #divider {
+            width: 6px;
+            cursor: col-resize;
+            background: linear-gradient(90deg, #fff, #eee)
+        }
+
+        /* title */
+        #title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px
+        }
+
+        /* editor area */
+        .editor-wrap {
+            display: flex;
+            flex: 1
+        }
+
+        textarea {
+            flex: 1;
+            height: 100%;
+            resize: none;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            border: 1px solid #e3e7ee;
+            border-radius: 6px;
+            background: #fff
+        }
+
+        /* status and cursor */
+        .status-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 8px
+        }
+
+        #status {
+            height: 22px;
+            font-weight: 600
+        }
+
+        #cursorPos {
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        /* controls */
+        .controls {
+            margin-top: 10px
+        }
+
+        /* right: output */
+        #outputHeader {
+            display: flex;
+            align-items: center;
+            justify-content: space-between
+        }
+
+        #output {
+            margin-top: 12px;
+            overflow: auto;
+            flex: 1;
+            min-height: 0;
+            background: var(--panel);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #e6e9ee
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        table th, table td {
+            border: 1px solid #e6e9ee;
+            padding: 8px;
+            text-align: left
+        }
+
+        /* copy area */
+        #copyArea {
+            margin-top: 12px
+        }
+
+        #copyArea button {
+            margin-right: 8px
+        }
+
+        /* footer */
+        .muted {
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        @media (max-width: 900px) {
+            #left {
+                width: 48%
+            }
+        }
+    </style>
 </head>
 <body>
-  <div id="left">
-    <textarea id="jsonInput" placeholder="请输入 JSON..."></textarea>
-    <div>
-      <button onclick="validateJson()">校验</button>
-      <button onclick="formatJson()">格式化</button>
-      <button onclick="renderJson()">渲染</button>
+<div id="left">
+    <div id="title">
+        JSON转表格工具
     </div>
-  </div>
 
-  <div id="divider"></div>
+    <div class="editor-wrap">
+        <textarea id="jsonInput" placeholder="在此粘贴或输入 JSON（对象或数组）..." spellcheck="false"></textarea>
+    </div>
 
-  <div id="right">
-    <h3>展示区域</h3>
+    <div class="status-row">
+        <div id="status" class="muted">未校验</div>
+        <div id="cursorPos">行: 1 列: 1</div>
+    </div>
+
+    <div class="controls" id="controls">
+        <button id="btnValidate">校验</button>
+        <button id="btnFormat">格式化</button>
+        <button id="btnCompress">压缩</button>
+        <button id="btnRender" class="primary">渲染为表格</button>
+        <button id="btnEscape">转义</button>
+        <button id="btnUnescape">去转义</button>
+        <button id="btnUni2cn">unicode→中文</button>
+        <button id="btnCn2uni">中文→unicode</button>
+    </div>
+
+    <div style="margin-top:10px" class="muted">提示：编辑时校验信息会清空，表格展示区域会清空。</div>
+</div>
+
+<div id="divider"></div>
+
+<div id="right">
+    <div id="outputHeader">
+        <div>
+            <h3 style="margin:0">表格展示区域</h3>
+            <div class="muted" style="margin-top:6px">当输入为数组时按表格展示；对象以两列（键/值）展示。</div>
+        </div>
+        <div>
+            <button id="exportXlsxBtn">导出 XLSX</button>
+            <button id="exportCsvBtn">导出 CSV</button>
+        </div>
+    </div>
+
     <div id="output"></div>
-    <div id="copyArea" style="margin-top:20px;"></div>
-  </div>
 
-  <script>
-    // 分栏拖拽
+    <div id="copyArea">
+<!--
+TODO 增加复制列功能
+两个导出按钮 放到 复制区域来
+
+
+-->
+    </div>
+</div>
+
+<!-- SheetJS (xlsx.full.min.js) - 使用 jsdelivr CDN（国内通常可用） -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<script>
+    // --- 基本 UI 逻辑 ---
+    const input = document.getElementById('jsonInput');
+    const statusEl = document.getElementById('status');
+    const cursorEl = document.getElementById('cursorPos');
+    const output = document.getElementById('output');
+    const copyArea = document.getElementById('copyArea');
+
+    // 清除校验信息：当输入变化时
+    input.addEventListener('input', () => {
+        statusEl.textContent = '未校验';
+        statusEl.style.color = '';
+        clearPreview();
+        updateCursorPos();
+    });
+
+    // 显示光标所在行列
+    function updateCursorPos() {
+        const pos = input.selectionStart;
+        const text = input.value.slice(0, pos);
+        const lines = text.split('\n');
+        const line = lines.length;
+        const col = lines[lines.length - 1].length + 1;
+        cursorEl.textContent = `行: ${line} 列: ${col}`;
+    }
+
+    input.addEventListener('keyup', updateCursorPos);
+    input.addEventListener('click', updateCursorPos);
+
+    // 按钮绑定（使用 addEventListener 避免 inline 失效）
+    document.getElementById('btnValidate').addEventListener('click', validateJson);
+    document.getElementById('btnFormat').addEventListener('click', formatJson);
+    document.getElementById('btnCompress').addEventListener('click', compressJson);
+    document.getElementById('btnRender').addEventListener('click', renderJson);
+    document.getElementById('btnEscape').addEventListener('click', escapeText);
+    document.getElementById('btnUnescape').addEventListener('click', unescapeText);
+    document.getElementById('btnUni2cn').addEventListener('click', unicodeToCN);
+    document.getElementById('btnCn2uni').addEventListener('click', cnToUnicode);
+
+    document.getElementById('exportCsvBtn').addEventListener('click', exportCsvImpl);
+    document.getElementById('exportXlsxBtn').addEventListener('click', exportXlsxImpl);
+   
     const divider = document.getElementById('divider');
     const left = document.getElementById('left');
+    const body = document.body;
     let dragging = false;
-
-    divider.addEventListener('mousedown', () => dragging = true);
-    document.addEventListener('mousemove', e => {
-      if (dragging) left.style.width = e.clientX + 'px';
+    
+    // 修复拖拽功能
+    // 确保拖拽光标始终显示在分割线上
+    divider.addEventListener('mousedown', (e) => {
+        dragging = true;
+        e.preventDefault(); // 防止文本选择
+        body.style.cursor = 'col-resize';
+        body.style.userSelect = 'none'; // 防止拖动时选中内容
     });
-    document.addEventListener('mouseup', () => dragging = false);
-
+    
+    body.addEventListener('mousemove', (e) => {
+        // 即使不在拖动状态，当鼠标悬停在分割线上时也显示调整光标
+        if (!dragging && e.target === divider) {
+            body.style.cursor = 'col-resize';
+        } else if (!dragging) {
+            body.style.cursor = '';
+        }
+        
+        if (dragging) {
+            // 计算新宽度并应用边界限制
+            const minWidth = 200;
+            const maxWidth = window.innerWidth - 200;
+            const newWidth = Math.max(minWidth, Math.min(maxWidth, e.clientX));
+            
+            // 使用百分比宽度而不是固定像素，确保响应式行为
+            left.style.width = `${(newWidth / window.innerWidth) * 100}%`;
+        }
+    });
+    
+    // 确保所有情况下都能正确重置拖拽状态
+    const resetDragging = () => {
+        if (dragging) {
+            dragging = false;
+            body.style.cursor = '';
+            body.style.userSelect = '';
+        }
+    };
+    
+    body.addEventListener('mouseup', resetDragging);
+    body.addEventListener('mouseleave', resetDragging);
+    body.addEventListener('blur', resetDragging);
+    // ---------- 功能实现 ----------
     function validateJson() {
-      try {
-        JSON.parse(jsonInput.value);
-        alert('JSON 校验成功');
-      } catch (e) {
-        alert('JSON 格式错误: ' + e.message);
-      }
+        try {
+            const parsed = JSON.parse(input.value);
+            statusEl.style.color = 'green';
+            statusEl.textContent = 'JSON 校验通过';
+            // show structure hint
+            if (Array.isArray(parsed)) statusEl.textContent += `（数组，长度 ${parsed.length}）`;
+        } catch (e) {
+            statusEl.style.color = 'red';
+            // 尝试提取行列信息（如果错误消息里有 position）
+            let msg = e.message || String(e);
+            // 有时会包含 "at position 123"，我们尽量解析数字并换算为行列
+            const m = msg.match(/position\s*(\d+)/i) || msg.match(/at\s*(\d+)/i);
+            if (m) {
+                const pos = parseInt(m[1], 10);
+                const before = input.value.slice(0, pos);
+                const lines = before.split('\n');
+                const line = lines.length;
+                const col = lines[lines.length - 1].length + 1;
+                msg += ` (行 ${line}, 列 ${col})`;
+            }
+            statusEl.textContent = '错误: ' + msg;
+        }
     }
 
     function formatJson() {
-      try {
-        jsonInput.value = JSON.stringify(JSON.parse(jsonInput.value), null, 2);
-      } catch (e) { alert('无法格式化: ' + e.message); }
+        try {
+            const parsed = JSON.parse(input.value);
+            input.value = JSON.stringify(parsed, null, 2);
+            statusEl.textContent = '已格式化';
+            statusEl.style.color = 'green';
+            updateCursorPos();
+        } catch (e) {
+            statusEl.style.color = 'red';
+            let msg = e.message || String(e);
+            statusEl.textContent = '无法格式化: ' + msg;
+        }
+    }
+
+    function compressJson() {
+        try {
+            const parsed = JSON.parse(input.value);
+            input.value = JSON.stringify(parsed);
+            statusEl.textContent = '已压缩';
+            statusEl.style.color = 'green';
+            updateCursorPos();
+        } catch (e) {
+            statusEl.style.color = 'red';
+            let msg = e.message || String(e);
+            statusEl.textContent = '无法压缩: ' + msg;
+        }
     }
 
     function renderJson() {
-      let data;
-      try { data = JSON.parse(jsonInput.value); } 
-      catch (e) { alert('JSON 无法解析'); return; }
+        clearPreview();
+        let data;
+        try {
+            data = JSON.parse(input.value);
+        } catch (e) {
+            alert('JSON 无法解析');
+            return;
+        }
 
-      const out = document.getElementById('output');
-      out.innerHTML = '';
-
-      if (Array.isArray(data)) {
-        renderTable(data);
-      } else if (typeof data === 'object') {
-        renderObject(data);
-      } else {
-        out.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
-      }
+        if (Array.isArray(data)) {
+            renderTable(data);
+        } else if (typeof data === 'object' && data !== null) {
+            renderObject(data);
+        } else {
+            output.innerHTML = `<pre>${escapeHtml(JSON.stringify(data))}</pre>`;
+        }
     }
 
     function renderTable(arr) {
-      if (arr.length === 0) return;
-
-      const keys = Object.keys(arr[0]);
-      let html = '<table><thead><tr>' + keys.map(k => `<th>${k}</th>`).join('') + '</tr></thead><tbody>';
-
-      arr.forEach(row => {
-        html += '<tr>' + keys.map(k => `<td>${row[k]}</td>`).join('') + '</tr>';
-      });
-      html += '</tbody></table>';
-
-      document.getElementById('output').innerHTML = html;
-
-      buildCopyTools(arr, keys);
+        if (arr.length === 0) {
+            output.innerHTML = '<div class="muted">数组为空</div>';
+            return;
+        }
+        const keys = Array.from(new Set(arr.flatMap(r => Object.keys(r))));
+        const thead = `<thead><tr>${keys.map(k => `<th>${escapeHtml(k)}</th>`).join('')}</tr></thead>`;
+        const rows = arr.map(r => `<tr>${keys.map(k => `<td>${escapeHtml(String(r[k] === undefined ? '' : r[k]))}</td>`).join('')}</tr>`).join('');
+        output.innerHTML = `<table>${thead}<tbody>${rows}</tbody></table>`;
+        buildCopyTools(arr, keys);
     }
 
     function renderObject(obj) {
-      let html = '<table><tbody>';
-      for (const k in obj) {
-        html += `<tr><th>${k}</th><td>${JSON.stringify(obj[k])}</td></tr>`;
-      }
-      html += '</tbody></table>';
-      document.getElementById('output').innerHTML = html;
-      document.getElementById('copyArea').innerHTML = '';
+        const rows = Object.keys(obj).map(k => `<tr><th>${escapeHtml(k)}</th><td>${escapeHtml(JSON.stringify(obj[k]))}</td></tr>`).join('');
+        output.innerHTML = `<table><tbody>${rows}</tbody></table>`;
+        // also expose copy tools for single object
+        buildCopyTools([obj], Object.keys(obj));
     }
 
     function buildCopyTools(arr, keys) {
-      const copyArea = document.getElementById('copyArea');
-      
-      const toCSV = () => arr.map(r => keys.map(k => r[k]).join(',')).join('\n');
-      const toCSVWithQuotes = () => arr.map(r => keys.map(k => `'${r[k]}'`).join(',')).join('\n');
-      const toMarkdown = () => {
-        let h = '|' + keys.join('|') + '|\n|' + keys.map(()=>'---').join('|') + '|\n';
-        h += arr.map(r => '|' + keys.map(k => r[k]).join('|') + '|').join('\n');
-        return h;
-      };
-      const toTSV = () => arr.map(r => keys.map(k => r[k]).join('\t')).join('\n');
+        const toCSV = () => [keys, ...arr.map(r => keys.map(k => r[k] === undefined ? '' : r[k]))].map(row => row.map(cell => String(cell)).join(',')).join('\n');
+        const toCSVWithQuotes = () => [keys, ...arr.map(r => keys.map(k => r[k] === undefined ? '' : r[k]))].map(row => row.map(cell => `'${String(cell).replace(/'/g, "''")}'`).join(',')).join('\n');
+        const toMarkdown = () => {
+            const header = '|' + keys.join('|') + '|\n|' + keys.map(() => '---').join('|') + '|\n';
+            const body = arr.map(r => '|' + keys.map(k => escapeMarkdown(String(r[k] === undefined ? '' : r[k]))).join('|') + '|').join('\n');
+            return header + body;
+        };
+        const toTSV = () => [keys, ...arr.map(r => keys.map(k => r[k] === undefined ? '' : r[k]))].map(row => row.map(cell => String(cell)).join('\t')).join('\n');
 
-      copyArea.innerHTML = `
-        <h4>复制选项</h4>
-        <button onclick="copyText(toCSV())">复制 CSV</button>
-        <button onclick="copyText(toCSVWithQuotes())">复制 CSV (含单引号)</button>
-        <button onclick="copyText(toMarkdown())">复制 Markdown 表格</button>
-        <button onclick="copyText(toTSV())">复制 Excel / TSV</button>
-        <pre id="preview"></pre>
+        copyArea.innerHTML = `
+        <div style="margin-bottom:8px"><strong>复制选项</strong></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button id="c_csv">复制 CSV</button>
+          <button id="c_csv_q">CSV (含单引号)</button>
+          <button id="c_md">复制 Markdown 表格</button>
+          <button id="c_tsv">复制 Excel/TSV</button>
+          <button id="c_headers">复制标题</button>
+        </div>
+        <pre id="preview" style="margin-top:10px;height:80px;overflow:auto;background:#fafafa;padding:8px;border-radius:6px;border:1px solid #eee"></pre>
       `;
 
-      window.toCSV = toCSV;
-      window.toCSVWithQuotes = toCSVWithQuotes;
-      window.toMarkdown = toMarkdown;
-      window.toTSV = toTSV;
+        document.getElementById('c_csv').addEventListener('click', () => copyText(toCSV()));
+        document.getElementById('c_csv_q').addEventListener('click', () => copyText(toCSVWithQuotes()));
+        document.getElementById('c_md').addEventListener('click', () => copyText(toMarkdown()));
+        document.getElementById('c_tsv').addEventListener('click', () => copyText(toTSV()));
+        document.getElementById('c_headers').addEventListener('click', () => copyText(keys.join(',')));
     }
 
     function copyText(txt) {
-      navigator.clipboard.writeText(txt);
-      document.getElementById('preview').textContent = txt;
-      alert('已复制');
+        navigator.clipboard.writeText(txt).then(() => {
+            const p = document.getElementById('preview');
+            if (p) p.textContent = txt;
+            statusEl.style.color = 'green';
+            statusEl.textContent = '已复制到剪贴板';
+        }).catch(() => {
+            alert('复制失败，请手动复制预览区域的文本');
+        });
     }
-  </script>
+
+    function clearPreview() {
+        copyArea.innerHTML = '';
+        output.innerHTML = '';
+    }
+
+    function escapeText() {
+        input.value = input.value.replace(/"/g, '\\"');
+        statusEl.textContent = '已转义';
+        statusEl.style.color = '';
+    }
+
+    function unescapeText() {
+        input.value = input.value.replace(/\\"/g, '"');
+        statusEl.textContent = '已去转义';
+        statusEl.style.color = '';
+    }
+
+    function unicodeToCN() {
+        input.value = input.value.replace(/\\u([0-9a-fA-F]{4})/g, (_, g) => String.fromCharCode(parseInt(g, 16)));
+        statusEl.textContent = '已转为中文';
+    }
+
+    function cnToUnicode() {
+        input.value = input.value.replace(/[^\x00-\xff]/g, c => "\\u" + c.charCodeAt(0).toString(16).padStart(4, '0'));
+        statusEl.textContent = '已转为unicode';
+    }
+
+    // helper
+    function escapeHtml(s) {
+        return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function escapeMarkdown(s) {
+        return s.replace(/\|/g, '\\|').replace(/\n/g, ' ');
+    }
+
+    // ----- 导出 CSV/XLSX -----
+    function exportCsvImpl() {
+        try {
+            const parsed = JSON.parse(input.value);
+            let rows = [];
+            if (Array.isArray(parsed)) {
+                const keys = Array.from(new Set(parsed.flatMap(r => Object.keys(r))));
+                rows.push(keys);
+                parsed.forEach(r => rows.push(keys.map(k => r[k] === undefined ? '' : r[k])));
+            } else if (typeof parsed === 'object') {
+                rows = Object.keys(parsed).map(k => [k, JSON.stringify(parsed[k])]);
+            } else {
+                rows = [[String(parsed)]]
+            }
+
+            const csv = rows.map(r => r.map(c => String(c)).join(',')).join('\n');
+            const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'data.csv';
+            a.click();
+        } catch (e) {
+            alert('导出 CSV 失败：' + e.message);
+        }
+    }
+
+    function exportXlsxImpl() {
+        try {
+            if (typeof XLSX === 'undefined') {
+                alert('XLSX 库未加载，无法导出 .xlsx。');
+                return;
+            }
+            const parsed = JSON.parse(input.value);
+            let ws;
+            if (Array.isArray(parsed)) {
+                const keys = Array.from(new Set(parsed.flatMap(r => Object.keys(r))));
+                const aoa = [keys, ...parsed.map(r => keys.map(k => r[k] === undefined ? '' : r[k]))];
+                ws = XLSX.utils.aoa_to_sheet(aoa);
+            } else if (typeof parsed === 'object') {
+                const aoa = Object.keys(parsed).map(k => [k, typeof parsed[k] === 'object' ? JSON.stringify(parsed[k]) : parsed[k]]);
+                ws = XLSX.utils.aoa_to_sheet(aoa);
+            } else {
+                ws = XLSX.utils.aoa_to_sheet([[parsed]]);
+            }
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+            XLSX.writeFile(wb, 'data.xlsx');
+        } catch (e) {
+            alert('导出 XLSX 失败：' + e.message);
+        }
+    }
+
+    // 保证初始光标位置显示
+    updateCursorPos();
+</script>
 </body>
 </html>
