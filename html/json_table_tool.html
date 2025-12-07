@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
-    <meta charset="UTF-8"/>
-    <title>JSON转表格工具</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta charset="UTF-8" />
+    <title>JSON 转表格工具</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <style>
         :root {
             --bg: #f7f8fa;
@@ -26,7 +27,6 @@
             display: flex
         }
 
-        /* buttons */
         button {
             background: var(--panel);
             border: 1px solid #d1d5db;
@@ -42,23 +42,21 @@
             border-color: transparent
         }
 
-        /* container */
         #left {
             width: 42%;
             border-right: 1px solid #e6e9ee;
-            padding: 16px;
-            background: var(--panel);
+            padding: 0px 16px;
             display: flex;
             flex-direction: column;
             overflow: hidden
         }
 
         #right {
-            flex: 1;
-            padding: 16px;
+            padding: 0px 16px;
             display: flex;
             flex-direction: column;
-            overflow: hidden
+            overflow: hidden;
+            flex: 1
         }
 
         #divider {
@@ -67,11 +65,25 @@
             background: linear-gradient(90deg, #fff, #eee)
         }
 
-        /* title */
-        #title {
+        .top-section {
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+            margin-bottom: 5px
+        }
+
+        .top-section h2 {
             font-size: 16px;
             font-weight: 600;
             margin-bottom: 8px
+        }
+
+        .bottom-section {
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 10px 0px;
         }
 
         /* editor area */
@@ -93,38 +105,28 @@
             background: #fff
         }
 
-        /* status and cursor */
+
         .status-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-top: 8px
         }
 
-        #status {
+        .status-row .tips {
             height: 22px;
-            font-weight: 600
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--muted);
         }
 
         #cursorPos {
             color: var(--muted);
-            font-size: 13px
-        }
-
-        /* controls */
-        .controls {
-            margin-top: 10px
-        }
-
-        /* right: output */
-        #outputHeader {
-            display: flex;
-            align-items: center;
-            justify-content: space-between
+            font-size: 13px;
+            margin-right: 8px;
         }
 
         #output {
-            margin-top: 12px;
+            /*margin-top: 12px;*/
             overflow: auto;
             flex: 1;
             min-height: 0;
@@ -140,25 +142,42 @@
             font-size: 13px
         }
 
-        table th, table td {
+        table th,
+        table td {
             border: 1px solid #e6e9ee;
             padding: 8px;
             text-align: left
         }
-
-        /* copy area */
-        #copyArea {
-            margin-top: 12px
+        table th {
+            background: #f9fafb;
+            font-size: 14px;
         }
 
-        #copyArea button {
-            margin-right: 8px
-        }
-
-        /* footer */
         .muted {
             color: var(--muted);
             font-size: 13px
+        }
+
+        .info-section {
+            padding: 8px 0px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .button-group .right {
+            margin-left: auto;
+        }
+
+        .preview-box {
+            overflow-y: auto;
+            background: #fafafa;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #eee;
         }
 
         @media (max-width: 900px) {
@@ -168,373 +187,477 @@
         }
     </style>
 </head>
+
 <body>
-<div id="left">
-    <div id="title">
-        JSON转表格工具
-    </div>
-
-    <div class="editor-wrap">
-        <textarea id="jsonInput" placeholder="在此粘贴或输入 JSON（对象或数组）..." spellcheck="false"></textarea>
-    </div>
-
-    <div class="status-row">
-        <div id="status" class="muted">未校验</div>
-        <div id="cursorPos">行: 1 列: 1</div>
-    </div>
-
-    <div class="controls" id="controls">
-        <button id="btnValidate">校验</button>
-        <button id="btnFormat">格式化</button>
-        <button id="btnCompress">压缩</button>
-        <button id="btnRender" class="primary">渲染为表格</button>
-        <button id="btnEscape">转义</button>
-        <button id="btnUnescape">去转义</button>
-        <button id="btnUni2cn">unicode→中文</button>
-        <button id="btnCn2uni">中文→unicode</button>
-    </div>
-
-    <div style="margin-top:10px" class="muted">提示：编辑时校验信息会清空，表格展示区域会清空。</div>
-</div>
-
-<div id="divider"></div>
-
-<div id="right">
-    <div id="outputHeader">
-        <div>
-            <h3 style="margin:0">表格展示区域</h3>
-            <div class="muted" style="margin-top:6px">当输入为数组时按表格展示；对象以两列（键/值）展示。</div>
+    <div id="left">
+        <div class="top-section">
+            <h2>JSON转表格工具</h2>
         </div>
-        <div>
-            <button id="exportXlsxBtn">导出 XLSX</button>
-            <button id="exportCsvBtn">导出 CSV</button>
+
+        <div class="editor-wrap">
+            <textarea id="jsonInput" placeholder="在此粘贴或输入 JSON（对象或数组）..." spellcheck="false"></textarea>
+        </div>
+
+        <div class="bottom-section">
+            <div class="status-row">
+                <div id="status" class="tips">未校验</div>
+                <div id="cursorPos">行: 1 列: 1</div>
+            </div>
+
+            <div class="button-group">
+                <button id="btnValidate">校验</button>
+                <button id="btnFormat">格式化</button>
+                <button id="btnRender" class="primary">渲染为表格</button>
+
+                <div class="right">
+                    <button id="btnEscape">转义</button>
+                    <button id="btnUnescape">去转义</button>
+                    <button id="btnCompress">压缩</button>
+                    <button id="btnUni2cn">unicode→中文</button>
+                    <button id="btnCn2uni">中文→unicode</button>
+                </div>
+            </div>
+
+            <div class="info-section muted">提示：编辑时校验信息会清空，表格展示区域会清空。</div>
+
         </div>
     </div>
 
-    <div id="output"></div>
+    <div id="divider"></div>
 
-    <div id="copyArea">
-<!--
-TODO 增加复制列功能
-两个导出按钮 放到 复制区域来
+    <div id="right">
+        <div class="top-section">
+            <h2>表格展示区域</h2>
+            <div class="muted">当输入为数组时按表格展示；对象以两列（键/值）展示。</div>
+        </div>
 
+        <div id="output"></div>
 
--->
+        <div id="copyArea" class="bottom-section">
+            <div class="status-row">
+                <div id="copyStatus" class="tips"></div>
+            </div>
+            <div class="button-group">
+                <button id="c_csv" disabled>复制 CSV</button>
+                <button id="c_csv_q" disabled>CSV (含单引号)</button>
+                <button id="c_md" disabled>复制 Markdown 表格</button>
+                <button id="c_tsv" disabled>复制 Excel/TSV</button>
+                <button id="c_headers" disabled>复制标题</button>
+                <div class="right">
+                    <button id="exportCsvBtn" disabled>导出 CSV</button>
+                    <button id="exportXlsxBtn" disabled>导出 XLSX</button>
+                </div>
+            </div>
+            <textarea id="copyPreview" class="preview-box" readonly></textarea>
+        </div>
     </div>
-</div>
 
-<!-- SheetJS (xlsx.full.min.js) - 使用 jsdelivr CDN（国内通常可用） -->
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <!-- SheetJS (xlsx.full.min.js) - 使用 jsdelivr CDN（国内通常可用） -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
-<script>
-    // --- 基本 UI 逻辑 ---
-    const input = document.getElementById('jsonInput');
-    const statusEl = document.getElementById('status');
-    const cursorEl = document.getElementById('cursorPos');
-    const output = document.getElementById('output');
-    const copyArea = document.getElementById('copyArea');
+    <script>
+        // --- 全局变量和 DOM 元素引用 ---
+        const input = document.getElementById('jsonInput');
+        const statusEl = document.getElementById('status');
+        const cursorEl = document.getElementById('cursorPos');
+        const output = document.getElementById('output');
+        const copyArea = document.getElementById('copyArea');
 
-    // 清除校验信息：当输入变化时
-    input.addEventListener('input', () => {
-        statusEl.textContent = '未校验';
-        statusEl.style.color = '';
-        clearPreview();
-        updateCursorPos();
-    });
+        // 当前处理的数据和键（用于复制功能）
+        let currentData = [];
+        let currentKeys = [];
 
-    // 显示光标所在行列
-    function updateCursorPos() {
-        const pos = input.selectionStart;
-        const text = input.value.slice(0, pos);
-        const lines = text.split('\n');
-        const line = lines.length;
-        const col = lines[lines.length - 1].length + 1;
-        cursorEl.textContent = `行: ${line} 列: ${col}`;
-    }
+        // --- 工具函数定义 ---
 
-    input.addEventListener('keyup', updateCursorPos);
-    input.addEventListener('click', updateCursorPos);
 
-    // 按钮绑定（使用 addEventListener 避免 inline 失效）
-    document.getElementById('btnValidate').addEventListener('click', validateJson);
-    document.getElementById('btnFormat').addEventListener('click', formatJson);
-    document.getElementById('btnCompress').addEventListener('click', compressJson);
-    document.getElementById('btnRender').addEventListener('click', renderJson);
-    document.getElementById('btnEscape').addEventListener('click', escapeText);
-    document.getElementById('btnUnescape').addEventListener('click', unescapeText);
-    document.getElementById('btnUni2cn').addEventListener('click', unicodeToCN);
-    document.getElementById('btnCn2uni').addEventListener('click', cnToUnicode);
-
-    document.getElementById('exportCsvBtn').addEventListener('click', exportCsvImpl);
-    document.getElementById('exportXlsxBtn').addEventListener('click', exportXlsxImpl);
-   
-    const divider = document.getElementById('divider');
-    const left = document.getElementById('left');
-    const body = document.body;
-    let dragging = false;
-    
-    // 修复拖拽功能
-    // 确保拖拽光标始终显示在分割线上
-    divider.addEventListener('mousedown', (e) => {
-        dragging = true;
-        e.preventDefault(); // 防止文本选择
-        body.style.cursor = 'col-resize';
-        body.style.userSelect = 'none'; // 防止拖动时选中内容
-    });
-    
-    body.addEventListener('mousemove', (e) => {
-        // 即使不在拖动状态，当鼠标悬停在分割线上时也显示调整光标
-        if (!dragging && e.target === divider) {
-            body.style.cursor = 'col-resize';
-        } else if (!dragging) {
-            body.style.cursor = '';
-        }
-        
-        if (dragging) {
-            // 计算新宽度并应用边界限制
-            const minWidth = 200;
-            const maxWidth = window.innerWidth - 200;
-            const newWidth = Math.max(minWidth, Math.min(maxWidth, e.clientX));
-            
-            // 使用百分比宽度而不是固定像素，确保响应式行为
-            left.style.width = `${(newWidth / window.innerWidth) * 100}%`;
-        }
-    });
-    
-    // 确保所有情况下都能正确重置拖拽状态
-    const resetDragging = () => {
-        if (dragging) {
-            dragging = false;
-            body.style.cursor = '';
-            body.style.userSelect = '';
-        }
-    };
-    
-    body.addEventListener('mouseup', resetDragging);
-    body.addEventListener('mouseleave', resetDragging);
-    body.addEventListener('blur', resetDragging);
-    // ---------- 功能实现 ----------
-    function validateJson() {
-        try {
-            const parsed = JSON.parse(input.value);
-            statusEl.style.color = 'green';
-            statusEl.textContent = 'JSON 校验通过';
-            // show structure hint
-            if (Array.isArray(parsed)) statusEl.textContent += `（数组，长度 ${parsed.length}）`;
-        } catch (e) {
-            statusEl.style.color = 'red';
-            // 尝试提取行列信息（如果错误消息里有 position）
-            let msg = e.message || String(e);
-            // 有时会包含 "at position 123"，我们尽量解析数字并换算为行列
-            const m = msg.match(/position\s*(\d+)/i) || msg.match(/at\s*(\d+)/i);
-            if (m) {
-                const pos = parseInt(m[1], 10);
-                const before = input.value.slice(0, pos);
-                const lines = before.split('\n');
-                const line = lines.length;
-                const col = lines[lines.length - 1].length + 1;
-                msg += ` (行 ${line}, 列 ${col})`;
-            }
-            statusEl.textContent = '错误: ' + msg;
-        }
-    }
-
-    function formatJson() {
-        try {
-            const parsed = JSON.parse(input.value);
-            input.value = JSON.stringify(parsed, null, 2);
-            statusEl.textContent = '已格式化';
-            statusEl.style.color = 'green';
+        // 清除校验信息：当输入变化时
+        input.addEventListener('input', () => {
+            statusEl.textContent = '未校验';
+            statusEl.style.color = '';
+            clearPreview();
             updateCursorPos();
-        } catch (e) {
-            statusEl.style.color = 'red';
-            let msg = e.message || String(e);
-            statusEl.textContent = '无法格式化: ' + msg;
-        }
-    }
-
-    function compressJson() {
-        try {
-            const parsed = JSON.parse(input.value);
-            input.value = JSON.stringify(parsed);
-            statusEl.textContent = '已压缩';
-            statusEl.style.color = 'green';
-            updateCursorPos();
-        } catch (e) {
-            statusEl.style.color = 'red';
-            let msg = e.message || String(e);
-            statusEl.textContent = '无法压缩: ' + msg;
-        }
-    }
-
-    function renderJson() {
-        clearPreview();
-        let data;
-        try {
-            data = JSON.parse(input.value);
-        } catch (e) {
-            alert('JSON 无法解析');
-            return;
-        }
-
-        if (Array.isArray(data)) {
-            renderTable(data);
-        } else if (typeof data === 'object' && data !== null) {
-            renderObject(data);
-        } else {
-            output.innerHTML = `<pre>${escapeHtml(JSON.stringify(data))}</pre>`;
-        }
-    }
-
-    function renderTable(arr) {
-        if (arr.length === 0) {
-            output.innerHTML = '<div class="muted">数组为空</div>';
-            return;
-        }
-        const keys = Array.from(new Set(arr.flatMap(r => Object.keys(r))));
-        const thead = `<thead><tr>${keys.map(k => `<th>${escapeHtml(k)}</th>`).join('')}</tr></thead>`;
-        const rows = arr.map(r => `<tr>${keys.map(k => `<td>${escapeHtml(String(r[k] === undefined ? '' : r[k]))}</td>`).join('')}</tr>`).join('');
-        output.innerHTML = `<table>${thead}<tbody>${rows}</tbody></table>`;
-        buildCopyTools(arr, keys);
-    }
-
-    function renderObject(obj) {
-        const rows = Object.keys(obj).map(k => `<tr><th>${escapeHtml(k)}</th><td>${escapeHtml(JSON.stringify(obj[k]))}</td></tr>`).join('');
-        output.innerHTML = `<table><tbody>${rows}</tbody></table>`;
-        // also expose copy tools for single object
-        buildCopyTools([obj], Object.keys(obj));
-    }
-
-    function buildCopyTools(arr, keys) {
-        const toCSV = () => [keys, ...arr.map(r => keys.map(k => r[k] === undefined ? '' : r[k]))].map(row => row.map(cell => String(cell)).join(',')).join('\n');
-        const toCSVWithQuotes = () => [keys, ...arr.map(r => keys.map(k => r[k] === undefined ? '' : r[k]))].map(row => row.map(cell => `'${String(cell).replace(/'/g, "''")}'`).join(',')).join('\n');
-        const toMarkdown = () => {
-            const header = '|' + keys.join('|') + '|\n|' + keys.map(() => '---').join('|') + '|\n';
-            const body = arr.map(r => '|' + keys.map(k => escapeMarkdown(String(r[k] === undefined ? '' : r[k]))).join('|') + '|').join('\n');
-            return header + body;
-        };
-        const toTSV = () => [keys, ...arr.map(r => keys.map(k => r[k] === undefined ? '' : r[k]))].map(row => row.map(cell => String(cell)).join('\t')).join('\n');
-
-        copyArea.innerHTML = `
-        <div style="margin-bottom:8px"><strong>复制选项</strong></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button id="c_csv">复制 CSV</button>
-          <button id="c_csv_q">CSV (含单引号)</button>
-          <button id="c_md">复制 Markdown 表格</button>
-          <button id="c_tsv">复制 Excel/TSV</button>
-          <button id="c_headers">复制标题</button>
-        </div>
-        <pre id="preview" style="margin-top:10px;height:80px;overflow:auto;background:#fafafa;padding:8px;border-radius:6px;border:1px solid #eee"></pre>
-      `;
-
-        document.getElementById('c_csv').addEventListener('click', () => copyText(toCSV()));
-        document.getElementById('c_csv_q').addEventListener('click', () => copyText(toCSVWithQuotes()));
-        document.getElementById('c_md').addEventListener('click', () => copyText(toMarkdown()));
-        document.getElementById('c_tsv').addEventListener('click', () => copyText(toTSV()));
-        document.getElementById('c_headers').addEventListener('click', () => copyText(keys.join(',')));
-    }
-
-    function copyText(txt) {
-        navigator.clipboard.writeText(txt).then(() => {
-            const p = document.getElementById('preview');
-            if (p) p.textContent = txt;
-            statusEl.style.color = 'green';
-            statusEl.textContent = '已复制到剪贴板';
-        }).catch(() => {
-            alert('复制失败，请手动复制预览区域的文本');
         });
-    }
 
-    function clearPreview() {
-        copyArea.innerHTML = '';
-        output.innerHTML = '';
-    }
+        // 显示光标所在行列
+        function updateCursorPos() {
+            const pos = input.selectionStart;
+            const text = input.value.slice(0, pos);
+            const lines = text.split('\n');
+            const line = lines.length;
+            const col = lines[lines.length - 1].length + 1;
+            cursorEl.textContent = `行: ${line} 列: ${col}`;
+        }
 
-    function escapeText() {
-        input.value = input.value.replace(/"/g, '\\"');
-        statusEl.textContent = '已转义';
-        statusEl.style.color = '';
-    }
+        input.addEventListener('keyup', updateCursorPos);
+        input.addEventListener('click', updateCursorPos);
 
-    function unescapeText() {
-        input.value = input.value.replace(/\\"/g, '"');
-        statusEl.textContent = '已去转义';
-        statusEl.style.color = '';
-    }
+        // --- 事件监听器绑定（仅初始化时绑定一次） ---
+        function initEventListeners() {
+            // 左侧功能按钮
+            document.getElementById('btnValidate').addEventListener('click', validateJson);
+            document.getElementById('btnFormat').addEventListener('click', formatJson);
+            document.getElementById('btnCompress').addEventListener('click', compressJson);
+            document.getElementById('btnRender').addEventListener('click', renderJson);
+            document.getElementById('btnEscape').addEventListener('click', escapeText);
+            document.getElementById('btnUnescape').addEventListener('click', unescapeText);
+            document.getElementById('btnUni2cn').addEventListener('click', unicodeToCN);
+            document.getElementById('btnCn2uni').addEventListener('click', cnToUnicode);
 
-    function unicodeToCN() {
-        input.value = input.value.replace(/\\u([0-9a-fA-F]{4})/g, (_, g) => String.fromCharCode(parseInt(g, 16)));
-        statusEl.textContent = '已转为中文';
-    }
+            // 导出按钮
+            document.getElementById('exportCsvBtn').addEventListener('click', exportCsvImpl);
+            document.getElementById('exportXlsxBtn').addEventListener('click', exportXlsxImpl);
 
-    function cnToUnicode() {
-        input.value = input.value.replace(/[^\x00-\xff]/g, c => "\\u" + c.charCodeAt(0).toString(16).padStart(4, '0'));
-        statusEl.textContent = '已转为unicode';
-    }
+            // 复制相关按钮 - 使用当前全局数据
+            document.getElementById('c_csv').addEventListener('click', () => copyText(formatAsCSV(currentKeys, currentData), 'csv'));
+            document.getElementById('c_csv_q').addEventListener('click', () => copyText(formatAsCSVWithQuotes(currentKeys, currentData), 'csv(含单引号)'));
+            document.getElementById('c_md').addEventListener('click', () => copyText(formatAsMarkdown(currentKeys, currentData), 'Markdown 表格'));
+            document.getElementById('c_tsv').addEventListener('click', () => copyText(formatAsTSV(currentKeys, currentData), 'Excel/TSV'));
+            document.getElementById('c_headers').addEventListener('click', () => copyText(currentKeys.join(','), '标题（逗号分隔）'));
+        }
 
-    // helper
-    function escapeHtml(s) {
-        return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
+        // --- 格式化工具函数（使用传入的数据而非闭包） ---
+        function formatAsCSV(keys, data) {
+            return [keys, ...data.map(r => keys.map(k => r[k] === undefined ? '' : r[k]))]
+                .map(row => row.map(cell => String(cell)).join(','))
+                .join('\n');
+        }
 
-    function escapeMarkdown(s) {
-        return s.replace(/\|/g, '\\|').replace(/\n/g, ' ');
-    }
+        function formatAsCSVWithQuotes(keys, data) {
+            return [keys, ...data.map(r => keys.map(k => r[k] === undefined ? '' : r[k]))]
+                .map(row => row.map(cell => `'${String(cell).replace(/'/g, "''")}'`).join(','))
+                .join('\n');
+        }
 
-    // ----- 导出 CSV/XLSX -----
-    function exportCsvImpl() {
-        try {
-            const parsed = JSON.parse(input.value);
-            let rows = [];
-            if (Array.isArray(parsed)) {
-                const keys = Array.from(new Set(parsed.flatMap(r => Object.keys(r))));
-                rows.push(keys);
-                parsed.forEach(r => rows.push(keys.map(k => r[k] === undefined ? '' : r[k])));
-            } else if (typeof parsed === 'object') {
-                rows = Object.keys(parsed).map(k => [k, JSON.stringify(parsed[k])]);
-            } else {
-                rows = [[String(parsed)]]
+        function formatAsMarkdown(keys, data) {
+            const header = '|' + keys.join('|') + '|\n|' + keys.map(() => '---').join('|') + '|\n';
+            const body = data.map(r => '|' + keys.map(k => escapeMarkdown(String(r[k] === undefined ? '' : r[k]))).join('|') + '|').join('\n');
+            return header + body;
+        }
+
+        function formatAsTSV(keys, data) {
+            return [keys, ...data.map(r => keys.map(k => r[k] === undefined ? '' : r[k]))]
+                .map(row => row.map(cell => String(cell)).join('\t'))
+                .join('\n');
+        }
+
+        // 初始化事件监听器
+        initEventListeners();
+
+        const divider = document.getElementById('divider');
+        const left = document.getElementById('left');
+        const body = document.body;
+        let dragging = false;
+
+        // 修复拖拽功能
+        // 确保拖拽光标始终显示在分割线上
+        divider.addEventListener('mousedown', (e) => {
+            dragging = true;
+            e.preventDefault(); // 防止文本选择
+            body.style.cursor = 'col-resize';
+            body.style.userSelect = 'none'; // 防止拖动时选中内容
+        });
+
+        body.addEventListener('mousemove', (e) => {
+            // 即使不在拖动状态，当鼠标悬停在分割线上时也显示调整光标
+            if (!dragging && e.target === divider) {
+                body.style.cursor = 'col-resize';
+            } else if (!dragging) {
+                body.style.cursor = '';
             }
 
-            const csv = rows.map(r => r.map(c => String(c)).join(',')).join('\n');
-            const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = 'data.csv';
-            a.click();
-        } catch (e) {
-            alert('导出 CSV 失败：' + e.message);
-        }
-    }
+            if (dragging) {
+                // 计算新宽度并应用边界限制
+                const minWidth = 200;
+                const maxWidth = window.innerWidth - 200;
+                const newWidth = Math.max(minWidth, Math.min(maxWidth, e.clientX));
 
-    function exportXlsxImpl() {
-        try {
-            if (typeof XLSX === 'undefined') {
-                alert('XLSX 库未加载，无法导出 .xlsx。');
+                // 使用百分比宽度而不是固定像素，确保响应式行为
+                left.style.width = `${(newWidth / window.innerWidth) * 100}%`;
+            }
+        });
+
+        // 确保所有情况下都能正确重置拖拽状态
+        const resetDragging = () => {
+            if (dragging) {
+                dragging = false;
+                body.style.cursor = '';
+                body.style.userSelect = '';
+            }
+        };
+
+        body.addEventListener('mouseup', resetDragging);
+        body.addEventListener('mouseleave', resetDragging);
+        body.addEventListener('blur', resetDragging);
+
+        // ---------- 功能实现 ----------
+        function validateJson() {
+            try {
+                const parsed = JSON.parse(input.value);
+                statusEl.style.color = 'green';
+                statusEl.textContent = 'JSON 校验通过';
+                // show structure hint
+                if (Array.isArray(parsed)) statusEl.textContent += `（数组，长度 ${parsed.length}）`;
+            } catch (e) {
+                statusEl.style.color = 'red';
+                // 尝试提取行列信息（如果错误消息里有 position）
+                let msg = e.message || String(e);
+                // 有时会包含 "at position 123"，我们尽量解析数字并换算为行列
+                const m = msg.match(/position\s*(\d+)/i) || msg.match(/at\s*(\d+)/i);
+                if (m) {
+                    const pos = parseInt(m[1], 10);
+                    const before = input.value.slice(0, pos);
+                    const lines = before.split('\n');
+                    const line = lines.length;
+                    const col = lines[lines.length - 1].length + 1;
+                    msg += ` (行 ${line}, 列 ${col})`;
+                }
+                statusEl.textContent = '错误: ' + msg;
+            }
+        }
+
+        function formatJson() {
+            try {
+                const parsed = JSON.parse(input.value);
+                input.value = JSON.stringify(parsed, null, 2);
+                statusEl.textContent = '已格式化';
+                statusEl.style.color = 'green';
+                updateCursorPos();
+            } catch (e) {
+                let msg = e.message || String(e);
+                statusEl.style.color = 'red';
+                statusEl.textContent = '无法格式化: ' + msg;
+            }
+        }
+
+
+        function renderJson() {
+            clearPreview();
+            let data;
+            try {
+                data = JSON.parse(input.value);
+            } catch (e) {
+                statusEl.style.color = 'red';
+                statusEl.textContent = '渲染失败！JSON 无法解析';
                 return;
             }
-            const parsed = JSON.parse(input.value);
-            let ws;
-            if (Array.isArray(parsed)) {
-                const keys = Array.from(new Set(parsed.flatMap(r => Object.keys(r))));
-                const aoa = [keys, ...parsed.map(r => keys.map(k => r[k] === undefined ? '' : r[k]))];
-                ws = XLSX.utils.aoa_to_sheet(aoa);
-            } else if (typeof parsed === 'object') {
-                const aoa = Object.keys(parsed).map(k => [k, typeof parsed[k] === 'object' ? JSON.stringify(parsed[k]) : parsed[k]]);
-                ws = XLSX.utils.aoa_to_sheet(aoa);
-            } else {
-                ws = XLSX.utils.aoa_to_sheet([[parsed]]);
-            }
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-            XLSX.writeFile(wb, 'data.xlsx');
-        } catch (e) {
-            alert('导出 XLSX 失败：' + e.message);
-        }
-    }
 
-    // 保证初始光标位置显示
-    updateCursorPos();
-</script>
+            if (Array.isArray(data)) {
+                renderTable(data);
+            } else if (typeof data === 'object' && data !== null) {
+                renderObject(data);
+            } else {
+                output.innerHTML = `<pre>${escapeHtml(JSON.stringify(data))}</pre>`;
+            }
+            statusEl.textContent = '已渲染';
+            statusEl.style.color = 'green';
+        }
+
+        function renderTable(arr) {
+            if (arr.length === 0) {
+                output.innerHTML = '<div class="muted">数组为空</div>';
+                return;
+            }
+            const keys = Array.from(new Set(arr.flatMap(r => Object.keys(r))));
+            const thead = `<thead><tr>${keys.map(k => `<th>${escapeHtml(k)}</th>`).join('')}</tr></thead>`;
+            const rows = arr.map(r => `<tr>${keys.map(k => `<td>${escapeHtml(String(r[k] === undefined ? '' : r[k]))}</td>`).join('')}</tr>`).join('');
+            output.innerHTML = `<table>${thead}<tbody>${rows}</tbody></table>`;
+            updateCopyData(arr, keys);
+        }
+
+        function renderObject(obj) {
+            const rows = Object.keys(obj).map(k => `<tr><th>${escapeHtml(k)}</th><td>${escapeHtml(JSON.stringify(obj[k]))}</td></tr>`).join('');
+            output.innerHTML = `<table><tbody>${rows}</tbody></table>`;
+            // also expose copy tools for single object
+            updateCopyData([obj], Object.keys(obj));
+        }
+
+        function escapeHtml(s) {
+            return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function escapeText() {
+            input.value = input.value.replace(/"/g, '\\"');
+            statusEl.textContent = '已转义';
+            statusEl.style.color = 'green';
+        }
+
+        function unescapeText() {
+            input.value = input.value.replace(/\\"/g, '"');
+            statusEl.textContent = '已去转义';
+            statusEl.style.color = 'green';
+        }
+        function compressJson() {
+            try {
+                const parsed = JSON.parse(input.value);
+                input.value = JSON.stringify(parsed);
+                statusEl.textContent = '已压缩';
+                statusEl.style.color = 'green';
+                updateCursorPos();
+            } catch (e) {
+                let msg = e.message || String(e);
+                statusEl.style.color = 'red';
+                statusEl.textContent = '无法压缩: ' + msg;
+            }
+        }
+        function unicodeToCN() {
+            input.value = input.value.replace(/\\u([0-9a-fA-F]{4})/g, (_, g) => String.fromCharCode(parseInt(g, 16)));
+            statusEl.textContent = '已转为中文';
+            statusEl.style.color = 'green';
+        }
+
+        function cnToUnicode() {
+            input.value = input.value.replace(/[^\x00-\xff]/g, c => "\\u" + c.charCodeAt(0).toString(16).padStart(4, '0'));
+            statusEl.textContent = '已转为unicode';
+            statusEl.style.color = 'green';
+        }
+
+        /**
+         * 更新复制工具的数据和状态
+         * 更新全局复制数据并启用复制/导出选项
+         */
+        function updateCopyData(arr, keys) {
+            // 更新全局数据，供复制按钮使用
+            currentData = arr;
+            currentKeys = keys;
+
+            // 启用所有复制相关按钮
+            document.getElementById('c_csv').disabled = false;
+            document.getElementById('c_csv_q').disabled = false;
+            document.getElementById('c_md').disabled = false;
+            document.getElementById('c_tsv').disabled = false;
+            document.getElementById('c_headers').disabled = false;
+            document.getElementById('exportCsvBtn').disabled = false;
+            document.getElementById('exportXlsxBtn').disabled = false;
+        }
+
+        // 全局变量，用于存储提示信息的定时器ID，实现防抖功能
+        let copyStatusTimer = null;
+
+        /**
+         * 复制文本到剪贴板
+         * @param {string} txt - 要复制的文本
+         * @param {string} format - 文本格式类型（如CSV、MD等）
+         */
+        function copyText(txt, format = '') {
+            navigator.clipboard.writeText(txt).then(() => {
+                const copyPreview = document.getElementById('copyPreview');
+                if (copyPreview) copyPreview.value = txt;
+                // 提示
+                const copyStatus = document.getElementById('copyStatus');
+                copyStatus.style.color = 'green';
+                // 根据format参数显示不同的提示信息
+                const message = format ? `已复制 ${format} 到剪贴板` : '已复制到剪贴板';
+                copyStatus.textContent = message;
+
+                // 清除之前的定时器（防抖），确保只有最后一次点击生效
+                if (copyStatusTimer) {
+                    clearTimeout(copyStatusTimer);
+                }
+
+                // 3秒后自动清除提示信息
+                copyStatusTimer = setTimeout(() => {
+                    copyStatus.textContent = '';
+                    copyStatus.style.color = '';
+                    copyStatusTimer = null; // 重置定时器ID
+                }, 3000);
+            }).catch(() => {
+                copyStatus.style.color = 'red';
+                copyStatus.textContent = '复制失败，请手动复制预览区域的文本';
+            });
+        }
+
+        /**
+         * 清除预览区域和重置复制工具状态
+         */
+        function clearPreview() {
+            output.innerHTML = '';
+
+            // 清空全局数据
+            currentData = [];
+            currentKeys = [];
+
+            // 重置复制区域按钮为禁用状态，但保持区域显示
+            const buttons = copyArea.querySelectorAll('button');
+            buttons.forEach(btn => btn.disabled = true);
+
+            // 清空预览区域
+            const copyPreview = document.getElementById('copyPreview');
+            if (copyPreview) copyPreview.value = '';
+
+            // 清除复制状态提示
+            const copyStatus = document.getElementById('copyStatus');
+            if (copyStatus) {
+                copyStatus.textContent = '';
+                copyStatus.style.color = '';
+            }
+        }
+
+        function escapeMarkdown(s) {
+            return s.replace(/\|/g, '\\|').replace(/\n/g, ' ');
+        }
+
+        // ----- 导出 CSV/XLSX -----
+        function exportCsvImpl() {
+            try {
+                const parsed = JSON.parse(input.value);
+                let rows = [];
+                if (Array.isArray(parsed)) {
+                    const keys = Array.from(new Set(parsed.flatMap(r => Object.keys(r))));
+                    rows.push(keys);
+                    parsed.forEach(r => rows.push(keys.map(k => r[k] === undefined ? '' : r[k])));
+                } else if (typeof parsed === 'object') {
+                    rows = Object.keys(parsed).map(k => [k, JSON.stringify(parsed[k])]);
+                } else {
+                    rows = [[String(parsed)]]
+                }
+
+                const csv = rows.map(r => r.map(c => String(c)).join(',')).join('\n');
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'data.csv';
+                a.click();
+                copyStatus.style.color = 'green';
+                copyStatus.textContent = '已导出 CSV';
+            } catch (e) {
+                copyStatus.style.color = 'red';
+                copyStatus.textContent = '导出 CSV 失败：' + e.message;
+            }
+        }
+
+        function exportXlsxImpl() {
+            try {
+                if (typeof XLSX === 'undefined') {
+                    copyStatus.style.color = 'red';
+                    copyStatus.textContent = 'XLSX 库未加载，无法导出 .xlsx。';
+                    return;
+                }
+                const parsed = JSON.parse(input.value);
+                let ws;
+                if (Array.isArray(parsed)) {
+                    const keys = Array.from(new Set(parsed.flatMap(r => Object.keys(r))));
+                    const aoa = [keys, ...parsed.map(r => keys.map(k => r[k] === undefined ? '' : r[k]))];
+                    ws = XLSX.utils.aoa_to_sheet(aoa);
+                } else if (typeof parsed === 'object') {
+                    const aoa = Object.keys(parsed).map(k => [k, typeof parsed[k] === 'object' ? JSON.stringify(parsed[k]) : parsed[k]]);
+                    ws = XLSX.utils.aoa_to_sheet(aoa);
+                } else {
+                    ws = XLSX.utils.aoa_to_sheet([[parsed]]);
+                }
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+                XLSX.writeFile(wb, 'data.xlsx');
+                copyStatus.style.color = 'green';
+                copyStatus.textContent = '已导出 XLSX';
+            } catch (e) {
+                copyStatus.style.color = 'red';
+                copyStatus.textContent = '导出 XLSX 失败：' + e.message;
+            }
+        }
+
+        // 保证初始光标位置显示
+        updateCursorPos();
+    </script>
 </body>
+
 </html>
