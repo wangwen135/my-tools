@@ -152,6 +152,18 @@
             background: #f9fafb;
             font-size: 14px;
         }
+        
+        /* 可复制列的表头样式 */
+        th.copyable-header {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            transition: background-color 0.2s;
+        }
+        
+        th.copyable-header:hover {
+            background-color: #f3f4f6;
+        }
 
         .muted {
             color: var(--muted);
@@ -191,7 +203,7 @@
 <body>
     <div id="left">
         <div class="top-section">
-            <h2>JSON转表格工具</h2>
+            <h2>JSON 转表格工具</h2>
         </div>
 
         <div class="editor-wrap">
@@ -458,10 +470,46 @@
                 return;
             }
             const keys = Array.from(new Set(arr.flatMap(r => Object.keys(r))));
-            const thead = `<thead><tr>${keys.map(k => `<th>${escapeHtml(k)}</th>`).join('')}</tr></thead>`;
+            const thead = `<thead><tr>${keys.map(k => `<th class="copyable-header" data-key="${escapeHtml(k)}" title="点击复制该列数据">${escapeHtml(k)}</th>`).join('')}</tr></thead>`;
             const rows = arr.map(r => `<tr>${keys.map(k => `<td>${escapeHtml(String(r[k] === undefined ? '' : r[k]))}</td>`).join('')}</tr>`).join('');
             output.innerHTML = `<table>${thead}<tbody>${rows}</tbody></table>`;
             updateCopyData(arr, keys);
+            
+            // 添加表头点击事件，用于复制单列数据
+            setupHeaderClickEvents();
+        }
+        
+        /**
+         * 为表格表头添加点击事件监听，实现点击复制列数据功能
+         */
+        function setupHeaderClickEvents() {
+            const headers = output.querySelectorAll('th.copyable-header');
+            headers.forEach(header => {
+                header.addEventListener('click', function() {
+                    const key = this.getAttribute('data-key');
+                    copyColumnData(key);
+                    
+                    // 添加视觉反馈
+                    this.style.backgroundColor = '#dbeafe'; // 临时高亮背景
+                    setTimeout(() => {
+                        this.style.backgroundColor = ''; // 恢复原背景
+                    }, 300);
+                });
+            });
+        }
+        
+        /**
+         * 复制指定列的数据
+         * @param {string} key - 要复制的列名/键名
+         */
+        function copyColumnData(key) {
+            // 从当前数据中提取指定列的值
+            const columnValues = currentData.map(row => row[key] === undefined ? '' : String(row[key]));
+            // 添加列名作为第一行
+            const columnData = [key, ...columnValues].join('\n');
+            
+            // 使用现有的复制功能
+            copyText(columnData, `"${key}" 列数据`);
         }
 
         function renderObject(obj) {
