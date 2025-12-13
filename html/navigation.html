@@ -1,365 +1,513 @@
 <!doctype html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>我的工具集合</title>
   <style>
-    :root{
-      --bg:#06070a;
-      --card-bg:rgba(255,255,255,0.04);
-      --glass: rgba(255,255,255,0.04);
+    :root {
+      --bg: #06070a;
+      --card-bg: rgba(255, 255, 255, 0.04);
+      --glass: rgba(255, 255, 255, 0.04);
       --accent: #66d9ff;
-      --muted: rgba(255,255,255,0.6);
-      --glass-border: rgba(255,255,255,0.06);
+      --muted: rgba(255, 255, 255, 0.6);
+      --glass-border: rgba(255, 255, 255, 0.06);
       --tile-size: 160px;
       --radius: 14px;
       --max-width: 1200px;
       --glass-blur: 8px;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
+
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      height: 100%
+    }
+
+    body {
+      margin: 0;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
       background: radial-gradient(ellipse at center, #081021 0%, #03040a 60%);
-      color:#eaf6ff;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      overflow:hidden;
+      color: #eaf6ff;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow: hidden;
     }
 
     /* Canvas background container sits behind everything */
-    #bg-canvas{position:fixed;inset:0;z-index:0}
-
-    header{
-      position:relative;z-index:2;display:flex;align-items:center;justify-content:center;padding:28px 20px 8px 20px;
-      text-align:center;
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0
     }
-    header h1{
-      margin:0;font-size:28px;letter-spacing:1px;font-weight:700;text-shadow:0 6px 30px rgba(102,217,255,0.06);
-    }
-    .subtitle{margin-top:6px;font-size:12px;color:var(--muted);}
 
-    main{position:relative;z-index:2;display:flex;justify-content:center;padding:18px;}
-    .wrap{
-      width:100%;max-width:var(--max-width);
+    header {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 20px 8px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: 1px;
+      font-weight: 700;
+      text-shadow: 0 6px 30px rgba(102, 217, 255, 0.06);
+    }
+
+    .subtitle {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    main {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: center;
+      padding: 18px;
+    }
+
+    .wrap {
+      width: 100%;
+      max-width: var(--max-width);
       backdrop-filter: blur(var(--glass-blur));
-      padding:28px;border-radius:18px;
-      border:1px solid var(--glass-border);background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));
-      box-shadow: 0 8px 40px rgba(2,6,23,0.6);
+      padding: 28px;
+      border-radius: 18px;
+      border: 1px solid var(--glass-border);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+      box-shadow: 0 8px 40px rgba(2, 6, 23, 0.6);
     }
 
-    .grid{
-      display:grid;grid-template-columns:repeat(auto-fill, minmax(160px,1fr));gap:18px;align-items:stretch;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 18px;
+      align-items: stretch;
     }
 
-    .tile{
-      display:flex;flex-direction:column;gap:8px;align-items:flex-start;
-      padding:14px;border-radius:12px;min-height:120px;background:var(--card-bg);
-      transition:transform .22s cubic-bezier(.2,.9,.3,1), box-shadow .22s;
-      cursor:pointer;border:1px solid rgba(255,255,255,0.03);
-      position:relative;overflow:hidden;
+    .tile {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-start;
+      padding: 14px;
+      border-radius: 12px;
+      min-height: 120px;
+      background: var(--card-bg);
+      transition: transform .22s cubic-bezier(.2, .9, .3, 1), box-shadow .22s;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
     }
-    .tile:hover{transform:translateY(-8px) scale(1.01);box-shadow:0 10px 30px rgba(3,8,20,0.6)}
 
-    .tile .meta{display:flex;gap:12px;width:100%;align-items:center}
-    .icon{
-      min-width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;
-      color:rgba(2,8,18,0.95);background:linear-gradient(135deg,rgba(255,255,255,0.9),rgba(255,255,255,0.85));flex-shrink:0;box-shadow:0 4px 14px rgba(2,8,18,0.35);
+    .tile:hover {
+      transform: translateY(-5px) ;
+      box-shadow: 0 10px 30px rgba(3, 8, 20, 0.6)
     }
-    .icon img{width:100%;height:100%;object-fit:cover;border-radius:10px}
 
-    .titles{display:flex;flex-direction:column}
-    .title-large{font-size:15px;font-weight:700;color:#eaf6ff}
-    .title-small{font-size:12px;color:var(--muted);margin-top:2px}
+    .tile .meta {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+      align-items: center
+    }
 
-    .desc{font-size:12px;color:rgba(255,255,255,0.65);margin-top:6px;line-height:1.25}
+    .icon {
+      min-width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+      color: rgba(2, 8, 18, 0.95);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.85));
+      flex-shrink: 0;
+      box-shadow: 0 4px 14px rgba(2, 8, 18, 0.35);
+    }
 
-    footer{position:fixed;left:0;right:0;bottom:8px;z-index:2;display:flex;justify-content:center;padding:6px 12px;font-size:13px;color:var(--muted)}
+    .icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px
+    }
+
+    .titles {
+      display: flex;
+      flex-direction: column
+    }
+
+    .title-large {
+      font-size: 15px;
+      font-weight: 700;
+      color: #eaf6ff
+    }
+
+    .title-small {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px
+    }
+
+    .desc {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.65);
+      margin-top: 6px;
+      line-height: 1.25
+    }
+
+    footer {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 8px;
+      z-index: 2;
+      display: flex;
+      justify-content: center;
+      padding: 6px 12px;
+      font-size: 13px;
+      color: var(--muted)
+    }
 
     /* small responsive tweaks */
-    @media (max-width:520px){
-      :root{--tile-size:140px}
-      header h1{font-size:20px}
-      .wrap{padding:16px}
+    @media (max-width:520px) {
+      :root {
+        --tile-size: 140px
+      }
+
+      header h1 {
+        font-size: 20px
+      }
+
+      .wrap {
+        padding: 16px
+      }
     }
 
     /* subtle glow effect for active tile */
-    .tile::after{
-      content:"";position:absolute;inset:0;pointer-events:none;mix-blend-mode:overlay;opacity:0;transition:opacity .22s
+    .tile::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      mix-blend-mode: overlay;
+      opacity: 0;
+      transition: opacity .22s
     }
-    .tile:hover::after{opacity:1;background:linear-gradient(120deg, rgba(102,217,255,0.02), rgba(102,217,255,0.04));}
+
+    .tile:hover::after {
+      opacity: 1;
+      background: linear-gradient(120deg, rgba(102, 217, 255, 0.02), rgba(102, 217, 255, 0.04));
+    }
 
     /* small badge for link */
-    .open-badge{position:absolute;right:10px;bottom:10px;font-size:11px;color:var(--muted);background:rgba(255,255,255,0.02);padding:6px 8px;border-radius:999px;border:1px solid rgba(255,255,255,0.03)}
-
+    .open-badge {
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      font-size: 11px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.02);
+      padding: 6px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.03)
+    }
   </style>
 </head>
+
 <body>
-<canvas id="bg-canvas"></canvas>
-<header>
-  <div>
-    <h1>我的工具集合</h1>
-    <div class="subtitle">一站式工具入口</div>
-  </div>
-</header>
+  <canvas id="bg-canvas"></canvas>
+  <header>
+    <div>
+      <h1>我的工具集合</h1>
+      <div class="subtitle"></div>
+    </div>
+  </header>
 
-<main>
-  <div class="wrap">
-    <div id="grid" class="grid" aria-live="polite"></div>
-  </div>
-</main>
+  <main>
+    <div class="wrap">
+      <div id="grid" class="grid" aria-live="polite"></div>
+    </div>
+  </main>
 
-<footer>个人学习用 | by wwh</footer>
+  <footer>个人学习用 | by wwh</footer>
 
-<script>
-  // ======== JSON 描述（把你的工具按这个格式放进来） ========
-  const tools = [
-    {
-      "title": "代码片段",
-      "subtitle": "Snippets",
-      "description": "存放常用的代码片段与模板，支持搜索与分类。",
-      "link": "https://example.com/snippets",
-      "icon": "" // 留空表示使用首字母生成的图标
-    },
-    {
-      "title": "接口文档",
-      "subtitle": "API Docs",
-      "description": "在线查看与测试后端 API（Swagger / Knife4j）。",
-      "link": "https://example.com/api-docs",
-      "icon": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' fill='%2366d9ff'/><text x='50%' y='54%' dominant-baseline='middle' text-anchor='middle' font-size='26' font-family='Arial' fill='white'>API</text></svg>"
-    },
-    {
-      "title": "数据库管理",
-      "subtitle": "DB Admin",
-      "description": "数据库连接与常用 SQL 管理界面（Adminer / DBeaver）。",
-      "link": "https://example.com/db",
-      "icon": ""
-    },
-    {
-      "title": "监控看板",
-      "subtitle": "Metrics",
-      "description": "Prometheus / Grafana 仪表盘入口，服务指标一目了然。",
-      "link": "https://example.com/monitor",
-      "icon": ""
-    },
-    {
-      "title": "任务队列",
-      "subtitle": "Jobs",
-      "description": "查看并管理队列任务与重试日志。",
-      "link": "https://example.com/jobs",
-      "icon": ""
-    },
-    {
-      "title": "文档中心",
-      "subtitle": "Docs",
-      "description": "项目文档、规范、周报等集中存放。",
-      "link": "https://example.com/docs",
-      "icon": ""
-    }
-  ];
+  <script>
+    // ======== JSON 描述（把你的工具按这个格式放进来） ========
+    const tools = [
+      {
+        "title": "代码片段",
+        "subtitle": "Snippets",
+        "description": "存放常用的代码片段与模板，支持搜索与分类。",
+        "link": "https://example.com/snippets",
+        "icon": "" // 留空表示使用首字母生成的图标
+      },
+      {
+        "title": "接口文档",
+        "subtitle": "API Docs",
+        "description": "在线查看与测试后端 API（Swagger / Knife4j）。",
+        "link": "https://example.com/api-docs",
+        "icon": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' fill='%2366d9ff'/><text x='50%' y='54%' dominant-baseline='middle' text-anchor='middle' font-size='26' font-family='Arial' fill='white'>API</text></svg>"
+      },
+      {
+        "title": "数据库管理",
+        "subtitle": "DB Admin",
+        "description": "数据库连接与常用 SQL 管理界面（Adminer / DBeaver）。",
+        "link": "https://example.com/db",
+        "icon": ""
+      },
+      {
+        "title": "监控看板",
+        "subtitle": "Metrics",
+        "description": "Prometheus / Grafana 仪表盘入口，服务指标一目了然。",
+        "link": "https://example.com/monitor",
+        "icon": ""
+      },
+      {
+        "title": "任务队列",
+        "subtitle": "Jobs",
+        "description": "查看并管理队列任务与重试日志。",
+        "link": "https://example.com/jobs",
+        "icon": ""
+      },
+      {
+        "title": "文档中心",
+        "subtitle": "Docs",
+        "description": "项目文档、规范、周报等集中存放。",
+        "link": "https://example.com/docs",
+        "icon": ""
+      },
+      {
+        "title": "JSON 转表格工具",
+        "subtitle": "",
+        "description": "将JSON数据转换为表格视图，支持校验，格式化，转义，压缩等功能，支持多种格式的数据复制与导出",
+        "link": "json_table_tool.html",
+        "icon": ""
+      },
+      {
+        "title": "GeoJSON 地图查看器",
+        "subtitle": "",
+        "description": "用于查看GeoJSON格式的地图数据，支持本地地图文件，提供地图交互功能，如缩放、平移、点击查看等",
+        "link": "geojson_map_viewer.html",
+        "icon": ""
+      },
+    ];
 
-  // ======== DOM 生成器 ========
-  const grid = document.getElementById('grid');
+    // ======== DOM 生成器 ========
+    const grid = document.getElementById('grid');
 
-  function hashStringToColor(str){
-    // 简单 hash -> 颜色
-    let h=0;for(let i=0;i<str.length;i++)h=(h<<5)-h+str.charCodeAt(i)|0;
-    const hue = Math.abs(h) % 360;
-    return `linear-gradient(135deg,hsl(${hue} 90% 65% / 1), hsl(${(hue+30)%360} 85% 55% / 1))`;
-  }
-
-  function initialsFromTitle(title){
-    // 取前两个有意义的字符（中文或英文）
-    if(!title) return "?";
-    let s = title.trim();
-    // 若第一个是中文，取第一个或前两个中文
-    const zh = /[\u4e00-\u9fff]/;
-    if(zh.test(s[0])){
-      return s.slice(0,2);
-    }
-    // 否则取单词首字母
-    const parts = s.split(/\s+/);
-    if(parts.length>=2) return (parts[0][0]||'').toUpperCase() + (parts[1][0]||'').toUpperCase();
-    return (s[0]||'?').toUpperCase();
-  }
-
-  function makeTile(item){
-    const a = document.createElement('a');
-    a.className = 'tile';
-    a.href = item.link || '#';
-    a.target = '_blank';
-    a.rel = 'noopener noreferrer';
-
-    const meta = document.createElement('div'); meta.className='meta';
-    const icon = document.createElement('div'); icon.className='icon';
-
-    if(item.icon){
-      // 使用图片或 SVG data URI
-      const img = document.createElement('img'); img.src = item.icon; img.alt = item.title||'icon';
-      icon.appendChild(img);
-    } else {
-      icon.style.background = hashStringToColor(item.title||'tool');
-      icon.style.color = '#04121a';
-      icon.textContent = initialsFromTitle(item.title||'');
+    function hashStringToColor(str) {
+      // 简单 hash -> 颜色
+      let h = 0; for (let i = 0; i < str.length; i++)h = (h << 5) - h + str.charCodeAt(i) | 0;
+      const hue = Math.abs(h) % 360;
+      return `linear-gradient(135deg,hsl(${hue} 90% 65% / 1), hsl(${(hue + 30) % 360} 85% 55% / 1))`;
     }
 
-    const titles = document.createElement('div'); titles.className='titles';
-    const t1 = document.createElement('div'); t1.className='title-large'; t1.textContent = item.title||'Untitled';
-    const t2 = document.createElement('div'); t2.className='title-small'; t2.textContent = item.subtitle||'';
-    titles.appendChild(t1); titles.appendChild(t2);
-
-    meta.appendChild(icon); meta.appendChild(titles);
-    a.appendChild(meta);
-
-    if(item.description){
-      const d = document.createElement('div'); d.className='desc'; d.textContent = item.description; a.appendChild(d);
+    function initialsFromTitle(title) {
+      // 取前两个有意义的字符（中文或英文）
+      if (!title) return "?";
+      let s = title.trim();
+      // 若第一个是中文，取第一个或前两个中文
+      const zh = /[\u4e00-\u9fff]/;
+      if (zh.test(s[0])) {
+        return s.slice(0, 2);
+      }
+      // 否则取单词首字母
+      const parts = s.split(/\s+/);
+      if (parts.length >= 2) return (parts[0][0] || '').toUpperCase() + (parts[1][0] || '').toUpperCase();
+      return (s[0] || '?').toUpperCase();
     }
 
-    const badge = document.createElement('div'); badge.className='open-badge'; badge.textContent='打开'; a.appendChild(badge);
+    function makeTile(item) {
+      const a = document.createElement('a');
+      a.className = 'tile';
+      a.href = item.link || '#';
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
 
-    return a;
-  }
+      const meta = document.createElement('div'); meta.className = 'meta';
+      const icon = document.createElement('div'); icon.className = 'icon';
 
-  function renderGrid(){
-    grid.innerHTML='';
-    for(const t of tools){
-      const tile = makeTile(t);
-      grid.appendChild(tile);
-    }
-  }
+      if (item.icon) {
+        // 使用图片或 SVG data URI
+        const img = document.createElement('img'); img.src = item.icon; img.alt = item.title || 'icon';
+        icon.appendChild(img);
+      } else {
+        icon.style.background = hashStringToColor(item.title || 'tool');
+        icon.style.color = '#04121a';
+        icon.textContent = initialsFromTitle(item.title || '');
+      }
 
-  renderGrid();
+      const titles = document.createElement('div'); titles.className = 'titles';
+      const t1 = document.createElement('div'); t1.className = 'title-large'; t1.textContent = item.title || 'Untitled';
+      const t2 = document.createElement('div'); t2.className = 'title-small'; t2.textContent = item.subtitle || '';
+      titles.appendChild(t1); titles.appendChild(t2);
 
-  // ======== 背景（科幻风）: Canvas 粒子 + 漂浮连线 + 颜色渐变 ========
-  const canvas = document.getElementById('bg-canvas');
-  const ctx = canvas.getContext('2d');
-  let W = canvas.width = innerWidth;
-  let H = canvas.height = innerHeight;
+      meta.appendChild(icon); meta.appendChild(titles);
+      a.appendChild(meta);
 
-  window.addEventListener('resize', ()=>{W=canvas.width=innerWidth;H=canvas.height=innerHeight;initParticles();});
+      if (item.description) {
+        const d = document.createElement('div'); d.className = 'desc'; d.textContent = item.description; a.appendChild(d);
+      }
 
-  const PR = window.devicePixelRatio || 1;
+      // const badge = document.createElement('div'); badge.className = 'open-badge'; badge.textContent = '打开'; a.appendChild(badge);
 
-  let particles = [];
-  const PARTICLE_COUNT = Math.max(40, Math.floor((W*H)/60000));
-
-  function rand(min,max){return Math.random()*(max-min)+min}
-
-  function initParticles(){
-    particles = [];
-    const count = Math.max(40, Math.floor((W*H)/60000));
-    for(let i=0;i<count;i++){
-      particles.push({
-        x: Math.random()*W,
-        y: Math.random()*H,
-        vx: rand(-0.3,0.3),
-        vy: rand(-0.3,0.3),
-        r: rand(0.6,2.2),
-        alpha: rand(0.2,0.9)
-      });
-    }
-  }
-  initParticles();
-
-  let tStart = performance.now();
-  function draw(){
-    const now = performance.now();
-    const dt = (now - tStart) * 0.001; tStart = now;
-
-    // 背景渐变
-    const g = ctx.createLinearGradient(0,0,W,H);
-    g.addColorStop(0,'#021025');
-    g.addColorStop(0.5,'#021226');
-    g.addColorStop(1,'#00030a');
-    ctx.fillStyle = g;
-    ctx.fillRect(0,0,W,H);
-
-    // 动态星云（轻微模糊的圆形）
-    for(let i=0;i<12;i++){
-      const cx = W * ((i*0.17)%1 + 0.02);
-      const cy = H * ((i*0.29)%1 + 0.01);
-      const rad = Math.min(W,H) * (0.14 + 0.02*Math.sin(now*0.0007 + i));
-      const grad = ctx.createRadialGradient(cx,cy,rad*0.1,cx,cy,rad);
-      grad.addColorStop(0, `rgba(102,217,255,${0.02 + 0.02*Math.sin(now*0.0008+i)})`);
-      grad.addColorStop(1,'rgba(2,6,14,0)');
-      ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(cx,cy,rad,0,Math.PI*2); ctx.fill();
+      return a;
     }
 
-    // 粒子
-    for(let p of particles){
-      p.x += p.vx * (0.6 + Math.sin(now*0.0002));
-      p.y += p.vy * (0.6 + Math.cos(now*0.0001));
-      // wrap
-      if(p.x< -20) p.x = W+20; if(p.x>W+20) p.x = -20;
-      if(p.y< -20) p.y = H+20; if(p.y>H+20) p.y = -20;
-
-      ctx.beginPath(); ctx.globalAlpha = p.alpha * 0.9; ctx.fillStyle = 'white'; ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+    function renderGrid() {
+      grid.innerHTML = '';
+      for (const t of tools) {
+        const tile = makeTile(t);
+        grid.appendChild(tile);
+      }
     }
-    ctx.globalAlpha = 1;
 
-    // 近邻连线
-    const maxDist = Math.min(W,H) * 0.12;
-    ctx.beginPath();
-    for(let i=0;i<particles.length;i++){
-      for(let j=i+1;j<particles.length;j++){
-        const a = particles[i], b = particles[j];
-        const dx = a.x-b.x, dy = a.y-b.y; const d = Math.sqrt(dx*dx+dy*dy);
-        if(d<maxDist){
-          const alpha = 0.12*(1 - d/maxDist);
-          ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
-          ctx.strokeStyle = `rgba(102,217,255,${alpha})`;
-          ctx.lineWidth = 0.8; ctx.stroke();
+    renderGrid();
+
+    // ======== 背景（科幻风）: Canvas 粒子 + 漂浮连线 + 颜色渐变 ========
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let W = canvas.width = innerWidth;
+    let H = canvas.height = innerHeight;
+
+    window.addEventListener('resize', () => { W = canvas.width = innerWidth; H = canvas.height = innerHeight; initParticles(); });
+
+    const PR = window.devicePixelRatio || 1;
+
+    let particles = [];
+    const PARTICLE_COUNT = Math.max(40, Math.floor((W * H) / 60000));
+
+    function rand(min, max) { return Math.random() * (max - min) + min }
+
+    function initParticles() {
+      particles = [];
+      const count = Math.max(40, Math.floor((W * H) / 60000));
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          vx: rand(-0.3, 0.3),
+          vy: rand(-0.3, 0.3),
+          r: rand(0.6, 2.2),
+          alpha: rand(0.2, 0.9)
+        });
+      }
+    }
+    initParticles();
+
+    let tStart = performance.now();
+    function draw() {
+      const now = performance.now();
+      const dt = (now - tStart) * 0.001; tStart = now;
+
+      // 背景渐变
+      const g = ctx.createLinearGradient(0, 0, W, H);
+      g.addColorStop(0, '#021025');
+      g.addColorStop(0.5, '#021226');
+      g.addColorStop(1, '#00030a');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+
+      // 动态星云（轻微模糊的圆形）
+      for (let i = 0; i < 12; i++) {
+        const cx = W * ((i * 0.17) % 1 + 0.02);
+        const cy = H * ((i * 0.29) % 1 + 0.01);
+        const rad = Math.min(W, H) * (0.14 + 0.02 * Math.sin(now * 0.0007 + i));
+        const grad = ctx.createRadialGradient(cx, cy, rad * 0.1, cx, cy, rad);
+        grad.addColorStop(0, `rgba(102,217,255,${0.02 + 0.02 * Math.sin(now * 0.0008 + i)})`);
+        grad.addColorStop(1, 'rgba(2,6,14,0)');
+        ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(cx, cy, rad, 0, Math.PI * 2); ctx.fill();
+      }
+
+      // 粒子
+      for (let p of particles) {
+        p.x += p.vx * (0.6 + Math.sin(now * 0.0002));
+        p.y += p.vy * (0.6 + Math.cos(now * 0.0001));
+        // wrap
+        if (p.x < -20) p.x = W + 20; if (p.x > W + 20) p.x = -20;
+        if (p.y < -20) p.y = H + 20; if (p.y > H + 20) p.y = -20;
+
+        ctx.beginPath(); ctx.globalAlpha = p.alpha * 0.9; ctx.fillStyle = 'white'; ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+
+      // 近邻连线
+      const maxDist = Math.min(W, H) * 0.12;
+      ctx.beginPath();
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const a = particles[i], b = particles[j];
+          const dx = a.x - b.x, dy = a.y - b.y; const d = Math.sqrt(dx * dx + dy * dy);
+          if (d < maxDist) {
+            const alpha = 0.12 * (1 - d / maxDist);
+            ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = `rgba(102,217,255,${alpha})`;
+            ctx.lineWidth = 0.8; ctx.stroke();
+          }
         }
       }
-    }
 
-    // 轻微移动的光斑遮罩
-    ctx.globalCompositeOperation = 'lighter';
-    for(let i=0;i<3;i++){
-      const cx = (W*0.2)*(i+1) + 60*Math.sin(now*0.0004*(i+3));
-      const cy = H*(0.2 + 0.25*i) + 40*Math.cos(now*0.0005*(i+2));
-      const rad = Math.min(W,H) * (0.25 - i*0.05 + 0.02*Math.sin(now*0.0006*(i+1)));
-      const grad = ctx.createRadialGradient(cx,cy,rad*0.1,cx,cy,rad);
-      grad.addColorStop(0, 'rgba(102,217,255,0.02)');
-      grad.addColorStop(1, 'rgba(102,217,255,0)');
-      ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(cx,cy,rad,0,Math.PI*2); ctx.fill();
+      // 轻微移动的光斑遮罩
+      ctx.globalCompositeOperation = 'lighter';
+      for (let i = 0; i < 3; i++) {
+        const cx = (W * 0.2) * (i + 1) + 60 * Math.sin(now * 0.0004 * (i + 3));
+        const cy = H * (0.2 + 0.25 * i) + 40 * Math.cos(now * 0.0005 * (i + 2));
+        const rad = Math.min(W, H) * (0.25 - i * 0.05 + 0.02 * Math.sin(now * 0.0006 * (i + 1)));
+        const grad = ctx.createRadialGradient(cx, cy, rad * 0.1, cx, cy, rad);
+        grad.addColorStop(0, 'rgba(102,217,255,0.02)');
+        grad.addColorStop(1, 'rgba(102,217,255,0)');
+        ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(cx, cy, rad, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.globalCompositeOperation = 'source-over';
+
+      requestAnimationFrame(draw);
     }
-    ctx.globalCompositeOperation = 'source-over';
 
     requestAnimationFrame(draw);
-  }
 
-  requestAnimationFrame(draw);
+    // 鼠标交互：添加轻微排斥，避免粒子聚成一团
+    let mouse = { x: -9999, y: -9999 };
+    window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+    window.addEventListener('mouseout', () => { mouse.x = -9999; mouse.y = -9999; });
 
-  // 鼠标交互：添加轻微排斥，避免粒子聚成一团
-  let mouse = { x: -9999, y: -9999 };
-  window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-  window.addEventListener('mouseout', () => { mouse.x = -9999; mouse.y = -9999; });
+    // 调整后的交互：使用轻微排斥而不是吸引
+    function interact() {
+      for (let p of particles) {
+        const dx = mouse.x - p.x, dy = mouse.y - p.y;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
 
-  // 调整后的交互：使用轻微排斥而不是吸引
-  function interact() {
-    for (let p of particles) {
-      const dx = mouse.x - p.x, dy = mouse.y - p.y;
-      const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        if (dist < 160) {
+          // 轻微排斥力，防止粒子全部挤到鼠标附近
+          const force = -0.0015 * (1 - dist / 160);
+          p.vx += (dx / dist) * force;
+          p.vy += (dy / dist) * force;
+        }
 
-      if (dist < 160) {
-        // 轻微排斥力，防止粒子全部挤到鼠标附近
-        const force = -0.0015 * (1 - dist / 160);
-        p.vx += (dx / dist) * force;
-        p.vy += (dy / dist) * force;
+        // 限制速度，避免发散
+        p.vx = Math.max(-0.4, Math.min(0.4, p.vx));
+        p.vy = Math.max(-0.4, Math.min(0.4, p.vy));
       }
 
-      // 限制速度，避免发散
-      p.vx = Math.max(-0.4, Math.min(0.4, p.vx));
-      p.vy = Math.max(-0.4, Math.min(0.4, p.vy));
+      requestAnimationFrame(interact);
     }
 
-    requestAnimationFrame(interact);
-  }
 
-
-</script>
+  </script>
 </body>
+
 </html>
