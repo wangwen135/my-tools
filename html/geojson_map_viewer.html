@@ -37,7 +37,7 @@
             border-radius: 10px;
             padding: 20px 15px;
             text-align: center;
-            cursor: pointer;
+            /*cursor: pointer;*/
             transition: all 0.3s ease;
             background-color: white;
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
@@ -173,7 +173,7 @@
             z-index: 1000;
             pointer-events: none;
         }
-        
+
         /* 地图配置面板样式 */
         #mapConfigPanel {
             position: fixed;
@@ -182,16 +182,16 @@
             width: 280px;
             background-color: white;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             z-index: 1001;
             transform: translateX(150%);
             transition: transform 0.3s ease;
         }
-        
+
         #mapConfigPanel.show {
             transform: translateX(0);
         }
-        
+
         .panel-header {
             background-color: #f5f5f5;
             padding: 15px;
@@ -202,14 +202,15 @@
             align-items: center;
             border-bottom: 1px solid #ddd;
         }
-        
+
         .panel-header h3 {
             margin: 0;
             font-size: 16px;
             color: #333;
         }
-        
-        #closePanel {
+
+
+        .icon-button {
             background: none;
             border: none;
             font-size: 20px;
@@ -222,22 +223,28 @@
             align-items: center;
             justify-content: center;
         }
-        
-        #closePanel:hover {
-            color: #333;
+
+        .icon-button:hover {
+            color: #000;
         }
-        
+
+        .reset-button {
+            margin-left: auto;
+            margin-right: 10px;
+            padding-top: 3px;
+        }
+
         .panel-content {
             padding: 15px;
         }
-        
+
         .config-item {
             margin-bottom: 15px;
             display: flex;
             gap: 8px;
             align-items: center;
         }
-        
+
         .config-item label {
             display: flex;
             align-items: center;
@@ -245,7 +252,7 @@
             font-size: 14px;
             color: #333;
         }
-        
+
         .config-item input[type="color"] {
             width: 30px;
             height: 30px;
@@ -253,14 +260,14 @@
             border-radius: 4px;
             cursor: pointer;
         }
-        
+
         .config-item input[type="number"] {
             width: 60px;
             padding: 5px;
             border: 1px solid #ddd;
             border-radius: 4px;
         }
-        
+
         .apply-button {
             width: 100%;
             background-color: #2196F3;
@@ -272,11 +279,11 @@
             font-size: 14px;
             margin-top: 10px;
         }
-        
+
         .apply-button:hover {
             background-color: #1976D2;
         }
-        
+
         /* 配置面板切换按钮 */
         #toggleConfigPanel {
             position: fixed;
@@ -291,12 +298,12 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             z-index: 1000;
             font-size: 18px;
             color: #666;
         }
-        
+
         #toggleConfigPanel:hover {
             background-color: #f5f5f5;
             color: #333;
@@ -322,47 +329,54 @@
     </div>
     <!-- 配置面板切换按钮 -->
     <button id="toggleConfigPanel">⚙</button>
-    
+
     <!-- 地图属性配置面板 -->
     <div id="mapConfigPanel">
         <div class="panel-header">
             <h3>地图属性配置</h3>
-            <button id="closePanel">×</button>
+            <button id="resetConfig" class="icon-button reset-button" title="重置为默认值">⟲</button>
+            <button id="closePanel" class="icon-button" title="关闭面板">✕</button>
+
         </div>
         <div class="panel-content">
             <div class="config-item">
-            <label>
-                <input type="checkbox" id="showTitle" checked> 显示标题
-            </label>
-        </div>
-        <div class="config-item">
-            <label>
-                <input type="checkbox" id="showLabels" checked> 显示地图标签
-            </label>
-        </div>
-        <div class="config-item">
-            <label>
-                <input type="checkbox" id="allowZoom" checked> 允许缩放
-            </label>
-        </div>
-        <div class="config-item">
-            <label for="labelFontSize">标签字体大小:</label>
-            <input type="number" id="labelFontSize" min="8" max="32" value="13">PX
-        </div>
-        <div class="config-item">
-            <label for="fillColor">填充颜色:</label>
-            <input type="color" id="fillColor" value="#c4e3f3">
-            <span class="color-value" id="fillColorValue">#c4e3f3</span>
-        </div>
-        <div class="config-item">
-            <label for="borderColor">边框颜色:</label>
-            <input type="color" id="borderColor" value="#4682b4">
-            <span class="color-value" id="borderColorValue">#4682b4</span>
-        </div>
-        <div class="config-item">
-            <label for="borderWidth">边框宽度:</label>
-            <input type="number" id="borderWidth" min="0" max="10" value="1">PX
-        </div>
+                <label>
+                    <input type="checkbox" id="showTitle" checked> 显示标题
+                </label>
+            </div>
+            <div class="config-item">
+                <label>
+                    <input type="checkbox" id="showLabels" checked> 显示地图标签
+                </label>
+            </div>
+            <div class="config-item">
+                <label>
+                    <input type="checkbox" id="allowZoom" checked> 允许缩放
+                </label>
+            </div>
+            <div class="config-item">
+                <label for="containerBgColor">容器背景色:</label>
+                <input type="color" id="containerBgColor" value="#ffffff">
+                <span class="color-value" id="containerBgColorValue">#ffffff</span>
+            </div>
+            <div class="config-item">
+                <label for="labelFontSize">标签字体大小:</label>
+                <input type="number" id="labelFontSize" min="8" max="32" value="13">PX
+            </div>
+            <div class="config-item">
+                <label for="fillColor">填充颜色:</label>
+                <input type="color" id="fillColor" value="#c4e3f3">
+                <span class="color-value" id="fillColorValue">#c4e3f3</span>
+            </div>
+            <div class="config-item">
+                <label for="borderColor">边框颜色:</label>
+                <input type="color" id="borderColor" value="#4682b4">
+                <span class="color-value" id="borderColorValue">#4682b4</span>
+            </div>
+            <div class="config-item">
+                <label for="borderWidth">边框宽度:</label>
+                <input type="number" id="borderWidth" min="0" max="10" value="1">PX
+            </div>
             <div class="config-item">
                 <label for="hoverColor">鼠标悬停颜色:</label>
                 <input type="color" id="hoverColor" value="#ffa500">
@@ -371,7 +385,7 @@
             <button id="applyConfig" class="apply-button">应用配置</button>
         </div>
     </div>
-    
+
     <!-- 地图容器 -->
     <div id="main"></div>
     <div id="output">点击地图属性将显示在这里</div>
@@ -381,78 +395,189 @@
         // 全局变量
         let myChart = null;
         let geoJson = null;
-        let mapInfoElement = null;
-        let mapConfigForm = null;
-        
+
+        // 全局默认配置对象
+        const defaultConfig = {
+            // 显示地图标题
+            showTitle: true,
+            // 显示区域标签
+            showLabels: true,
+            // 允许地图缩放
+            allowZoom: true,
+            // 标签字体大小
+            labelFontSize: 13,
+            // 区域边框宽度
+            borderWidth: 1,
+            // 区域填充颜色
+            fillColor: '#c4e3f3',
+            // 区域边框颜色
+            borderColor: '#4682b4',
+            // 悬停高亮颜色
+            hoverColor: '#ffa500',
+            // 容器背景颜色
+            containerBgColor: '#ffffff'
+        };
+
         const chartDom = document.getElementById('main');
         myChart = echarts.init(chartDom);
 
         // 配置面板交互逻辑
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
+            // 缓存DOM元素引用
             const configPanel = document.getElementById('mapConfigPanel');
             const toggleButton = document.getElementById('toggleConfigPanel');
             const closeButton = document.getElementById('closePanel');
-            const fillColorInput = document.getElementById('fillColor');
-            const borderColorInput = document.getElementById('borderColor');
-            const hoverColorInput = document.getElementById('hoverColor');
-            const fillColorValue = document.getElementById('fillColorValue');
-            const borderColorValue = document.getElementById('borderColorValue');
-            const hoverColorValue = document.getElementById('hoverColorValue');
-            
+            const resetButton = document.getElementById('resetConfig');
+            const applyConfigButton = document.getElementById('applyConfig');
+
+            // 获取配置面板的DOM元素引用
+            const showTitleEl = document.getElementById('showTitle');
+            const showLabelsEl = document.getElementById('showLabels');
+            const allowZoomEl = document.getElementById('allowZoom');
+            const labelFontSizeEl = document.getElementById('labelFontSize');
+            const borderWidthEl = document.getElementById('borderWidth');
+
+            // 颜色相关DOM元素
+            const colorElements = {
+                fillColor: { inputEL: document.getElementById('fillColor'), valueEL: document.getElementById('fillColorValue') },
+                borderColor: { inputEL: document.getElementById('borderColor'), valueEL: document.getElementById('borderColorValue') },
+                hoverColor: { inputEL: document.getElementById('hoverColor'), valueEL: document.getElementById('hoverColorValue') },
+                containerBgColor: { inputEL: document.getElementById('containerBgColor'), valueEL: document.getElementById('containerBgColorValue') }
+            };
+
+            // 从localStorage加载配置（包含背景色设置逻辑）
+            loadConfigFromLocalStorage();
+
             // 切换配置面板显示/隐藏
-            toggleButton.addEventListener('click', function() {
+            toggleButton.addEventListener('click', function () {
                 configPanel.classList.toggle('show');
             });
-            
+
             // 关闭配置面板
-            closeButton.addEventListener('click', function() {
+            closeButton.addEventListener('click', function () {
                 configPanel.classList.remove('show');
             });
-            
+
+            // 重置配置按钮事件
+            if (resetButton) {
+                resetButton.addEventListener('click', function () {
+
+                    // 重置为默认配置
+                    showTitleEl.checked = defaultConfig.showTitle;
+                    showLabelsEl.checked = defaultConfig.showLabels;
+                    allowZoomEl.checked = defaultConfig.allowZoom;
+                    labelFontSizeEl.value = defaultConfig.labelFontSize;
+                    borderWidthEl.value = defaultConfig.borderWidth;
+
+                    // 重置颜色配置
+                    Object.keys(colorElements).forEach(colorKey => {
+                        if (colorElements[colorKey].inputEL && colorElements[colorKey].valueEL) {
+                            colorElements[colorKey].inputEL.value = defaultConfig[colorKey];
+                            colorElements[colorKey].valueEL.textContent = defaultConfig[colorKey];
+                        }
+                    });
+
+                    // 应用重置后的配置
+                    applyMapConfig();
+                });
+            }
+
             // 点击面板外部关闭面板
-            document.addEventListener('click', function(event) {
-                if (!configPanel.contains(event.target) && 
+            /*
+            document.addEventListener('click', function (event) {
+                if (!configPanel.contains(event.target) &&
                     event.target !== toggleButton) {
                     configPanel.classList.remove('show');
                 }
             });
-            
+            */
+
             // 颜色选择框实时更新颜色数值显示
-            fillColorInput.addEventListener('input', function() {
-                fillColorValue.textContent = this.value;
+            Object.values(colorElements).forEach(element => {
+                if (element.inputEL && element.valueEL) {
+                    element.inputEL.addEventListener('input', function () {
+                        element.valueEL.textContent = this.value;
+                    });
+                }
             });
-            
-            borderColorInput.addEventListener('input', function() {
-                borderColorValue.textContent = this.value;
-            });
-            
-            hoverColorInput.addEventListener('input', function() {
-                hoverColorValue.textContent = this.value;
-            });
-            
+
             // 应用配置按钮点击事件
-            const applyConfigButton = document.getElementById('applyConfig');
             if (applyConfigButton) {
-                applyConfigButton.addEventListener('click', function() {
+                applyConfigButton.addEventListener('click', function () {
                     applyMapConfig();
                 });
             }
+
+            // 从localStorage加载配置的函数
+            function loadConfigFromLocalStorage() {
+                try {
+
+
+                    // 从localStorage获取保存的配置
+                    const savedConfig = localStorage.getItem('mapConfig');
+                    if (savedConfig) {
+                        const config = JSON.parse(savedConfig);
+
+                        // 应用布尔选项
+                        if (showTitleEl) showTitleEl.checked = config.showTitle;
+                        if (showLabelsEl) showLabelsEl.checked = config.showLabels;
+                        if (allowZoomEl) allowZoomEl.checked = config.allowZoom;
+                        if (labelFontSizeEl) labelFontSizeEl.value = config.labelFontSize || defaultConfig.labelFontSize;
+                        if (borderWidthEl) borderWidthEl.value = config.borderWidth || defaultConfig.borderWidth;
+
+                        // 应用颜色配置
+                        Object.keys(colorElements).forEach(colorKey => {
+                            if (colorElements[colorKey].inputEL && colorElements[colorKey].valueEL) {
+                                const colorValue = config[colorKey] || defaultConfig[colorKey];
+                                colorElements[colorKey].inputEL.value = colorValue;
+                                colorElements[colorKey].valueEL.textContent = colorValue;
+                            }
+                        });
+
+                        // 直接应用容器背景色，修复刷新后背景色重置问题
+                        const mainContainer = document.getElementById('main');
+                        if (mainContainer && config.containerBgColor) {
+                            mainContainer.style.backgroundColor = config.containerBgColor;
+                        }
+                    }
+                } catch (e) {
+                    console.warn('无法从localStorage加载配置:', e);
+                }
+            }
         });
-        
+
         // 应用地图配置函数
         function applyMapConfig() {
             if (!myChart) return;
-            
+
+            // 获取配置面板的DOM元素引用
+            const showTitleEl = document.getElementById('showTitle');
+            const showLabelsEl = document.getElementById('showLabels');
+            const allowZoomEl = document.getElementById('allowZoom');
+            const labelFontSizeEl = document.getElementById('labelFontSize');
+            const borderWidthEl = document.getElementById('borderWidth');
+            const fillColorEl = document.getElementById('fillColor');
+            const borderColorEl = document.getElementById('borderColor');
+            const hoverColorEl = document.getElementById('hoverColor');
+            const containerBgColorEl = document.getElementById('containerBgColor');
+
             // 获取配置项的值
-            const showTitle = document.getElementById('showTitle').checked;
-            const showLabels = document.getElementById('showLabels').checked;
-            const allowZoom = document.getElementById('allowZoom').checked;
-            const labelFontSize = parseInt(document.getElementById('labelFontSize').value);
-            const fillColor = document.getElementById('fillColor').value;
-            const borderColor = document.getElementById('borderColor').value;
-            const borderWidth = parseInt(document.getElementById('borderWidth').value);
-            const hoverColor = document.getElementById('hoverColor').value;
-            
+            const showTitle = showTitleEl.checked;
+            const showLabels = showLabelsEl.checked;
+            const allowZoom = allowZoomEl.checked;
+            const labelFontSize = parseInt(labelFontSizeEl.value) || defaultConfig.labelFontSize;
+            const borderWidth = parseInt(borderWidthEl.value) || defaultConfig.borderWidth;
+            const fillColor = fillColorEl.value || defaultConfig.fillColor;
+            const borderColor = borderColorEl.value || defaultConfig.borderColor;
+            const hoverColor = hoverColorEl.value || defaultConfig.hoverColor;
+            const containerBgColor = containerBgColorEl.value || defaultConfig.containerBgColor;
+
+            // 更新地图容器背景色
+            const mainContainer = document.getElementById('main');
+            if (mainContainer) {
+                mainContainer.style.backgroundColor = containerBgColor;
+            }
+
             // 直接设置新选项而不是修改当前选项，避免引用问题
             const newOption = {
                 // 应用标题设置
@@ -460,30 +585,30 @@
                     text: geoJson ? geoJson.name || '地图渲染' : '地图渲染',
                     left: 'center'
                 } : null,
-                
+
                 // 应用缩放控制
                 roam: allowZoom,
-                
+
                 // 更新地图系列
                 series: [{
                     type: 'map',
                     map: 'customMap',
                     roam: allowZoom,
-                    
+
                     // 应用标签设置
                     label: {
                         show: showLabels,
                         formatter: '{b}',
                         fontSize: labelFontSize
                     },
-                    
+
                     // 应用地图基础样式
                     itemStyle: {
                         areaColor: fillColor,
                         borderColor: borderColor,
                         borderWidth: borderWidth
                     },
-                    
+
                     // 应用鼠标悬停样式
                     emphasis: {
                         label: {
@@ -495,18 +620,18 @@
                             areaColor: hoverColor
                         }
                     },
-                    
+
                     // 更新数据，如果feature有自己的颜色就使用它的颜色，否则使用全局配置
-                    data: geoJson && geoJson.features ? 
+                    data: geoJson && geoJson.features ?
                         geoJson.features.map((feature, index) => {
                             // 检查feature是否有自己的颜色
                             let featureFillColor = fillColor; // 默认使用全局填充颜色
-                            
+
                             // 如果feature的properties中有color属性，使用它
                             if (feature.properties && feature.properties.color) {
                                 featureFillColor = feature.properties.color;
                             }
-                            
+
                             return {
                                 name: (feature.properties && feature.properties.name) || `要素${index + 1}`,
                                 value: feature.properties || {},
@@ -520,17 +645,51 @@
                         }) : []
                 }]
             };
-            
-            // 直接设置新选项
-            myChart.setOption(newOption, true);
-            
+
+            // 检查是否有地图数据，如果没有则不尝试设置地图选项
+            if (geoJson) {
+                // 直接设置新选项
+                myChart.setOption(newOption, true);
+            } else {
+                // 只有当没有地图数据时，才设置基本选项而不包含地图系列
+                const basicOption = {
+                    // 应用标题设置
+                    title: showTitle ? {
+                        text: '地图渲染',
+                        left: 'center'
+                    } : null,
+
+                    // 应用缩放控制
+                    roam: allowZoom
+                };
+                myChart.setOption(basicOption, true);
+            }
+
             // 强制调整图表大小，确保地图正确渲染
             myChart.resize();
-            
+
+            // 保存配置到 localStorage
+            try {
+                const config = {
+                    showTitle: showTitle,
+                    showLabels: showLabels,
+                    allowZoom: allowZoom,
+                    labelFontSize: labelFontSize,
+                    fillColor: fillColor,
+                    borderColor: borderColor,
+                    borderWidth: borderWidth,
+                    hoverColor: hoverColor,
+                    containerBgColor: containerBgColor
+                };
+                localStorage.setItem('mapConfig', JSON.stringify(config));
+            } catch (e) {
+                console.warn('无法保存配置到localStorage:', e);
+            }
+
             // 隐藏配置面板
-            document.getElementById('mapConfigPanel').classList.remove('show');
+            // document.getElementById('mapConfigPanel').classList.remove('show');
         }
-        
+
         // 默认的echarts选项
         const defaultOption = {
             title: {
@@ -569,42 +728,40 @@
             if (file && (file.type === 'application/json' || file.name.endsWith('.geojson') || file.name.endsWith('.json'))) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
-                console.log("文件内容:", e.target.result.substring(0, 200));
-                try {
-                    geoJson = JSON.parse(e.target.result);
-                        
+                    console.log("文件内容:", e.target.result.substring(0, 200));
+                    try {
+                        let geoJsonTmp = JSON.parse(e.target.result);
+
                         // 验证GeoJSON结构
-                        if (!geoJson || !Array.isArray(geoJson.features)) {
+                        if (!geoJsonTmp || !Array.isArray(geoJsonTmp.features)) {
                             throw new Error('GeoJSON文件结构不正确，缺少features数组');
                         }
-                        
+                        // 替换原始geoJson变量
+                        geoJson = geoJsonTmp;
+
                         console.log(`成功解析GeoJSON文件，包含${geoJson.features.length}个要素`);
-                        
+
                         // 更新要素数量标签
                         const featureCountLabel = document.getElementById('featureCountLabel');
                         featureCountLabel.textContent = `地图已渲染，包含${geoJson.features.length}个要素`;
-                        
+
+                        // 重置输出区域
+                        resetOutputDiv();
+
                         // 直接注册地图，新版本echarts会自动覆盖之前的注册
-                        echarts.registerMap('customMap', geoJson); 
+                        echarts.registerMap('customMap', geoJson);
                         console.log('已注册地图数据');
 
                         // 清空当前图表
                         myChart.clear();
-                        
+
                         // 应用当前配置面板中的设置，让applyMapConfig来处理所有显示逻辑
                         applyMapConfig();
-                        
+
                         // 更新选中的文件名显示
                         fileNameElement.textContent = file.name;
                         fileNameElement.title = file.name;
-                        
-                        // 自动打开配置面板
-                        /*setTimeout(function() {
-                            const configPanel = document.getElementById('mapConfigPanel');
-                            if (configPanel) {
-                                configPanel.classList.add('show');
-                            }
-                        }, 500);*/
+
                     } catch (error) {
                         console.error("地图渲染错误:", error);
                         alert('加载失败，请确保文件格式正确！\n\n' + error.message);
@@ -674,6 +831,10 @@
                 console.error("拖拽处理错误:", error);
                 alert('文件拖拽处理失败: ' + error.message);
             }
+        }
+        function resetOutputDiv() {
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = '点击地图属性将显示在这里';
         }
 
         // 监听点击事件
