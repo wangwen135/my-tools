@@ -162,6 +162,17 @@
         #output::-webkit-scrollbar-thumb:hover {
             background: #a8a8a8;
         }
+
+        /* 要素数量标签样式 */
+        .feature-count-label {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 13px;
+            color: #666;
+            z-index: 1000;
+            pointer-events: none;
+        }
     </style>
 </head>
 
@@ -183,6 +194,7 @@
     </div>
     <div id="main"></div>
     <div id="output">点击地图属性将显示在这里</div>
+    <div id="featureCountLabel" class="feature-count-label"></div>
 
     <script>
         const chartDom = document.getElementById('main');
@@ -236,6 +248,10 @@
                         }
                         
                         console.log(`成功解析GeoJSON文件，包含${geoJson.features.length}个要素`);
+                        
+                        // 更新要素数量标签
+                        const featureCountLabel = document.getElementById('featureCountLabel');
+                        featureCountLabel.textContent = `地图已渲染，包含${geoJson.features.length}个要素`;
                         
                         // 直接注册地图，新版本echarts会自动覆盖之前的注册
                         echarts.registerMap('customMap', geoJson); 
