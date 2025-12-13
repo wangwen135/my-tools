@@ -226,17 +226,30 @@
             if (file && (file.type === 'application/json' || file.name.endsWith('.geojson') || file.name.endsWith('.json'))) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
-                    console.log("文件内容:", e.target.result.substring(0, 100));
+                    console.log("文件内容:", e.target.result.substring(0, 200));
                     try {
                         const geoJson = JSON.parse(e.target.result);
-                        echarts.registerMap('customMap', geoJson); // 注册地图
+                        
+                        // 验证GeoJSON结构
+                        if (!geoJson || !Array.isArray(geoJson.features)) {
+                            throw new Error('GeoJSON文件结构不正确，缺少features数组');
+                        }
+                        
+                        console.log(`成功解析GeoJSON文件，包含${geoJson.features.length}个要素`);
+                        
+                        // 直接注册地图，新版本echarts会自动覆盖之前的注册
+                        echarts.registerMap('customMap', geoJson); 
+                        console.log('已注册地图数据');
 
-                        const seriesData = geoJson.features.map(feature => {
+                        // 准备系列数据
+                        const seriesData = geoJson.features.map((feature, index) => {
+                            // 确保properties存在
+                            const properties = feature.properties || {};
                             return {
-                                name: feature.properties.name || '未命名',
-                                value: feature.properties,
+                                name: properties.name || `要素${index + 1}`,
+                                value: properties,
                                 itemStyle: {
-                                    areaColor: feature.properties.color || '#CCCCCC'
+                                    areaColor: properties.color || '#CCCCCC'
                                 }
                             };
                         });
@@ -262,13 +275,24 @@
                             data: seriesData
                         };
 
+                        // 清空当前图表，然后设置新选项
+                        myChart.clear();
                         myChart.setOption({
+                            title: {
+                                text: geoJson.name || '地图渲染',
+                                left: 'center'
+                            },
                             series: [seriesOption]
                         });
+                        
+                        // 强制调整图表大小，确保地图正确渲染
+                        myChart.resize();
+                        
                         // 更新选中的文件名显示
                         fileNameElement.textContent = file.name;
                         fileNameElement.title = file.name;
                     } catch (error) {
+                        console.error("地图渲染错误:", error);
                         alert('加载失败，请确保文件格式正确！\n\n' + error.message);
                     }
                 };
@@ -284,6 +308,8 @@
             if (file) {
                 processGeoJSONFile(file);
             }
+            // 重置文件输入框，允许连续选择相同的文件
+            this.value = '';
         });
 
         // 拖拽区域事件监听
@@ -321,11 +347,17 @@
         dropZone.addEventListener('drop', handleDrop, false);
 
         function handleDrop(e) {
-            const dt = e.dataTransfer;
-            const files = dt.files;
+            try {
+                const dt = e.dataTransfer;
+                const files = dt.files;
 
-            if (files.length > 0) {
-                processGeoJSONFile(files[0]);
+                if (files.length > 0) {
+                    console.log(`拖拽文件: ${files[0].name}`);
+                    processGeoJSONFile(files[0]);
+                }
+            } catch (error) {
+                console.error("拖拽处理错误:", error);
+                alert('文件拖拽处理失败: ' + error.message);
             }
         }
 
