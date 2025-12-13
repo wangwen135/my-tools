@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoJSON 地图渲染工具</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        /* 全局样式 */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* 上传区域样式 */
+        .uploader {
+            position: fixed;
+            width: 268px;
+            top: 5px;
+            left: 5px;
+            z-index: 1000;
+        }
+
+        .drop-zone {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 20px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: white;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        .drop-zone:hover {
+            border-color: #4a90e2;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+        }
+
+        .drop-zone.highlight {
+            border-color: #4a90e2;
+            background-color: #f0f7ff;
+            box-shadow: 0 2px 10px rgba(74, 144, 226, 0.15);
+        }
+
+        .drop-zone-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .drop-zone-icon {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+
+        .drop-zone h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .drop-zone p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .file-select-btn {
+            display: inline-block;
+            background-color: #4a90e2;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            font-size: 14px;
+        }
+
+        .file-select-btn:hover {
+            background-color: #357abd;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .file-info {
+            font-size: 14px;
+            color: #999;
+            margin-top: 10px;
+        }
+
+        .selected-file-name {
+            font-size: 13px;
+            color: #4a90e2;
+            margin-top: 8px;
+            padding: 6px 12px;
+            background-color: rgba(74, 144, 226, 0.1);
+            border-radius: 4px;
+            border: 1px solid rgba(74, 144, 226, 0.2);
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* 地图容器样式 */
+        #main {
+            flex: 1;
+            width: 100%;
+            background-color: white;
+            overflow: hidden;
+        }
+
+        /* 属性输出区域样式 */
+        #output {
+            position: fixed;
+            left: 20px;
+            bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            max-width: 500px;
+            max-height: 300px;
+            overflow-y: auto;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* 滚动条样式 */
+        #output::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #output::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        #output::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        #output::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="uploader">
+        <div id="dropZone" class="drop-zone">
+            <div class="drop-zone-content">
+                <div class="drop-zone-icon">📁</div>
+                <h3>拖拽 GeoJSON 文件到此处</h3>
+                <p>或</p>
+                <label for="geojsonFile" class="file-select-btn">
+                    选择文件
+                    <input type="file" id="geojsonFile" accept=".json, .geojson" style="display: none;">
+                </label>
+                <p class="file-info">支持 .geojson 和 .json 格式文件</p>
+                <div id="selectedFileName" class="selected-file-name">请选择文件</div>
+            </div>
+        </div>
+    </div>
+    <div id="main"></div>
+    <div id="output">点击地图属性将显示在这里</div>
+
+    <script>
+        const chartDom = document.getElementById('main');
+        const myChart = echarts.init(chartDom);
+
+        // 默认的echarts选项
+        const defaultOption = {
+            title: {
+                text: '地图渲染',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: function (params) {
+                    if (params.data && params.data.value) {
+                        const { id, name } = params.data.value;
+                        let tips = `<strong>${name || id || '未命名'}</strong><br/>`;
+
+                        // 循环遍历并输出所有属性
+                        let data = params.data.value;
+                        for (const key in data) {
+                            if (data.hasOwnProperty(key)) {
+                                tips += `${key}: ${data[key] || 'N/A'}<br/>`;
+                            }
+                        }
+                        return tips;
+                    }
+                    return '无数据';
+                }
+            },
+            series: []
+        };
+
+        myChart.setOption(defaultOption);
+
+        // 处理文件的公共函数
+        function processGeoJSONFile(file) {
+            // 文件名显示
+            const fileNameElement = document.getElementById('selectedFileName');
+
+            if (file && (file.type === 'application/json' || file.name.endsWith('.geojson') || file.name.endsWith('.json'))) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    console.log("文件内容:", e.target.result.substring(0, 100));
+                    try {
+                        const geoJson = JSON.parse(e.target.result);
+                        echarts.registerMap('customMap', geoJson); // 注册地图
+
+                        const seriesData = geoJson.features.map(feature => {
+                            return {
+                                name: feature.properties.name || '未命名',
+                                value: feature.properties,
+                                itemStyle: {
+                                    areaColor: feature.properties.color || '#CCCCCC'
+                                }
+                            };
+                        });
+
+                        const seriesOption = {
+                            name: '自定义地图',
+                            type: 'map',
+                            map: 'customMap', // 使用注册的地图
+                            roam: true, // 支持放大缩小和拖动
+                            label: {
+                                show: true,
+                                formatter: '{b}'
+                            },
+                            emphasis: {
+                                label: {
+                                    show: true,
+                                    color: '#fff'
+                                },
+                                itemStyle: {
+                                    areaColor: '#f00'
+                                }
+                            },
+                            data: seriesData
+                        };
+
+                        myChart.setOption({
+                            series: [seriesOption]
+                        });
+                        // 更新选中的文件名显示
+                        fileNameElement.textContent = file.name;
+                        fileNameElement.title = file.name;
+                    } catch (error) {
+                        alert('加载失败，请确保文件格式正确！\n\n' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            } else {
+                alert('请选择有效的 GeoJSON 文件（.geojson 或 .json 格式）');
+            }
+        }
+
+        // 原有文件选择功能
+        document.getElementById('geojsonFile').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                processGeoJSONFile(file);
+            }
+        });
+
+        // 拖拽区域事件监听
+        const dropZone = document.getElementById('dropZone');
+
+        // 防止浏览器默认行为
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        // 高亮效果
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            dropZone.classList.add('highlight');
+        }
+
+        function unhighlight() {
+            dropZone.classList.remove('highlight');
+        }
+
+        // 处理拖拽文件
+        dropZone.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+
+            if (files.length > 0) {
+                processGeoJSONFile(files[0]);
+            }
+        }
+
+        // 监听点击事件
+        myChart.on('click', function (params) {
+            const outputDiv = document.getElementById('output');
+
+            if (params.data && params.data.value) {
+                const { id, name } = params.data.value;
+                let outputHtml = `<strong>${name || id || '未命名'}</strong><br/>`;
+
+                // 循环遍历并输出所有属性
+                let data = params.data.value;
+                for (const key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        outputHtml += `${key}: ${data[key] || 'N/A'}<br/>`;
+                    }
+                }
+                // 显示输出
+                outputDiv.innerHTML = outputHtml;
+
+            } else {
+                outputDiv.innerHTML = '无数据';
+            }
+        });
+
+        window.addEventListener('resize', function () {
+            myChart.resize();
+        });
+    </script>
+</body>
+
+</html>

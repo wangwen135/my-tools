@@ -43,7 +43,7 @@
         }
 
         #left {
-            width: 42%;
+            width: 48%;
             border-right: 1px solid #e6e9ee;
             padding: 0px 16px;
             display: flex;
@@ -76,6 +76,9 @@
             font-size: 16px;
             font-weight: 600;
             margin-bottom: 8px
+        }
+        .top-section .tips{
+            margin-left: auto;
         }
 
         .bottom-section {
@@ -192,9 +195,9 @@
             border: 1px solid #eee;
         }
 
-        @media (max-width: 900px) {
-            #left {
-                width: 48%
+        @media (max-width: 1200px) {
+            .top-section .tips {
+                display: none;
             }
         }
     </style>
@@ -241,6 +244,8 @@
         <div class="top-section">
             <h2>表格展示区域</h2>
             <div class="muted">当输入为数组时按表格展示；对象以两列（键/值）展示。</div>
+            <div class="muted tips">点击标题复制整列</div>
+
         </div>
 
         <div id="output"></div>
