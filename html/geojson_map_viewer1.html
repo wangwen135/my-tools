@@ -130,7 +130,7 @@
             position: fixed;
             left: 20px;
             bottom: 20px;
-            padding: 15px;
+            padding: 10px 15px;
             background: rgba(255, 255, 255, 0.95);
             border: 1px solid #e1e5e9;
             border-radius: 8px;
@@ -141,6 +141,13 @@
             z-index: 1000;
             font-size: 14px;
             line-height: 1.6;
+        }
+        #output span{
+            font-size: 13px;
+            color: #999;
+        }
+        #output pre{
+            margin-block: 5px;
         }
 
         /* 滚动条样式 */
@@ -412,12 +419,12 @@
 
 <!-- 地图容器 -->
 <div id="main"></div>
-<div id="output">点击地图属性将显示在这里</div>
+<div id="output">点击地图，属性将显示在这里</div>
 <div id="featureCountLabel" class="feature-count-label"></div>
 
 <script>
     // 使用IIFE封装，避免污染全局作用域
-    (function() {
+    (function () {
         // ---------------------- 常量和配置 ----------------------
         const defaultConfig = {
             showTitle: true,
@@ -493,20 +500,42 @@
             // 初始化ECharts实例
             myChart = echarts.init(domElements.chartDom);
 
-            // 地图点击事件 - 显示属性信息
-            myChart.on('click', function(params) {
-                if (params.data && params.data.properties) {
-                    let html = `<h4>${params.name} 属性</h4><pre>`;
-                    html += JSON.stringify(params.data.properties, null, 2);
+            //地图选中事件
+            myChart.on('select', function (params) {
+                console.log('选中地图要素:', params);
+                const dataIndexInside = params.dataIndexInside;
+                if(geoJson && geoJson.features && geoJson.features[dataIndexInside]){
+                    const feature = geoJson.features[dataIndexInside];
+                    const properties = feature.properties;
+                    let html = `<b>`;
+                    html += properties[domElements.labelProperty.value] || properties.name ;
+                    html += ` 属性</b><br>`;
+
+                    html += `<span>index: ${dataIndexInside}</span>`;
+
+                    html += `<pre>`;
+                    html += JSON.stringify(properties, null, 2);
                     html += `</pre>`;
+                    
                     domElements.output.innerHTML = html;
-                } else {
-                    domElements.output.innerHTML = `<p>未找到 ${params.name} 的属性信息</p>`;
+                }else {
+                    domElements.output.innerHTML = `<p>未找到属性信息</p>`;
                 }
+            });
+            // 地图取消选中事件
+            myChart.on('unselect', function (params) {
+                console.log('取消选中地图要素:', params);
+                domElements.output.innerHTML = '点击地图，属性将显示在这里';
+            });
+
+            // 地图点击事件 - 显示属性信息
+            myChart.on('click', function (params) {
+                console.log('点击地图:', params);
+                //这里可以获取到params.data
             });
 
             // 窗口大小变化时重绘地图
-            window.addEventListener('resize', function() {
+            window.addEventListener('resize', function () {
                 myChart.resize();
             });
         }
@@ -589,8 +618,8 @@
                 domElements.dropZone.addEventListener(eventName, unhighlight, false);
             });
 
-            domElements.dropZone.addEventListener('drop', handleDrop, false);
-            domElements.fileInput.addEventListener('change', handleFiles, false);
+            domElements.dropZone.addEventListener('drop', handleFileDrop, false);
+            domElements.fileInput.addEventListener('change', handleFileSelect, false);
         }
 
         function preventDefaults(e) {
@@ -606,29 +635,32 @@
             domElements.dropZone.classList.remove('highlight');
         }
 
-        function handleDrop(e) {
+        function handleFileDrop(e) {
             const files = e.dataTransfer.files;
             if (files.length > 0) {
-                processFile(files[0]);
+                processGeoJSONFile(files[0]);
             }
         }
 
-        function handleFiles(e) {
+        function handleFileSelect(e) {
             const file = e.target.files[0];
             if (file) {
-                processFile(file);
+                processGeoJSONFile(file);
             }
-        }
-
-        function processFile(file) {
-            // 显示选中的文件名
-            domElements.selectedFileName.textContent = file.name;
-
-            // 处理GeoJSON文件
-            processGeoJSONFile(file);
+            // 重置文件输入框，允许连续选择相同的文件
+            this.value = '';
         }
 
         function processGeoJSONFile(file) {
+            const fileName = file.name.toLowerCase();
+            const hasJsonMimeType = file && file.type && (file.type === 'application/json' || file.type === 'application/geo+json');
+            const hasValidExtension = fileName.endsWith('.geojson') || fileName.endsWith('.json');
+
+            if (!file || (!hasJsonMimeType && !hasValidExtension)) {
+                alert('请选择有效的 GeoJSON 文件（.geojson 或 .json 格式）');
+                return;
+            }
+
             const reader = new FileReader();
             reader.onload = function (e) {
                 try {
@@ -649,6 +681,8 @@
 
                     // 更新要素数量显示
                     updateFeatureCount(geoJson.features ? geoJson.features.length : 0);
+                    // 更新文件名
+                    updateSelectedFileName(file);
 
                     // 渲染地图
                     renderMap();
@@ -724,7 +758,7 @@
                 tooltip: {
                     trigger: 'item',
                     show: config.showTooltip,
-                    formatter: function(params) {
+                    formatter: function (params) {
                         let content = '';
                         if (params.data) {
                             content += `<strong>${params.name}</strong><br>`;
@@ -747,7 +781,7 @@
                         label: {
                             show: config.showLabels,
                             fontSize: config.labelFontSize,
-                            formatter: function(params) {
+                            formatter: function (params) {
                                 return params.data?.properties?.[config.labelProperty] || params.name;
                             }
                         },
@@ -756,7 +790,7 @@
                                 show: config.showLabels,
                                 color: '#fff',
                                 fontSize: config.labelFontSize,
-                                formatter: function(params) {
+                                formatter: function (params) {
                                     return params.data?.properties?.[config.labelProperty] || params.name;
                                 }
                             },
@@ -809,6 +843,11 @@
 
         function updateFeatureCount(count) {
             domElements.featureCountLabel.textContent = `要素数量: ${count}`;
+        }
+
+        // 显示选中的文件名
+        function updateSelectedFileName(file) {
+            domElements.selectedFileName.textContent = file.name;
         }
 
         function updateContainerBgColor(color) {
