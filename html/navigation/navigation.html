@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="description" content="个人学习和开发使用的工具集合，包括JSON转换、API文档、绘图工具等">
+    <title>我的工具集合</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!-- 背景Canvas，设置为装饰性 -->
+<canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+<header role="banner">
+    <h1>Tools Dashboard</h1>
+    <div class="subtitle">个人学习和开发使用的工具集合</div>
+</header>
+
+<main role="main">
+    <div class="wrap">
+        <!-- 搜索框 -->
+        <div class="search-container">
+            <input 
+                type="search" 
+                id="tool-search" 
+                placeholder="搜索工具..." 
+                aria-label="搜索工具"
+                class="search-input"
+            />
+        </div>
+        <!-- 工具导航面板 -->
+        <div id="container" role="application" aria-label="工具导航面板"></div>
+    </div>
+</main>
+
+<footer role="contentinfo">by wwh</footer>
+
+<script src="app.js"></script>
+<script src="bg-particles.js"></script>
+</body>
+</html>
