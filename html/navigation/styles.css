@@ -1,0 +1,356 @@
+/* 导航页面样式 */
+:root {
+    --accent: #66d9ff;
+    --muted: rgba(255, 255, 255, .6);
+    --glass: rgba(255, 255, 255, .045);
+    --border: rgba(255, 255, 255, .08);
+}
+
+* {
+    box-sizing: border-box
+}
+
+html, body {
+    height: 100%
+}
+
+body {
+    margin: 0;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto;
+    background: #05070c;
+    color: #eaf6ff;
+    overflow: hidden;
+}
+
+#bg-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0
+}
+
+header {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 26px 16px 10px
+}
+
+header h1 {
+    margin: 0;
+    font-size: 28px
+}
+
+.subtitle {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--muted)
+}
+
+main {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    padding: 16px
+}
+
+.wrap {
+    width: 100%;
+    max-width: 1600px;
+    padding: 26px;
+    border-radius: 22px;
+    backdrop-filter: blur(12px);
+    background: linear-gradient(180deg, rgba(255, 255, 255, .03), rgba(255, 255, 255, .01));
+    border: 1px solid var(--border);
+}
+
+/* 搜索框样式 */
+.search-container {
+    margin-bottom: 30px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--glass);
+    color: #eaf6ff;
+    font-size: 14px;
+    font-family: inherit;
+    backdrop-filter: blur(8px);
+    transition: all .3s ease;
+    outline: none;
+    will-change: border, box-shadow;
+}
+
+.search-input::placeholder {
+    color: var(--muted);
+}
+
+.search-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(102, 217, 255, 0.2);
+}
+
+.group {
+    margin-bottom: 48px;
+    position: relative
+}
+
+.group:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -24px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: .4
+}
+
+.group-title {
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    margin: 0 0 18px 4px
+}
+
+.grid {
+    display: grid;
+    grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));
+    gap: 26px
+}
+
+.tile {
+    position: relative;
+    height: 170px;
+    border-radius: 18px;
+    background: var(--glass);
+    border: 1px solid rgba(255, 255, 255, .06);
+    overflow: hidden;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    transition: transform .3s cubic-bezier(.2, .9, .3, 1), box-shadow .3s cubic-bezier(.2, .9, .3, 1);
+    will-change: transform, box-shadow;
+    outline: none;
+}
+
+/* 键盘焦点状态 */
+.tile:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(102, 217, 255, 0.3);
+}
+
+.tile:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, .6); /* 减少阴影复杂度以提高性能 */
+}
+
+/* 默认层 */
+.tile-front {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    transition: opacity .3s ease, transform .3s ease;
+    will-change: opacity, transform;
+}
+
+.tile:hover .tile-front {
+    opacity: 0;
+    transform: scale(.85)
+}
+
+.icon {
+    width: 82px;
+    height: 82px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    font-weight: 700;
+    color: #031018
+}
+
+.icon img {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px
+}
+
+.title {
+    font-size: 14px;
+    opacity: .9
+}
+
+/* Hover 层 */
+.tile-back {
+    position: absolute;
+    inset: 0;
+    padding: 16px 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: radial-gradient(circle at top, rgba(102, 217, 255, .18), rgba(6, 10, 18, .95));
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity .3s cubic-bezier(.2, .9, .3, 1), transform .3s cubic-bezier(.2, .9, .3, 1);
+    will-change: opacity, transform;
+}
+
+.tile:hover .tile-back {
+    opacity: 1;
+    transform: translateY(0)
+}
+
+.tile-back .title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 6px
+}
+
+.tile-back .desc {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--muted)
+}
+
+footer {
+    position: fixed;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    z-index: 2
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 24px;
+    }
+    
+    .wrap {
+        padding: 18px;
+        margin: 0 8px;
+    }
+    
+    .grid {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 18px;
+    }
+    
+    .tile {
+        height: 150px;
+    }
+    
+    .icon {
+        width: 70px;
+        height: 70px;
+        font-size: 22px;
+    }
+}
+
+/* 针对更小屏幕的优化 */
+@media (max-width: 480px) {
+    header {
+        padding: 20px 12px 8px;
+    }
+    
+    header h1 {
+        font-size: 20px;
+    }
+    
+    .subtitle {
+        font-size: 11px;
+    }
+    
+    main {
+        padding: 12px;
+    }
+    
+    .wrap {
+        padding: 16px;
+        margin: 0 4px;
+        border-radius: 16px;
+    }
+    
+    .group {
+        margin-bottom: 36px;
+    }
+    
+    .group-title {
+        font-size: 13px;
+        letter-spacing: 1.5px;
+        margin-bottom: 14px;
+    }
+    
+    .grid {
+        grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+        gap: 14px;
+    }
+    
+    .tile {
+        height: 140px;
+        border-radius: 14px;
+    }
+    
+    .icon {
+        width: 60px;
+        height: 60px;
+        font-size: 18px;
+        border-radius: 16px;
+    }
+    
+    .title {
+        font-size: 13px;
+    }
+    
+    .tile-back {
+        padding: 14px;
+        border-radius: 14px;
+    }
+    
+    .tile-back .title {
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+    
+    .tile-back .desc {
+        font-size: 11px;
+        line-height: 1.4;
+    }
+    
+    footer {
+        font-size: 11px;
+        bottom: 6px;
+    }
+}
+
+/* 针对大屏幕的优化 */
+@media (min-width: 1200px) {
+    .grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 32px;
+    }
+    
+    .tile {
+        height: 200px;
+    }
+    
+    .icon {
+        width: 90px;
+        height: 90px;
+        font-size: 30px;
+    }
+}
