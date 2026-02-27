@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Markdown Editor Pro+</title>
+
+    <!-- Markdown 样式 -->
+    <link id="markdownTheme" rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.min.css">
+
+    <!-- 代码高亮 -->
+    <link rel="stylesheet" id="codeTheme"
+          href="https://cdn.jsdelivr.net/npm/highlight.js/styles/github.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js/highlight.min.js"></script>
+
+    <!-- Marked -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- KaTeX -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex/dist/contrib/auto-render.min.js"></script>
+
+    <!-- Mermaid -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+
+    <!-- PDF -->
+    <script src="https://cdn.jsdelivr.net/npm/html2pdf.js/dist/html2pdf.bundle.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI";
+        }
+
+        .toolbar {
+            display: flex;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            background: #f6f8fa;
+        }
+
+        .toolbar-left {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        button {
+            padding: 6px 12px;
+            border: 1px solid #d0d7de;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #24292f;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: #f3f4f6;
+            border-color: #babbbd;
+        }
+
+        button:active {
+            background: #ebecf0;
+        }
+
+        #modeBtn {
+            min-width: 100px;
+        }
+
+        .dark button {
+            background: #21262d;
+            border-color: #30363d;
+            color: #c9d1d9;
+        }
+
+        .dark button:hover {
+            background: #30363d;
+            border-color: #484f58;
+        }
+
+        select {
+            padding: 6px 12px;
+            border: 1px solid #d0d7de;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #24292f;
+        }
+
+        select:hover {
+            border-color: #babbbd;
+        }
+
+        .dark select {
+            background: #21262d;
+            border-color: #30363d;
+            color: #c9d1d9;
+        }
+
+        .dark select:hover {
+            border-color: #484f58;
+        }
+
+        #currentFileName {
+            font-size: 14px;
+            color: #666;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .editor-container {
+            width: 40%;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #ddd;
+            overflow: hidden;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            gap: 8px;
+            padding: 8px;
+            background: #f6f8fa;
+            border-bottom: 1px solid #ddd;
+            flex-shrink: 0;
+        }
+
+        .dark .editor-toolbar {
+            background: #161b22;
+            border-color: #30363d;
+        }
+
+        .editor-toolbar button {
+            padding: 4px 8px;
+            font-size: 12px;
+            min-width: 32px;
+        }
+
+        .dark #currentFileName {
+            color: #8b949e;
+        }
+
+        .toolbar-right {
+            margin-left: auto;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+            height: 100vh;
+        }
+
+        .toc {
+            width: 220px;
+            overflow: auto;
+            border-right: 1px solid #ddd;
+            padding: 10px;
+            background: #fafafa;
+            flex-shrink: 0;
+        }
+
+        .toc-hidden {
+            display: none !important;
+        }
+
+        .toc a {
+            display: block;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 2px 0;
+            color: #0366d6;
+        }
+
+        .editor {
+            width: 100%;
+            border: none;
+            padding: 16px;
+            resize: none;
+            outline: none;
+            font-family: monospace;
+            flex: 1;
+            overflow: auto;
+        }
+
+        .preview-wrapper {
+            width: 60%;
+            overflow: auto;
+            padding: 16px;
+        }
+
+        .markdown-body {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .resizer {
+            width: 12px;
+            cursor: col-resize;
+            background: #ddd;
+        }
+
+        .no-select {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .resizing {
+            cursor: col-resize !important;
+        }
+
+        .dark {
+            background: #0d1117;
+            color: #c9d1d9;
+        }
+
+        .dark .toolbar {
+            background: #161b22;
+            border-color: #30363d;
+        }
+
+        .dark .toc {
+            background: #161b22;
+            border-color: #30363d;
+        }
+
+        .dark textarea {
+            background: #0d1117;
+            color: #c9d1d9;
+            border-color: #30363d;
+        }
+
+        .dark .resizer {
+            background: #30363d;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: #3c3c3c;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            font-size: 13px;
+        }
+
+        .toast.show {
+            opacity: 0.9;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.success {
+            background: #28a745;
+        }
+
+        .toast.error {
+            background: #dc3545;
+        }
+
+        .dark .toast {
+            background: #21262d;
+            color: #c9d1d9;
+        }
+
+        .dark .toast.success {
+            background: #238636;
+        }
+
+        .dark .toast.error {
+            background: #da3633;
+        }
+
+        @media print {
+            body {
+                background: white;
+                height: auto;
+                overflow: visible;
+            }
+
+            .toolbar,
+            .toc,
+            .editor-container,
+            .editor,
+            .resizer,
+            #toast {
+                display: none !important;
+            }
+
+            .container {
+                display: block;
+                height: auto;
+                overflow: visible;
+            }
+
+            .preview-wrapper {
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                height: auto;
+                overflow: visible;
+            }
+
+            .markdown-body {
+                max-width: 100%;
+                padding: 20px;
+                height: auto;
+                overflow: visible;
+            }
+
+            h1, h2, h3, h4, h5, h6 {
+                page-break-after: avoid;
+            }
+
+            p, pre, blockquote {
+                page-break-inside: avoid;
+            }
+
+            table, img {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="toast" class="toast"></div>
+
+<div class="toolbar">
+    <div class="toolbar-left">
+        <button onclick="toggleTOC()">📑 目录</button>
+        <button onclick="newFile()">📄 新建</button>
+        <button onclick="saveFile()">💾 保存</button>
+        <button onclick="openFile()">📂 打开</button>
+        <span id="currentFileName">未命名文件</span>
+    </div>
+    <div class="toolbar-right">
+        <select onchange="changeTheme(this.value)">
+            <option value="github">GitHub</option>
+            <option value="dark">Dark</option>
+            <option value="solarized">Solarized</option>
+        </select>
+        <button id="modeBtn" onclick="toggleMode()">👁 预览</button>
+        <button onclick="printDocument()">🖨 打印</button>
+        <button onclick="exportPDF()">📕 导出 PDF</button>
+    </div>
+</div>
+
+<div class="container">
+    <div class="toc" id="toc"></div>
+
+    <div class="editor-container">
+        <div class="editor-toolbar">
+            <button onclick="decreaseFontSize()">A-</button>
+            <button onclick="increaseFontSize()">A+</button>
+        </div>
+        <textarea id="editor" class="editor"># 示例文档
+
+## Mermaid 示例
+
+```mermaid
+graph TD
+A-->B
+B-->C
+```
+## 数学公式
+
+$E=mc^2$</textarea>
+    </div>
+
+    <div class="resizer"></div>
+    <div class="preview-wrapper">
+        <article id="preview" class="markdown-body"></article>
+    </div>
+</div>
+<script>
+    mermaid.initialize({startOnLoad: false});
+
+    const editor = document.getElementById("editor");
+    const preview = document.getElementById("preview");
+    const toc = document.getElementById("toc");
+
+    let currentMode = "edit";
+    let isTOCVisible = true;
+    let currentFileHandle = null;
+
+    /* 自动保存 */
+    editor.value = localStorage.getItem("md_content") || editor.value;
+    editor.addEventListener("input", () => {
+        localStorage.setItem("md_content", editor.value);
+        render();
+    });
+
+    /* 渲染 */
+    function render() {
+        preview.innerHTML = marked.parse(editor.value, {breaks: true});
+        generateTOC();
+        preview.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightBlock(block);
+        });
+        renderMathInElement(preview, {
+            delimiters: [{left: "$$", right: "$$", display: true}, {
+                left: "$",
+                right: "$",
+                display: false
+            }]
+        });
+        renderMermaid();
+    }
+
+    render();
+
+    /* Mermaid */
+    function renderMermaid() {
+        preview.querySelectorAll("code.language-mermaid").forEach(el => {
+            const parent = el.parentElement;
+            const div = document.createElement("div");
+            div.className = "mermaid";
+            div.innerHTML = el.textContent;
+            parent.replaceWith(div);
+        });
+        mermaid.init(undefined, preview.querySelectorAll(".mermaid"));
+    }
+
+    /* TOC */
+    function generateTOC() {
+        toc.innerHTML = "";
+        const headers = preview.querySelectorAll("h1,h2,h3,h4");
+        headers.forEach(h => {
+            const id = h.innerText.replace(/\s+/g, "-");
+            h.id = id;
+            const a = document.createElement("a");
+            a.href = "#" + id;
+            a.innerText = h.innerText;
+            a.style.marginLeft = (parseInt(h.tagName[1]) - 1) * 12 + "px";
+            toc.appendChild(a);
+        });
+    }
+
+    /* 目录显示/隐藏 */
+    function toggleTOC() {
+        isTOCVisible = !isTOCVisible;
+        if (isTOCVisible) {
+            toc.classList.remove("toc-hidden");
+        } else {
+            toc.classList.add("toc-hidden");
+        }
+    }
+
+    /* 模式切换 */
+    function toggleMode() {
+        const modeBtn = document.getElementById("modeBtn");
+        if (currentMode === "edit") {
+            currentMode = "preview";
+            modeBtn.textContent = "✏️ 编辑";
+            setPreviewMode();
+        } else {
+            currentMode = "edit";
+            modeBtn.textContent = "👁 预览";
+            setEditMode();
+        }
+    }
+
+    function setEditMode() {
+        const editorContainer = document.querySelector(".editor-container");
+        editorContainer.style.display = "flex";
+        editorContainer.style.width = "30%";
+        const previewWrapper = document.querySelector(".preview-wrapper");
+        previewWrapper.style.display = "block";
+        previewWrapper.style.width = "70%";
+        const resizer = document.querySelector(".resizer");
+        resizer.style.display = "block";
+    }
+
+    function setPreviewMode() {
+        const editorContainer = document.querySelector(".editor-container");
+        editorContainer.style.display = "none";
+        const previewWrapper = document.querySelector(".preview-wrapper");
+        previewWrapper.style.display = "block";
+        previewWrapper.style.width = "100%";
+        const resizer = document.querySelector(".resizer");
+        resizer.style.display = "none";
+    }
+
+    /* 主题 */
+    function changeTheme(theme) {
+        const body = document.body;
+        const mdTheme = document.getElementById("markdownTheme");
+        const codeTheme = document.getElementById("codeTheme");
+        body.classList.remove("dark");
+        if (theme === "dark") {
+            body.classList.add("dark");
+            mdTheme.href = "https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown-dark.min.css";
+            codeTheme.href = "https://cdn.jsdelivr.net/npm/highlight.js/styles/github-dark.min.css";
+        } else if (theme === "solarized") {
+            mdTheme.href = "https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.min.css";
+            codeTheme.href = "https://cdn.jsdelivr.net/npm/highlight.js/styles/solarized-light.min.css";
+        } else {
+            mdTheme.href = "https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.min.css";
+            codeTheme.href = "https://cdn.jsdelivr.net/npm/highlight.js/styles/github.min.css";
+        }
+    }
+
+    /* 拖动分隔 */
+    const resizer = document.querySelector(".resizer");
+    let isDragging = false;
+    let startX = 0;
+    let startPercent = 0;
+
+    resizer.addEventListener("mousedown", function (e) {
+        isDragging = true;
+        startX = e.clientX;
+        const editorContainer = document.querySelector(".editor-container");
+        startPercent = parseFloat(editorContainer.style.width) || 30;
+        document.body.classList.add("no-select");
+        document.body.classList.add("resizing");
+        document.addEventListener("mousemove", resize);
+        document.addEventListener("mouseup", stopResize);
+    });
+
+    resizer.addEventListener("click", function(e){
+        if(Math.abs(e.clientX - startX) < 12) {
+            toggleSplit();
+        }
+    });
+
+    function stopResize() {
+        isDragging = false;
+        document.body.classList.remove("no-select");
+        document.body.classList.remove("resizing");
+        document.removeEventListener("mousemove", resize);
+        document.removeEventListener("mouseup", stopResize);
+    }
+
+    function resize(e) {
+        if (!isDragging) return;
+        const container = document.querySelector(".container");
+        const containerRect = container.getBoundingClientRect();
+        const tocWidth = isTOCVisible ? toc.offsetWidth : 0;
+        const mouseX = e.clientX - containerRect.left - tocWidth;
+        const availableWidth = container.offsetWidth - tocWidth;
+        const newPercent = Math.max(10, Math.min(90, (mouseX / availableWidth) * 100));
+        const editorContainer = document.querySelector(".editor-container");
+        editorContainer.style.width = newPercent + "%";
+        document.querySelector(".preview-wrapper").style.width = (100 - newPercent) + "%";
+    }
+
+    function toggleSplit() {
+        const previewWrapper = document.querySelector(".preview-wrapper");
+        const editorContainer = document.querySelector(".editor-container");
+
+        if (previewWrapper.style.display !== "none") {
+            editorContainer.style.display = "flex";
+            editorContainer.style.width = "100%";
+            previewWrapper.style.width = "0%";
+            previewWrapper.style.overflow = "hidden";
+            previewWrapper.style.display = "none";
+        } else {
+            editorContainer.style.display = "flex";
+            editorContainer.style.width = "50%";
+            previewWrapper.style.width = "50%";
+            previewWrapper.style.overflow = "auto";
+            previewWrapper.style.display = "block";
+        }
+    }
+
+    /* 打开文件 */
+    async function openFile() {
+        try {
+            const [fileHandle] = await window.showOpenFilePicker({
+                types: [{
+                    description: 'Markdown文件',
+                    accept: {'text/markdown': ['.md']}
+                }],
+                multiple: false
+            });
+            
+            currentFileHandle = fileHandle;
+            const file = await fileHandle.getFile();
+            const contents = await file.text();
+            
+            editor.value = contents;
+            updateFileName(file.name);
+            render();
+            showToast('打开文件成功！');
+        } catch (err) {
+            if (err.name !== 'AbortError') {
+                console.error('打开文件失败:', err);
+                showToast('打开文件失败', 'error');
+            }
+        }
+    }
+
+    /* 拖拽插入图片 */
+    editor.addEventListener("dragover", e => e.preventDefault());
+    editor.addEventListener("drop", e => {
+        e.preventDefault();
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith("image/")) {
+            const reader = new FileReader();
+            reader.onload = ev => {
+                editor.value += "\n![](" + ev.target.result + ")\n";
+                render();
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    /* 保存 */
+    async function saveFile() {
+        if (currentFileHandle) {
+            const writable = await currentFileHandle.createWritable();
+            await writable.write(editor.value);
+            await writable.close();
+            updateFileName(currentFileHandle.name);
+            showToast('保存成功！');
+        } else {
+            await saveAs();
+        }
+    }
+
+    async function saveAs() {
+        try {
+            currentFileHandle = await window.showSaveFilePicker({
+                suggestedName: "document.md",
+                types: [{
+                    description: 'Markdown文件',
+                    accept: {'text/markdown': ['.md']}
+                }]
+            });
+            const writable = await currentFileHandle.createWritable();
+            await writable.write(editor.value);
+            await writable.close();
+            updateFileName(currentFileHandle.name);
+            showToast('保存成功！');
+        } catch (err) {
+            if (err.name !== 'AbortError') {
+                console.error('保存失败:', err);
+                showToast('保存失败', 'error');
+            }
+        }
+    }
+
+    /* 更新文件名显示 */
+    function updateFileName(name) {
+        const fileNameSpan = document.getElementById("currentFileName");
+        fileNameSpan.textContent = name;
+    }
+
+    /* Toast提示 */
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = 'toast ' + type;
+        toast.classList.add('show');
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2000);
+    }
+
+    /* 新建文件 */
+    function newFile() {
+        if (confirm('新建文件将清空当前内容，确定继续吗？')) {
+            editor.value = "";
+            currentFileHandle = null;
+            localStorage.setItem("md_content", "");
+            updateFileName("未命名文件");
+            render();
+        }
+    }
+
+    /* PDF */
+    function exportPDF() {
+        const fileName = document.getElementById("currentFileName").textContent;
+        const pdfFileName = fileName.replace(/\.md$/, '') + '.pdf';
+        
+        const opt = {
+            margin:       [15, 15, 15, 15],
+            filename:     pdfFileName,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { 
+                scale: 2,
+                useCORS: true,
+                letterRendering: true
+            },
+            jsPDF:        { 
+                unit: 'mm', 
+                format: 'a4', 
+                orientation: 'portrait' 
+            },
+            pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+        };
+        
+        html2pdf().set(opt).from(preview).save();
+    }
+
+    /* 打印 */
+    function printDocument() {
+        window.print();
+    }
+
+    let editorFontSize = 14;
+
+    function increaseFontSize() {
+        editorFontSize = Math.min(editorFontSize + 2, 32);
+        editor.style.fontSize = editorFontSize + 'px';
+    }
+
+    function decreaseFontSize() {
+        editorFontSize = Math.max(editorFontSize - 2, 10);
+        editor.style.fontSize = editorFontSize + 'px';
+    }
+
+    /* 快捷键监听 */
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.key === 's') {
+            e.preventDefault();
+            saveFile();
+        }
+    });
+</script>
+</body>
+</html>
