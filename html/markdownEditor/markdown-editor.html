@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>Markdown Editor Pro+</title>
+    <title>Web Markdown Editor</title>
 
     <!-- Markdown 样式 -->
     <link id="markdownTheme" rel="stylesheet"
@@ -79,10 +79,6 @@
             background: #ebecf0;
         }
 
-        #modeBtn {
-            min-width: 100px;
-        }
-
         .dark button {
             background: #21262d;
             border-color: #30363d;
@@ -128,7 +124,7 @@
         }
 
         .editor-container {
-            width: 40%;
+            width: 50%;
             display: flex;
             flex-direction: column;
             border-right: 1px solid #ddd;
@@ -158,7 +154,7 @@
             min-width: 2rem;
             font-family: Consolas, Courier;
             font-size: 16px;
-            line-height: 1.5;
+            line-height: 1.8;
             overflow: hidden;
             user-select: none;
         }
@@ -230,11 +226,21 @@
             display: flex;
             align-items: center;
             gap: 4px;
-            padding: 6px 10px;
+            padding-left: 6px;
             background: #f6f8fa;
             border-bottom: 1px solid #ddd;
             flex-shrink: 0;
             flex-wrap: wrap;
+        }
+
+        /* 编辑区域工具栏 - 去掉gap，让按钮更紧凑 */
+        #editorToolbar {
+            gap: 0;
+        }
+
+        /* 预览区域工具栏 - 保持gap */
+        #previewToolbar {
+            gap: 4px;
         }
 
         .dark .editor-preview-toolbar {
@@ -244,53 +250,68 @@
 
         /* 工具栏按钮 */
         .btn-control {
-            padding: 4px 8px;
-            border: 1px solid #d0d7de;
-            background: white;
+            padding: 6px 8px;
+            border: none;
+            background: transparent;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 16px;
             color: #24292f;
             transition: all 0.2s;
         }
 
         .btn-control:hover {
-            background: #f3f4f6;
-            border-color: #babbbd;
+            background: #e5e7eb;
         }
 
         .btn-p-sm {
-            padding: 2px 6px;
-            font-size: 12px;
+            padding: 4px 8px;
+            font-size: 16px;
         }
 
         .btn-p-xxs {
-            padding: 1px 4px;
-            font-size: 11px;
+            padding: 2px 6px;
+            font-size: 14px;
         }
 
         .dark .btn-control {
-            background: #21262d;
-            border-color: #30363d;
+            background: transparent;
             color: #c9d1d9;
         }
 
         .dark .btn-control:hover {
             background: #30363d;
-            border-color: #484f58;
         }
 
         /* 选中状态 */
         .btn-control[data-select="true"] {
             background: #e6f2ff;
-            border-color: #0066cc;
             color: #0066cc;
         }
 
         .dark .btn-control[data-select="true"] {
             background: #1f3d2a;
-            border-color: #238636;
             color: #3fb950;
+        }
+
+        /* 顶部工具栏按钮选中状态 */
+        button[data-select="true"] {
+            background: #e6f2ff;
+            color: #0066cc;
+        }
+
+        .dark button[data-select="true"] {
+            background: #1f3d2a;
+            color: #3fb950;
+        }
+
+        /* S/M/L/F 按钮保持原样 */
+        #p-tb-small,
+        #p-tb-middle,
+        #p-tb-large,
+        #p-tb-full {
+            padding: 4px 8px;
+            font-size: 14px;
         }
 
         /* 字母图标 */
@@ -328,12 +349,45 @@
             margin-right: 4px;
         }
 
+        /* 下拉菜单项样式 */
+        .dropdown-item {
+            padding: 8px 16px;
+            font-size: 14px;
+            border: none;
+            background: transparent;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f3f4f6;
+        }
+
+        .dark .dropdown-item:hover {
+            background-color: #30363d;
+        }
+
         .min-w-2rem {
             min-width: 2rem;
         }
 
         .max-w-200px {
             max-width: 200px;
+        }
+
+        /* 标题下拉框菜单项 */
+        #tb-headline-ul .dropdown-item {
+            padding: 8px 16px;
+            font-size: 14px;
+            border: none;
+            background: transparent;
+        }
+
+        /* 颜色选择器菜单项 */
+        .editor-bg-color,
+        #tb-color-dropdown .dropdown-item {
+            padding: 12px 16px;
+            font-size: 14px;
+            border: none;
+            background: transparent;
         }
 
         .text-black-50 {
@@ -356,7 +410,7 @@
         .editor-toolbar {
             display: flex;
             gap: 8px;
-            padding: 8px;
+            padding: 0;
             background: #f6f8fa;
             border-bottom: 1px solid #ddd;
             flex-shrink: 0;
@@ -368,9 +422,10 @@
         }
 
         .editor-toolbar button {
-            padding: 4px 8px;
-            font-size: 12px;
-            min-width: 32px;
+            padding: 6px 8px;
+            font-size: 16px;
+            min-width: 36px;
+            border: none;
         }
 
         .dark #currentFileName {
@@ -481,7 +536,7 @@
         }
 
         .preview-wrapper {
-            width: 60%;
+            width: 50%;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -525,7 +580,7 @@
 
         /* 拖动条顶部按钮 */
         .resizer-top {
-            height: 36px;
+            height: 34px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -542,7 +597,7 @@
         /* 拖动条中间区域 */
         .resizer-mid {
             flex: 1;
-            cursor: col-resize;
+            cursor: pointer;
             background: #ddd;
             min-height: 0;
         }
@@ -553,7 +608,7 @@
 
         /* 拖动条底部按钮 */
         .resizer-bottom {
-            height: 24px;
+            height: 34px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -586,10 +641,6 @@
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
-        }
-
-        .resizing {
-            cursor: col-resize !important;
         }
 
         .dark {
@@ -762,10 +813,10 @@
 
 <div class="toolbar">
     <div class="toolbar-left">
-        <button onclick="toggleTOC()">📑 目录</button>
-        <button onclick="newFile()">📄 新建</button>
-        <button onclick="saveFile()">💾 保存</button>
-        <button onclick="openFile()">📂 打开</button>
+        <button id="tocToggleBtn" onclick="toggleTOC()"><i class="bi bi-list-columns"></i> 目录</button>
+        <button onclick="newFile()"><i class="bi bi-file-plus"></i> 新建</button>
+        <button onclick="saveFile()"><i class="bi bi-save"></i> 保存</button>
+        <button onclick="openFile()"><i class="bi bi-folder2-open"></i> 打开</button>
         <span id="currentFileName">未命名文件</span>
     </div>
     <div class="toolbar-right">
@@ -774,9 +825,57 @@
             <option value="dark">Dark</option>
             <option value="solarized">Solarized</option>
         </select>
-        <button id="modeBtn" onclick="toggleMode()">👁 预览</button>
-        <button onclick="printDocument()">🖨 打印</button>
-        <button onclick="exportPDF()">📕 导出 PDF</button>
+        <button id="modeBtn" onclick="toggleMode()"><i class="bi bi-eye"></i> 预览</button>
+        <button id="top-tb-fullscreen" onclick="toggleFullscreen()"><i class="bi bi-arrows-fullscreen"></i> 全屏</button>
+        <button onclick="printDocument()"><i class="bi bi-printer"></i> 打印</button>
+
+        <!--导出下拉框-->
+        <div class="dropdown d-inline-block">
+            <button id="tb-export" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-download"></i> 导出
+            </button>
+            <ul id="export-dropdown" class="dropdown-menu min-w-2rem">
+                <li>
+                    <button class="btn btn-control btn-p-sm dropdown-item" onclick="exportPDF()">
+                        <i class="bi bi-file-pdf"></i> 导出 PDF
+                    </button>
+                </li>
+                <li>
+                    <button class="btn btn-control btn-p-sm dropdown-item" onclick="exportImage()">
+                        <i class="bi bi-image"></i> 导出图片
+                    </button>
+                </li>
+                <li>
+                    <button class="btn btn-control btn-p-sm dropdown-item" onclick="exportHTML()">
+                        <i class="bi bi-file-code"></i> 导出 HTML
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <!--高级设置下拉框-->
+        <div class="dropdown d-inline-block">
+            <button id="tb-settings" class="btn btn-control" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-three-dots-vertical"></i>
+            </button>
+            <ul id="settings-dropdown" class="dropdown-menu min-w-2rem">
+                <li>
+                    <button id="settings-toggleToolbar" class="btn btn-control btn-p-sm dropdown-item" onclick="toggleToolbar()">
+                        <i class="bi bi-caret-up"></i> 工具栏隐藏
+                    </button>
+                </li>
+                <li>
+                    <button id="settings-toggleFootBar" class="btn btn-control btn-p-sm dropdown-item" onclick="toggleFootBar()">
+                        <i class="bi bi-caret-down"></i> 状态栏隐藏
+                    </button>
+                </li>
+                <li>
+                    <button id="settings-toggleSyncScroll" class="btn btn-control btn-p-sm dropdown-item" onclick="toggleSyncScrollSetting()">
+                        <i class="bi bi-arrows-vertical"></i> 同步滚动
+                    </button>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 
@@ -903,7 +1002,6 @@
             </button>
 
             <!--分隔-->
-            <span class="text-black-50 mx-1">|</span>
 
             <!--表格-->
             <button id="tb-table" class="btn btn-control btn-p-sm" data-bs-toggle="tooltip"
@@ -943,7 +1041,7 @@
             </button>
 
             <!--分隔-->
-            <span class="text-black-50 mx-1">|</span>
+<!--            <span class="text-black-50 mx-1">|</span>-->
 
             <!--编辑器背景颜色下拉框-->
             <div class="dropdown d-inline-block">
@@ -998,18 +1096,137 @@
             <div class="line-numbers" id="lineNumbers">
                 <span class="selected">1</span>
             </div>
-            <textarea id="editor" class="editor"># 示例文档
+            <textarea id="editor" class="editor"># Markdown 编辑器 - 功能演示
 
-## Mermaid 示例
+欢迎使用 Markdown 编辑器！本文档展示了各种 Markdown 语法和编辑器功能。
 
+## 📝 文本格式
+
+### 文本样式
+- **粗体文本**
+- *斜体文本*
+- ***粗斜体文本***
+- <u>下划线文本</u>
+- ~~删除线文本~~
+
+### 引用
+> 这是一段引用文本。
+> 可以有多行。
+
+## 📋 列表
+
+### 无序列表
+- 项目 1
+- 项目 2
+  - 子项目 2.1
+  - 子项目 2.2
+- 项目 3
+
+### 有序列表
+1. 第一项
+2. 第二项
+3. 第三项
+
+### 任务列表
+- [x] 已完成的任务
+- [ ] 未完成的任务
+- [x] 另一个完成的任务
+
+## 🖼️ 图片和链接
+
+### 链接
+[访问 GitHub](https://github.com)
+
+### 图片
+![示例图片](https://picsum.photos/300/200)
+
+## 📊 表格
+
+| 列 1 | 列 2 | 列 3 |
+|------|------|------|
+| 数据 1 | 数据 2 | 数据 3 |
+| 数据 4 | 数据 5 | 数据 6 |
+
+## 💻 代码
+
+### 行内代码
+这是一段 `inline code` 代码。
+
+### 代码块
+```javascript
+function hello() {
+    console.log("Hello, World!");
+}
+```
+
+```python
+def hello():
+    print("Hello, Python!")
+```
+
+## 📐 数学公式
+
+行内公式：$E = mc^2$
+
+块级公式（多种写法）：
+
+方式一（推荐）：
+$$
+\frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+$$
+
+方式二：
+\[
+\int_{a}^{b} x^2 \,dx = \frac{b^3}{3} - \frac{a^3}{3}
+\]
+
+方式三：
+$$
+\sum_{i=1}^{n} i = \frac{n(n+1)}{2}
+$$
+
+## 📈 Mermaid 图表
+
+### 流程图
 ```mermaid
 graph TD
-A-->B
-B-->C
+    A[开始] --> B{判断}
+    B -->|是| C[执行操作A]
+    B -->|否| D[执行操作B]
+    C --> E[结束]
+    D --> E
 ```
-## 数学公式
 
-$E=mc^2$</textarea>
+### 时序图
+```mermaid
+sequenceDiagram
+    participant 用户
+    participant 系统
+    用户->>系统: 发送请求
+    系统-->>用户: 返回响应
+```
+
+## 🔤 分隔线
+
+---
+
+## 📌 其他功能
+
+### 自动保存
+编辑器会自动保存内容到浏览器本地存储，刷新页面不会丢失内容。
+
+### 快捷键
+- `Ctrl+S`: 保存文件
+- `Ctrl+B`: 粗体
+- `Ctrl+I`: 斜体
+- `Ctrl+Shift+T`: 插入表格
+
+### 导出功能
+支持导出为 PDF、图片、HTML 等多种格式。
+
+---
+
+开始你的 Markdown 写作之旅吧！🚀</textarea>
         </div>
         <div class="foot-bar">
             <span>字符：<b id="charCount">0</b></span>
@@ -1020,12 +1237,12 @@ $E=mc^2$</textarea>
 
     <!-- 拖动条 -->
     <div class="resizer-container">
-        <!-- 顶部按钮：折叠预览 -->
-        <div class="resizer-top" id="resizerTop" title="折叠预览区域">
-            <i class="bi bi-caret-right" id="resizerTopIcon"></i>
+        <!-- 顶部按钮：隐藏工具栏 -->
+        <div class="resizer-top" id="resizerTop" title="隐藏工具栏">
+            <i class="bi bi-chevron-up" id="resizerTopIcon"></i>
         </div>
-        <!-- 中间拖动区域 -->
-        <div class="resizer-mid" id="resizerMid"></div>
+        <!-- 中间点击区域：折叠/展开预览 -->
+        <div class="resizer-mid" id="resizerMid" title="折叠/展开预览区域"></div>
         <!-- 底部按钮：隐藏状态栏 -->
         <div class="resizer-bottom" id="resizerBottom" title="隐藏状态栏">
             <i class="bi bi-chevron-down" id="resizerBottomIcon"></i>
@@ -1103,21 +1320,6 @@ $E=mc^2$</textarea>
                 </ul>
             </div>
 
-            <!--分隔-->
-            <span class="text-black-50 mx-1">|</span>
-
-            <!--下载-->
-            <button id="p-tb-download" class="btn btn-control btn-p-sm"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="下载文档图片">
-                <i class="bi bi-image"></i>
-            </button>
-
-            <!--全屏-->
-            <button id="p-tb-fullscreen" class="btn btn-control btn-p-sm"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="内容全屏">
-                <i class="bi bi-arrows-fullscreen"></i>
-            </button>
-
             <!--同步滚动-->
             <button id="tb-syncScroll" class="btn btn-control btn-p-sm ms-auto sync-scrolling-icon"
                     data-select="true" data-bs-toggle="tooltip" data-bs-placement="bottom" title="同步滚动">
@@ -1148,14 +1350,28 @@ $E=mc^2$</textarea>
     const toc = document.getElementById("toc");
 
     let currentMode = "edit";
-    let isTOCVisible = true;
+    let isTOCVisible = localStorage.getItem("mdEditor_tocVisible") !== "false";  // 默认开启
     let currentFileHandle = null;
-    let isSyncScroll = localStorage.getItem("syncScroll") !== "false";  // 默认开启
+    let isSyncScroll = localStorage.getItem("mdEditor_syncScroll") !== "false";  // 默认开启
     let lineNumberCounter = 1;
     let selectedLineNumber = 1;
 
+    // 工具栏和状态栏显示状态
+    let isToolbarVisible = localStorage.getItem("mdEditor_toolbarVisible") !== "false";
+    let isFootBarVisible = localStorage.getItem("mdEditor_footBarVisible") !== "false";
+
+    // 标题映射表：预览标题元素 ↔ 编辑器行号
+    let headingMap = [];
+
     // 获取行号元素
     const lineNumbers = document.getElementById("lineNumbers");
+
+    // 获取分隔条元素
+    const resizerMid = document.querySelector("#resizerMid");
+    const resizerTop = document.querySelector("#resizerTop");
+    const resizerBottom = document.querySelector("#resizerBottom");
+    const resizerTopIcon = document.querySelector("#resizerTopIcon");
+    const resizerBottomIcon = document.querySelector("#resizerBottomIcon");
 
     // 初始化同步滚动按钮状态
     const syncScrollBtn = document.getElementById("tb-syncScroll");
@@ -1230,30 +1446,37 @@ $E=mc^2$</textarea>
     function setEditorBackgroundColor(color, darkColor) {
         const editorTextarea = document.getElementById("editor");
         const lineNumbers = document.getElementById("lineNumbers");
+        const bgColorBtn = document.getElementById("tb-bgColor");
 
         editorTextarea.style.backgroundColor = color;
         lineNumbers.style.backgroundColor = color;
+
+        // 更新按钮背景色
+        bgColorBtn.style.backgroundColor = color || "";
 
         // 如果是暗色主题，使用暗色背景
         if (document.body.classList.contains("dark")) {
             editorTextarea.style.backgroundColor = darkColor;
             lineNumbers.style.backgroundColor = darkColor;
+            bgColorBtn.style.backgroundColor = darkColor || "";
         }
 
         // 保存到 localStorage
-        localStorage.setItem("editor_bg_color", color);
-        localStorage.setItem("editor_bg_color_dark", darkColor);
+        localStorage.setItem("mdEditor_bgColor", color);
+        localStorage.setItem("mdEditor_bgColor_dark", darkColor);
     }
 
     /* 初始化编辑器背景颜色 */
     function initEditorBackgroundColor() {
-        const savedColor = localStorage.getItem("editor_bg_color");
-        const savedColorDark = localStorage.getItem("editor_bg_color_dark");
+        const savedColor = localStorage.getItem("mdEditor_bgColor");
+        const savedColorDark = localStorage.getItem("mdEditor_bgColor_dark");
 
         if (savedColor && savedColorDark) {
             setEditorBackgroundColor(savedColor, savedColorDark);
         } else {
             // 默认不设置背景色（使用 CSS 默认值）
+            const bgColorBtn = document.getElementById("tb-bgColor");
+            bgColorBtn.style.backgroundColor = "";
         }
     }
 
@@ -1275,36 +1498,29 @@ $E=mc^2$</textarea>
 
         // 背景颜色
         document.getElementById("tb-color-dropdown").onclick = function(e) {
-            const color = e.target.closest("[data-color]")?.dataset.color;
+            const btn = e.target.closest("[data-color]");
+            const color = btn?.dataset.color;
             if (color !== undefined) {
                 preview.style.backgroundColor = color;
-            }
-        };
-
-        // 下载图片
-        document.getElementById("p-tb-download").onclick = function() {
-            html2canvas(previewContentWrapper || preview, {scale: 2, useCORS: true}).then(canvas => {
-                const link = document.createElement("a");
-                link.download = (document.getElementById("currentFileName").textContent || "document") + ".png";
-                link.href = canvas.toDataURL();
-                link.click();
-            });
-        };
-
-        // 全屏
-        document.getElementById("p-tb-fullscreen").onclick = function() {
-            if (document.fullscreenElement) {
-                document.exitFullscreen();
-            } else {
-                document.documentElement.requestFullscreen();
+                // 更新按钮背景色
+                const bgColorBtn = document.getElementById("p-tb-bgColor");
+                bgColorBtn.style.backgroundColor = color || "";
             }
         };
 
         // 同步滚动
         syncScrollBtn.onclick = function() {
             isSyncScroll = !isSyncScroll;
-            localStorage.setItem("syncScroll", isSyncScroll ? "true" : "false");
+            localStorage.setItem("mdEditor_syncScroll", isSyncScroll ? "true" : "false");
             syncScrollBtn.dataset.select = isSyncScroll ? "true" : "false";
+
+            // 更新设置菜单中的按钮状态
+            const settingBtn = document.getElementById("settings-toggleSyncScroll");
+            if (isSyncScroll) {
+                settingBtn.dataset.select = "true";
+            } else {
+                delete settingBtn.dataset.select;
+            }
         };
     }
 
@@ -1315,6 +1531,10 @@ $E=mc^2$</textarea>
         const markdownBody = document.querySelector(".markdown-body");
         markdownBody.style.maxWidth = width;
 
+        // 保存同步滚动按钮的当前状态
+        const syncScrollBtn = document.getElementById("tb-syncScroll");
+        const syncScrollState = syncScrollBtn?.dataset.select;
+
         // 清除所有按钮的选中状态
         document.querySelectorAll("#previewToolbar .btn-control").forEach(el => {
             delete el.dataset.select;
@@ -1322,6 +1542,11 @@ $E=mc^2$</textarea>
 
         // 设置当前按钮为选中
         btn.dataset.select = "true";
+
+        // 恢复同步滚动按钮的状态
+        if (syncScrollState) {
+            syncScrollBtn.dataset.select = syncScrollState;
+        }
     }
 
     /* 编辑工具栏操作函数 */
@@ -1435,7 +1660,7 @@ $E=mc^2$</textarea>
     }
 
     /* 自动保存 */
-    editor.value = localStorage.getItem("md_content") || editor.value;
+    editor.value = localStorage.getItem("mdEditor_content") || editor.value;
 
     // 防抖渲染（300ms 延迟）
     const debouncedRender = debounce(function() {
@@ -1444,7 +1669,7 @@ $E=mc^2$</textarea>
     }, 300);
 
     editor.addEventListener("input", () => {
-        localStorage.setItem("md_content", editor.value);
+        localStorage.setItem("mdEditor_content", editor.value);
         updateLineNumbers();
         updateEditorFootBar();
         debouncedRender();  // 使用防抖渲染
@@ -1504,19 +1729,56 @@ $E=mc^2$</textarea>
 
     /* 渲染 */
     function render() {
-        preview.innerHTML = marked.parse(editor.value, {breaks: true});
+        // 保护数学公式，避免被 marked 解析
+        let content = editor.value;
+        const mathBlocks = [];
+        let mathIndex = 0;
+
+        // 保护块级公式 $$...$$
+        content = content.replace(/\$\$([\s\S]*?)\$\$/g, (match, formula) => {
+            mathBlocks.push(formula);
+            return `MATH_BLOCK_${mathIndex++}_PLACEHOLDER`;
+        });
+
+        // 保护行内公式 $...$
+        content = content.replace(/\$([^\$\n]+?)\$/g, (match, formula) => {
+            mathBlocks.push(formula);
+            return `MATH_INLINE_${mathIndex++}_PLACEHOLDER`;
+        });
+
+        // 渲染 Markdown
+        preview.innerHTML = marked.parse(content, {breaks: true});
+
+        // 恢复数学公式
+        preview.innerHTML = preview.innerHTML.replace(/MATH_BLOCK_(\d+)_PLACEHOLDER/g, (match, index) => {
+            const formula = mathBlocks[parseInt(index)];
+            return `<span class="math-display">$$${formula}$$</span>`;
+        });
+        preview.innerHTML = preview.innerHTML.replace(/MATH_INLINE_(\d+)_PLACEHOLDER/g, (match, index) => {
+            const formula = mathBlocks[parseInt(index)];
+            return `<span class="math-inline">$${formula}$</span>`;
+        });
+
         generateTOC();
         preview.querySelectorAll('pre code').forEach((block) => {
             hljs.highlightBlock(block);
         });
+
+        // 渲染数学公式
         renderMathInElement(preview, {
-            delimiters: [{left: "$$", right: "$$", display: true}, {
-                left: "$",
-                right: "$",
-                display: false
-            }]
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false},
+                {left: '\\[', right: '\\]', display: true},
+                {left: '\\(', right: '\\)', display: false}
+            ],
+            throwOnError: false
         });
+
         renderMermaid();
+
+        // 更新预览区域底部统计
+        updatePreviewFootBar();
     }
 
     render();
@@ -1598,6 +1860,50 @@ $E=mc^2$</textarea>
     updateEditorFootBar();
     initEditorBackgroundColor();
 
+    // 初始化工具栏显示状态
+    if (!isToolbarVisible) {
+        document.getElementById("editorToolbar").style.display = "none";
+        document.getElementById("previewToolbar").style.display = "none";
+        document.getElementById("settings-toggleToolbar").innerHTML =
+            '<i class="bi bi-caret-down"></i> 工具栏显示';
+        resizerTopIcon.className = "bi bi-chevron-down";
+        resizerTop.title = "显示工具栏";
+    } else {
+        document.getElementById("settings-toggleToolbar").innerHTML =
+            '<i class="bi bi-caret-up"></i> 工具栏隐藏';
+        resizerTopIcon.className = "bi bi-chevron-up";
+        resizerTop.title = "隐藏工具栏";
+    }
+
+    // 初始化状态栏显示状态
+    if (!isFootBarVisible) {
+        document.querySelectorAll(".foot-bar").forEach(bar => bar.style.display = "none");
+        document.getElementById("settings-toggleFootBar").innerHTML =
+            '<i class="bi bi-caret-up"></i> 状态栏显示';
+        resizerBottomIcon.className = "bi bi-chevron-up";
+        resizerBottom.title = "显示状态栏";
+    } else {
+        document.getElementById("settings-toggleFootBar").innerHTML =
+            '<i class="bi bi-caret-down"></i> 状态栏隐藏';
+        resizerBottomIcon.className = "bi bi-chevron-down";
+        resizerBottom.title = "隐藏状态栏";
+    }
+
+    // 初始化同步滚动设置按钮状态
+    if (isSyncScroll) {
+        document.getElementById("settings-toggleSyncScroll").dataset.select = "true";
+    }
+
+    // 初始化中间区域标题
+    resizerMid.title = "折叠预览区域";
+
+    // 初始化目录显示状态
+    if (!isTOCVisible) {
+        toc.classList.add("toc-hidden");
+    } else {
+        document.getElementById("tocToggleBtn").dataset.select = "true";
+    }
+
     // 初始化预览宽度（默认 1020px，选中 M 按钮）
     const middleBtn = document.getElementById("p-tb-middle");
     if (middleBtn) {
@@ -1625,18 +1931,76 @@ $E=mc^2$</textarea>
     /* TOC */
     function generateTOC() {
         toc.innerHTML = "";
+        headingMap = []; // 清空映射表
+
         const headers = preview.querySelectorAll("h1,h2,h3,h4,h5,h6");
+        const editorLines = editor.value.split("\n");
+
+        // 扫描编辑器中的所有标题
+        const editorHeadings = [];
+        editorLines.forEach((line, lineNum) => {
+            const match = line.match(/^(#{1,6})\s+(.+)$/);
+            if (match) {
+                const level = match[1].length;
+                const text = match[2].trim();
+                editorHeadings.push({ lineNum: lineNum + 1, level, text });
+            }
+        });
+
+        // 生成目录并建立映射
+        let editorHeadingIndex = 0;
         headers.forEach((h, index) => {
             const level = parseInt(h.tagName[1]);
             const id = "heading-" + index;
             h.id = id;
+
+            // 找到对应的编辑器标题（按顺序匹配）
+            let targetLineNum = null;
+            while (editorHeadingIndex < editorHeadings.length) {
+                const editorHeading = editorHeadings[editorHeadingIndex];
+                if (editorHeading.level === level) {
+                    targetLineNum = editorHeading.lineNum;
+                    editorHeadingIndex++; // 消耗掉这个标题
+                    break;
+                }
+                editorHeadingIndex++;
+            }
+
+            // 如果没找到精确匹配，就找最接近的
+            if (targetLineNum === null && editorHeadingIndex < editorHeadings.length) {
+                targetLineNum = editorHeadings[editorHeadingIndex].lineNum;
+                editorHeadingIndex++;
+            }
+
+            // 存储映射
+            headingMap.push({
+                element: h,
+                lineNum: targetLineNum
+            });
 
             const item = document.createElement("div");
             item.className = "toc-item";
             item.dataset.level = level;
             item.textContent = h.innerText;
             item.onclick = function() {
-                h.scrollIntoView({behavior: 'smooth', block: 'start'});
+                // 滚动预览区域容器（而不是整个页面）
+                const container = previewContentWrapper;
+                const containerRect = container.getBoundingClientRect();
+                const elementRect = h.getBoundingClientRect();
+                const relativeTop = elementRect.top - containerRect.top + container.scrollTop;
+
+                container.scrollTo({
+                    top: relativeTop,
+                    behavior: 'smooth'
+                });
+
+                // 滚动编辑器到对应行
+                if (targetLineNum !== null) {
+                    const lineHeight = 16 * 1.8; // 字体大小16px，行高1.8
+                    const scrollPosition = (targetLineNum - 1) * lineHeight;
+                    editor.scrollTop = scrollPosition;
+                    setSelectedLineNumber(targetLineNum);
+                }
             };
             toc.appendChild(item);
         });
@@ -1645,10 +2009,16 @@ $E=mc^2$</textarea>
     /* 目录显示/隐藏 */
     function toggleTOC() {
         isTOCVisible = !isTOCVisible;
+        localStorage.setItem("mdEditor_tocVisible", isTOCVisible ? "true" : "false");
+
         if (isTOCVisible) {
             toc.classList.remove("toc-hidden");
+            // 添加选中效果
+            document.getElementById("tocToggleBtn").dataset.select = "true";
         } else {
             toc.classList.add("toc-hidden");
+            // 移除选中效果
+            delete document.getElementById("tocToggleBtn").dataset.select;
         }
     }
 
@@ -1657,11 +2027,11 @@ $E=mc^2$</textarea>
         const modeBtn = document.getElementById("modeBtn");
         if (currentMode === "edit") {
             currentMode = "preview";
-            modeBtn.textContent = "✏️ 编辑";
+            modeBtn.innerHTML = '<i class="bi bi-pencil-square"></i> 编辑';
             setPreviewMode();
         } else {
             currentMode = "edit";
-            modeBtn.textContent = "👁 预览";
+            modeBtn.innerHTML = '<i class="bi bi-eye"></i> 预览';
             setEditMode();
         }
     }
@@ -1669,11 +2039,11 @@ $E=mc^2$</textarea>
     function setEditMode() {
         const editorContainer = document.querySelector(".editor-container");
         editorContainer.style.display = "flex";
-        editorContainer.style.width = "30%";
+        editorContainer.style.width = "50%";
         editorContainer.style.minHeight = "0";
         const previewWrapper = document.querySelector(".preview-wrapper");
         previewWrapper.style.display = "flex";
-        previewWrapper.style.width = "70%";
+        previewWrapper.style.width = "50%";
         previewWrapper.style.minHeight = "0";
         const resizerContainer = document.querySelector(".resizer-container");
         resizerContainer.style.display = "flex";
@@ -1709,39 +2079,46 @@ $E=mc^2$</textarea>
         }
 
         // 更新编辑器背景颜色
-        const savedColor = localStorage.getItem("editor_bg_color");
-        const savedColorDark = localStorage.getItem("editor_bg_color_dark");
+        const savedColor = localStorage.getItem("mdEditor_bgColor");
+        const savedColorDark = localStorage.getItem("mdEditor_bgColor_dark");
         if (savedColor && savedColorDark) {
             setEditorBackgroundColor(savedColor, savedColorDark);
         }
     }
 
     /* 拖动分隔 */
-    const resizerMid = document.querySelector("#resizerMid");
-    const resizerTop = document.querySelector("#resizerTop");
-    const resizerBottom = document.querySelector("#resizerBottom");
-    const resizerTopIcon = document.querySelector("#resizerTopIcon");
-    const resizerBottomIcon = document.querySelector("#resizerBottomIcon");
-    let isDragging = false;
     let isPreviewCollapsed = false;
     let isFootBarHidden = false;
-    let startX = 0;
-    let startPercent = 0;
 
-    // 中间拖动区域 - 调整大小
-    resizerMid.addEventListener("mousedown", function (e) {
-        isDragging = true;
-        startX = e.clientX;
-        const editorContainer = document.querySelector(".editor-container");
-        startPercent = parseFloat(editorContainer.style.width) || 30;
-        document.body.classList.add("no-select");
-        document.body.classList.add("resizing");
-        document.addEventListener("mousemove", resize);
-        document.addEventListener("mouseup", stopResize);
+    // 顶部按钮 - 隐藏/显示工具栏
+    resizerTop.addEventListener("click", function() {
+        isToolbarVisible = !isToolbarVisible;
+        localStorage.setItem("mdEditor_toolbarVisible", isToolbarVisible ? "true" : "false");
+
+        const editorToolbar = document.getElementById("editorToolbar");
+        const previewToolbar = document.getElementById("previewToolbar");
+
+        if (isToolbarVisible) {
+            editorToolbar.style.display = "";
+            previewToolbar.style.display = "";
+            resizerTopIcon.className = "bi bi-chevron-up";
+            resizerTop.title = "隐藏工具栏";
+            // 更新设置菜单中的按钮文字
+            document.getElementById("settings-toggleToolbar").innerHTML =
+                '<i class="bi bi-caret-up"></i> 工具栏隐藏';
+        } else {
+            editorToolbar.style.display = "none";
+            previewToolbar.style.display = "none";
+            resizerTopIcon.className = "bi bi-chevron-down";
+            resizerTop.title = "显示工具栏";
+            // 更新设置菜单中的按钮文字
+            document.getElementById("settings-toggleToolbar").innerHTML =
+                '<i class="bi bi-caret-down"></i> 工具栏显示';
+        }
     });
 
-    // 顶部按钮 - 折叠/展开预览
-    resizerTop.addEventListener("click", function() {
+    // 中间区域 - 折叠/展开预览
+    resizerMid.addEventListener("click", function() {
         isPreviewCollapsed = !isPreviewCollapsed;
         const previewWrapper = document.querySelector(".preview-wrapper");
         const editorContainer = document.querySelector(".editor-container");
@@ -1753,8 +2130,7 @@ $E=mc^2$</textarea>
             previewWrapper.style.width = "0%";
             previewWrapper.style.minHeight = "0";
             previewWrapper.style.display = "none";
-            // 改变图标为向左
-            resizerTopIcon.className = "bi bi-caret-left";
+            resizerMid.title = "展开预览区域";
         } else {
             // 展开预览
             editorContainer.style.width = "50%";
@@ -1762,14 +2138,13 @@ $E=mc^2$</textarea>
             previewWrapper.style.width = "50%";
             previewWrapper.style.minHeight = "0";
             previewWrapper.style.display = "flex";
-            // 改变图标为向右
-            resizerTopIcon.className = "bi bi-caret-right";
+            resizerMid.title = "折叠预览区域";
         }
     });
-
-    // 底部按钮 - 隐藏/显示状态栏
     resizerBottom.addEventListener("click", function() {
         isFootBarHidden = !isFootBarHidden;
+        isFootBarVisible = !isFootBarHidden;
+        localStorage.setItem("mdEditor_footBarVisible", isFootBarVisible ? "true" : "false");
 
         // 同时隐藏/显示编辑器和预览区域的底部状态栏
         const editorFootBar = document.querySelector(".editor-container .foot-bar");
@@ -1780,48 +2155,21 @@ $E=mc^2$</textarea>
             previewFootBar.style.display = "none";
             // 改变图标为向上
             resizerBottomIcon.className = "bi bi-chevron-up";
+            resizerBottom.title = "显示状态栏";
+            // 更新设置菜单中的按钮文字
+            document.getElementById("settings-toggleFootBar").innerHTML =
+                '<i class="bi bi-caret-up"></i> 状态栏显示';
         } else {
             editorFootBar.style.display = "flex";
             previewFootBar.style.display = "flex";
             // 改变图标为向下
             resizerBottomIcon.className = "bi bi-chevron-down";
+            resizerBottom.title = "隐藏状态栏";
+            // 更新设置菜单中的按钮文字
+            document.getElementById("settings-toggleFootBar").innerHTML =
+                '<i class="bi bi-caret-down"></i> 状态栏隐藏';
         }
     });
-
-    function stopResize() {
-        isDragging = false;
-        document.body.classList.remove("no-select");
-        document.body.classList.remove("resizing");
-        document.removeEventListener("mousemove", resize);
-        document.removeEventListener("mouseup", stopResize);
-    }
-
-    function resize(e) {
-        if (!isDragging) return;
-
-        // 确保不在顶部按钮和底部按钮的区域内拖动
-        const resizerContainer = document.querySelector(".resizer-container");
-        const resizerRect = resizerContainer.getBoundingClientRect();
-
-        // 如果鼠标在顶部 36px 或底部 24px 范围内，不拖动
-        if (e.clientY <= resizerRect.top + 36 || e.clientY >= resizerRect.bottom - 24) {
-            return;
-        }
-
-        const container = document.querySelector(".container");
-        const containerRect = container.getBoundingClientRect();
-        const tocWidth = isTOCVisible ? toc.offsetWidth : 0;
-        const mouseX = e.clientX - containerRect.left - tocWidth;
-        const availableWidth = container.offsetWidth - tocWidth;
-        const newPercent = Math.max(10, Math.min(90, (mouseX / availableWidth) * 100));
-        const editorContainer = document.querySelector(".editor-container");
-        const previewWrapper = document.querySelector(".preview-wrapper");
-
-        editorContainer.style.width = newPercent + "%";
-        editorContainer.style.minHeight = "0";
-        previewWrapper.style.width = (100 - newPercent) + "%";
-        previewWrapper.style.minHeight = "0";
-    }
 
     /* 打开文件 */
     async function openFile() {
@@ -1833,11 +2181,11 @@ $E=mc^2$</textarea>
                 }],
                 multiple: false
             });
-            
+
             currentFileHandle = fileHandle;
             const file = await fileHandle.getFile();
             const contents = await file.text();
-            
+
             editor.value = contents;
             updateFileName(file.name);
             render();
@@ -1923,7 +2271,7 @@ $E=mc^2$</textarea>
         if (confirm('新建文件将清空当前内容，确定继续吗？')) {
             editor.value = "";
             currentFileHandle = null;
-            localStorage.setItem("md_content", "");
+            localStorage.setItem("mdEditor_content", "");
             updateFileName("未命名文件");
             render();
         }
@@ -1933,30 +2281,91 @@ $E=mc^2$</textarea>
     function exportPDF() {
         const fileName = document.getElementById("currentFileName").textContent;
         const pdfFileName = fileName.replace(/\.md$/, '') + '.pdf';
-        
+
         const opt = {
             margin:       [15, 15, 15, 15],
             filename:     pdfFileName,
             image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { 
+            html2canvas:  {
                 scale: 2,
                 useCORS: true,
                 letterRendering: true
             },
-            jsPDF:        { 
-                unit: 'mm', 
-                format: 'a4', 
-                orientation: 'portrait' 
+            jsPDF:        {
+                unit: 'mm',
+                format: 'a4',
+                orientation: 'portrait'
             },
             pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
         };
-        
+
         html2pdf().set(opt).from(preview).save();
     }
 
     /* 打印 */
     function printDocument() {
         window.print();
+    }
+
+    /* 全屏切换 */
+    function toggleFullscreen() {
+        if (document.fullscreenElement) {
+            document.exitFullscreen();
+        } else {
+            document.documentElement.requestFullscreen();
+        }
+    }
+
+    /* 导出图片 */
+    function exportImage() {
+        html2canvas(previewContentWrapper || preview, {scale: 2, useCORS: true}).then(canvas => {
+            const link = document.createElement("a");
+            const fileName = document.getElementById("currentFileName").textContent || "document";
+            link.download = fileName.replace(/\.md$/, '') + ".png";
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+    }
+
+    /* 导出 HTML */
+    function exportHTML() {
+        const fileName = document.getElementById("currentFileName").textContent || "document";
+        const htmlFileName = fileName.replace(/\.md$/, '') + '.html';
+
+        const htmlContent = `<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>${editor.value.split('\n')[0].replace(/#/g, '').trim() || 'Document'}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #ffffff;
+        }
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+    </style>
+</head>
+<body>
+    <article class="markdown-body">
+        ${preview.innerHTML}
+    </article>
+</body>
+</html>`;
+
+        const blob = new Blob([htmlContent], {type: 'text/html'});
+        const link = document.createElement("a");
+        link.download = htmlFileName;
+        link.href = URL.createObjectURL(blob);
+        link.click();
+        URL.revokeObjectURL(link.href);
     }
 
     let editorFontSize = 16;
@@ -1971,6 +2380,75 @@ $E=mc^2$</textarea>
         editorFontSize = Math.max(editorFontSize - 2, 10);
         editor.style.fontSize = editorFontSize + 'px';
         lineNumbers.style.fontSize = editorFontSize + 'px';
+    }
+
+    /* 切换工具栏显示/隐藏 */
+    function toggleToolbar() {
+        isToolbarVisible = !isToolbarVisible;
+        localStorage.setItem("mdEditor_toolbarVisible", isToolbarVisible ? "true" : "false");
+
+        const editorToolbar = document.getElementById("editorToolbar");
+        const previewToolbar = document.getElementById("previewToolbar");
+
+        if (isToolbarVisible) {
+            editorToolbar.style.display = "";
+            previewToolbar.style.display = "";
+            document.getElementById("settings-toggleToolbar").innerHTML =
+                '<i class="bi bi-caret-up"></i> 工具栏隐藏';
+            // 更新分隔条顶部按钮图标和标题
+            resizerTopIcon.className = "bi bi-chevron-up";
+            resizerTop.title = "隐藏工具栏";
+        } else {
+            editorToolbar.style.display = "none";
+            previewToolbar.style.display = "none";
+            document.getElementById("settings-toggleToolbar").innerHTML =
+                '<i class="bi bi-caret-down"></i> 工具栏显示';
+            // 更新分隔条顶部按钮图标和标题
+            resizerTopIcon.className = "bi bi-chevron-down";
+            resizerTop.title = "显示工具栏";
+        }
+    }
+
+    /* 切换状态栏显示/隐藏 */
+    function toggleFootBar() {
+        isFootBarVisible = !isFootBarVisible;
+        localStorage.setItem("mdEditor_footBarVisible", isFootBarVisible ? "true" : "false");
+
+        const footBars = document.querySelectorAll(".foot-bar");
+
+        if (isFootBarVisible) {
+            footBars.forEach(bar => bar.style.display = "");
+            document.getElementById("settings-toggleFootBar").innerHTML =
+                '<i class="bi bi-caret-down"></i> 状态栏隐藏';
+            // 更新分隔条底部按钮图标
+            resizerBottomIcon.className = "bi bi-chevron-down";
+        } else {
+            footBars.forEach(bar => bar.style.display = "none");
+            document.getElementById("settings-toggleFootBar").innerHTML =
+                '<i class="bi bi-caret-up"></i> 状态栏显示';
+            // 更新分隔条底部按钮图标
+            resizerBottomIcon.className = "bi bi-chevron-up";
+        }
+    }
+
+    /* 切换同步滚动 */
+    function toggleSyncScrollSetting() {
+        isSyncScroll = !isSyncScroll;
+        localStorage.setItem("mdEditor_syncScroll", isSyncScroll ? "true" : "false");
+
+        // 更新预览区域的同步滚动按钮状态
+        const syncScrollBtn = document.getElementById("tb-syncScroll");
+        syncScrollBtn.dataset.select = isSyncScroll ? "true" : "false";
+
+        // 更新设置菜单中的按钮状态
+        const settingBtn = document.getElementById("settings-toggleSyncScroll");
+        if (isSyncScroll) {
+            settingBtn.innerHTML = '<i class="bi bi-arrows-vertical"></i> 同步滚动';
+            settingBtn.dataset.select = "true";
+        } else {
+            settingBtn.innerHTML = '<i class="bi bi-arrows-vertical"></i> 同步滚动';
+            delete settingBtn.dataset.select;
+        }
     }
 
     /* 快捷键监听 */
