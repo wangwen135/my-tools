@@ -407,6 +407,12 @@
             color: rgba(255, 255, 255, 0.5);
         }
 
+        /* 自定义提示框样式 */
+        .custom-tooltip {
+            --bs-tooltip-bg: #6c757d;
+            --bs-tooltip-color: #fff;
+        }
+
         .editor-toolbar {
             display: flex;
             gap: 8px;
@@ -676,6 +682,57 @@
             background: #30363d;
         }
 
+        /* 滚动条样式 - 浅色模式 */
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* 滚动条样式 - 深色模式 */
+        .dark ::-webkit-scrollbar-track {
+            background: #161b22;
+        }
+
+        .dark ::-webkit-scrollbar-thumb {
+            background: #30363d;
+            border-radius: 6px;
+        }
+
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #484f58;
+        }
+
+        .dark ::-webkit-scrollbar-corner {
+            background: #161b22;
+        }
+
+        /* 下拉菜单深色样式 */
+        .dark .dropdown-menu {
+            background: #21262d;
+            border-color: #30363d;
+        }
+
+        .dark .dropdown-item {
+            color: #c9d1d9;
+        }
+
+        .dark .dropdown-item:hover {
+            background: #30363d;
+        }
+
         .toast {
             position: fixed;
             top: 20px;
@@ -718,6 +775,318 @@
             background: #da3633;
         }
 
+        /* 拖拽文件提示层 */
+        .drag-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 123, 255, 0.1);
+            border: 3px dashed #007bff;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .drag-overlay.show {
+            display: flex;
+        }
+
+        .drag-overlay-text {
+            background: rgba(0, 123, 255, 0.9);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .dark .drag-overlay {
+            background: rgba(33, 136, 255, 0.15);
+            border-color: #58a6ff;
+        }
+
+        .dark .drag-overlay-text {
+            background: rgba(33, 136, 255, 0.95);
+        }
+
+        /* 模态框样式 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-dialog {
+            max-width: 380px;
+            width: 90%;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            margin: auto;
+        }
+
+        .dark .modal-dialog {
+            background: #21262d;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background: white;
+        }
+
+        .dark .modal-content {
+            background: #21262d;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .dark .modal-header {
+            border-color: #30363d;
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+            color: #24292f;
+        }
+
+        .dark .modal-title {
+            color: #c9d1d9;
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            border-radius: 4px;
+        }
+
+        .btn-close:hover {
+            background: #f3f4f6;
+        }
+
+        .dark .btn-close {
+            color: #8b949e;
+        }
+
+        .dark .btn-close:hover {
+            background: #30363d;
+        }
+
+        .modal-body {
+            padding: 12px 16px;
+        }
+
+        .modal-footer {
+            padding: 10px 16px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .dark .modal-footer {
+            border-color: #30363d;
+        }
+
+        .btn-primary {
+            background: #0969da;
+            border-color: #0969da;
+            color: white;
+            text-decoration: none;
+            padding: 4px 12px;
+            font-size: 13px;
+        }
+
+        .btn-primary:hover {
+            background: #085dc0;
+            border-color: #085dc0;
+            color: white;
+        }
+
+        .dark .btn-primary {
+            background: #1f6feb;
+            border-color: #1f6feb;
+        }
+
+        .dark .btn-primary:hover {
+            background: #388bfd;
+            border-color: #388bfd;
+        }
+
+        .btn-secondary {
+            padding: 4px 12px;
+            font-size: 13px;
+        }
+
+        /* 深色模式切换按钮 */
+        #darkModeBtn {
+            height: 32px;
+            padding: 4px 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #darkModeBtn i {
+            font-size: 16px;
+        }
+
+        /* 主题下拉框 */
+        #themeSelect {
+            font-size: 13px;
+            padding: 4px 8px;
+            border: 1px solid #d0d7de;
+        }
+
+        .dark #themeSelect {
+            border-color: #30363d;
+        }
+
+        /* 下拉菜单active状态 */
+        .dropdown-item.active {
+            background: #e2e3e5;
+        }
+
+        .dark .dropdown-item.active {
+            background: #30363d;
+        }
+
+        #darkModeBtn i {
+            font-size: 16px;
+        }
+
+        #themeSelect {
+            font-size: 13px;
+            padding: 6px 12px;
+            border: 1px solid #d0d7de;
+        }
+
+        .dark #themeSelect {
+            border-color: #30363d;
+        }
+
+        .about-content h6 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            margin-top: 16px;
+        }
+
+        .about-content h6:first-child {
+            margin-top: 0;
+        }
+
+        .about-content ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .about-content li {
+            padding: 4px 0;
+            font-size: 14px;
+            color: #24292f;
+        }
+
+        .dark .about-content li {
+            color: #c9d1d9;
+        }
+
+        .tech-stack {
+            background: #f6f8fa;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 0;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #24292f;
+            overflow-x: auto;
+        }
+
+        .dark .tech-stack {
+            background: #0d1117;
+            border-color: #30363d;
+            color: #c9d1d9;
+        }
+
+        .tech-stack strong {
+            color: #24292f;
+        }
+
+        .dark .tech-stack strong {
+            color: #c9d1d9;
+        }
+
+        .tech-stack a {
+            color: #0969da;
+            text-decoration: none;
+        }
+
+        .tech-stack a:hover {
+            text-decoration: underline;
+        }
+
+        .dark .tech-stack a {
+            color: #58a6ff;
+        }
+
+        .dropdown-divider {
+            margin: 8px 0;
+            border-top: 1px solid #ddd;
+        }
+
+        .dark .dropdown-divider {
+            border-color: #30363d;
+        }
+
+        .about-footer {
+            margin-top: 16px;
+        }
+
+        .text-muted {
+            color: #666;
+        }
+
+        .dark .text-muted {
+            color: #8b949e;
+        }
+
         @media print {
             body {
                 background: white;
@@ -739,7 +1108,9 @@
             .resizer-mid,
             .resizer-bottom,
             #toast,
-            .foot-bar {
+            .foot-bar,
+            .modal,
+            #dragOverlay {
                 display: none !important;
             }
 
@@ -811,6 +1182,52 @@
 
 <div id="toast" class="toast"></div>
 
+<div id="dragOverlay" class="drag-overlay">
+    <div class="drag-overlay-text">
+        <i class="bi bi-file-earmark-markdown"></i> 拖放 Markdown 文件到这里打开
+    </div>
+</div>
+
+<!-- About 模态框 -->
+<div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="aboutModalLabel">
+                    <i class="bi bi-code-slash"></i> Markdown Editor
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="about-content">
+                    <pre class="tech-stack">
+<strong>Markdown Editor</strong>
+v1.0.0
+
+<strong>Tech Stack:</strong>
+• Marked.js  (Markdown Parser)
+• KaTeX      (Math Renderer)
+• Mermaid    (Diagram Generator)
+• Highlight.js (Code Highlight)
+• Bootstrap 5 (UI Framework)
+
+<strong>Author:</strong>
+<a href="https://github.com/wangwen135" target="_blank">@WWH</a>
+
+<strong>License:</strong>
+MIT License
+                    </pre>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="https://github.com/wangwen135/web-markdown-editor" target="_blank" class="btn btn-primary">
+                    <i class="bi bi-github"></i> GitHub
+                </a>
+                <button type="button" class="btn btn-secondary" onclick="hideAboutModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="toolbar">
     <div class="toolbar-left">
         <button id="tocToggleBtn" onclick="toggleTOC()"><i class="bi bi-list-columns"></i> 目录</button>
@@ -820,12 +1237,21 @@
         <span id="currentFileName">未命名文件</span>
     </div>
     <div class="toolbar-right">
-        <select onchange="changeTheme(this.value)">
-            <option value="github">GitHub</option>
-            <option value="dark">Dark</option>
-            <option value="solarized">Solarized</option>
-        </select>
         <button id="modeBtn" onclick="toggleMode()"><i class="bi bi-eye"></i> 预览</button>
+        <button id="darkModeBtn" onclick="toggleDarkMode()" title="切换深色/浅色模式">
+            <i class="bi bi-moon" id="darkModeIcon"></i>
+        </button>
+
+        <!--主题下拉框-->
+        <div class="dropdown d-inline-block">
+            <button id="tb-theme" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-markdown"></i> 主题
+            </button>
+            <ul id="theme-dropdown" class="dropdown-menu min-w-2rem">
+                <!-- 动态生成主题选项 -->
+            </ul>
+        </div>
+
         <button id="top-tb-fullscreen" onclick="toggleFullscreen()"><i class="bi bi-arrows-fullscreen"></i> 全屏</button>
         <button onclick="printDocument()"><i class="bi bi-printer"></i> 打印</button>
 
@@ -874,6 +1300,19 @@
                         <i class="bi bi-arrows-vertical"></i> 同步滚动
                     </button>
                 </li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li>
+                    <button id="settings-reset" class="btn btn-control btn-p-sm dropdown-item" onclick="resetAllSettings()">
+                        <i class="bi bi-arrow-counterclockwise"></i> 重置设置
+                    </button>
+                </li>
+                <li>
+                    <button id="settings-about" class="btn btn-control btn-p-sm dropdown-item" onclick="showAboutModal()">
+                        <i class="bi bi-info-circle"></i> About
+                    </button>
+                </li>
             </ul>
         </div>
     </div>
@@ -902,22 +1341,22 @@
         <div id="editorToolbar" class="editor-preview-toolbar">
             <!--粗体-->
             <button id="tb-bold" class="btn btn-control btn-p-sm" data-bs-toggle="tooltip"
-                    data-bs-placement="bottom" title="加粗<br><b>Ctrl+B</b>">
+                    data-bs-custom-class="custom-tooltip" data-bs-placement="bottom" title="加粗<br><b>Ctrl+B</b>">
                 <i class="bi bi-type-bold"></i>
             </button>
             <!--斜体-->
             <button id="tb-italic" class="btn btn-control btn-p-sm" data-bs-toggle="tooltip"
-                    data-bs-placement="bottom" title="斜体<br><b>Ctrl+I</b>">
+                    data-bs-custom-class="custom-tooltip" data-bs-placement="bottom" title="斜体<br><b>Ctrl+I</b>">
                 <i class="bi bi-type-italic"></i>
             </button>
             <!--下划线-->
             <button id="tb-underline" class="btn btn-control btn-p-sm" data-bs-toggle="tooltip"
-                    data-bs-placement="bottom" title="下划线<br><b>Ctrl+U</b>">
+                    data-bs-custom-class="custom-tooltip" data-bs-placement="bottom" title="下划线<br><b>Ctrl+U</b>">
                 <i class="bi bi-type-underline"></i>
             </button>
             <!--删除线-->
             <button id="tb-strikethrough" class="btn btn-control btn-p-sm" data-bs-toggle="tooltip"
-                    data-bs-placement="bottom" title="删除线<br><b>Ctrl+Shift+S</b>">
+                    data-bs-custom-class="custom-tooltip" data-bs-placement="bottom" title="删除线<br><b>Ctrl+Shift+S</b>">
                 <i class="bi bi-type-strikethrough"></i>
             </button>
 
@@ -928,7 +1367,7 @@
             <div class="dropdown d-inline-block">
                 <div data-bs-toggle="dropdown" aria-expanded="false">
                     <button id="tb-headline" class="btn btn-control btn-p-sm dropdown-toggle"
-                            data-bs-toggle="tooltip" data-bs-placement="bottom"
+                            data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip" data-bs-placement="left"
                             title="标题<br><b> Ctrl+[1~6]</b>">
                         <i class="bi bi-type-h1"></i>
                     </button>
@@ -972,32 +1411,32 @@
 
             <!--水平线-->
             <button id="tb-horizontal-line" class="btn btn-control btn-p-sm" data-bs-toggle="tooltip"
-                    data-bs-placement="bottom" title="水平线">
+                    data-bs-custom-class="custom-tooltip" data-bs-placement="bottom" title="水平线">
                 <i class="bi bi-dash-lg"></i>
             </button>
             <!--引用-->
             <button id="tb-quote" class="btn btn-control btn-p-sm" data-bs-toggle="tooltip"
-                    data-bs-placement="bottom" title="引用<br><b>Ctrl+Shift+Q</b>">
+                    data-bs-custom-class="custom-tooltip" data-bs-placement="bottom" title="引用<br><b>Ctrl+Shift+Q</b>">
                 <i class="bi bi-blockquote-left"></i>
             </button>
             <!--无序列表-->
             <button id="tb-unordered-list" class="btn btn-control btn-p-sm" data-bs-toggle="tooltip"
-                    data-bs-placement="bottom" title="无序标题<br><b>Ctrl+Shift+[</b>">
+                    data-bs-custom-class="custom-tooltip" data-bs-placement="bottom" title="无序标题<br><b>Ctrl+Shift+[</b>">
                 <i class="bi bi-list-ul"></i>
             </button>
             <!--有序列表-->
             <button id="tb-ordered-list" class="btn btn-control btn-p-sm" data-bs-toggle="tooltip"
-                    data-bs-placement="bottom" title="有序标题<br><b>Ctrl+Shift+]</b>">
+                    data-bs-custom-class="custom-tooltip" data-bs-placement="bottom" title="有序标题<br><b>Ctrl+Shift+]</b>">
                 <i class="bi bi-list-ol"></i>
             </button>
             <!--未勾选-->
             <button id="tb-task-uncheck" class="btn btn-control btn-p-sm" data-bs-toggle="tooltip"
-                    data-bs-placement="bottom" title="任务列表-未勾选">
+                    data-bs-custom-class="custom-tooltip" data-bs-placement="bottom" title="任务列表-未勾选">
                 <i class="bi bi-square"></i>
             </button>
             <!--已经勾选-->
             <button id="tb-task-check" class="btn btn-control btn-p-sm" data-bs-toggle="tooltip"
-                    data-bs-placement="bottom" title="任务列表-已勾选">
+                    data-bs-custom-class="custom-tooltip" data-bs-placement="bottom" title="任务列表-已勾选">
                 <i class="bi bi-check-square"></i>
             </button>
 
@@ -1005,38 +1444,38 @@
 
             <!--表格-->
             <button id="tb-table" class="btn btn-control btn-p-sm" data-bs-toggle="tooltip"
-                    data-bs-placement="bottom" title="表格<br><b>Ctrl+Shift+T</b>">
+                    data-bs-custom-class="custom-tooltip" data-bs-placement="bottom" title="表格<br><b>Ctrl+Shift+T</b>">
                 <i class="bi bi-table"></i>
             </button>
             <!--图片-->
             <button id="tb-image" class="btn btn-control btn-p-sm" data-bs-toggle="tooltip"
-                    data-bs-placement="bottom" title="图片">
+                    data-bs-custom-class="custom-tooltip" data-bs-placement="bottom" title="图片">
                 <i class="bi bi-image"></i>
             </button>
             <!--链接-->
             <button id="tb-link" class="btn btn-control btn-p-sm" data-bs-toggle="tooltip"
-                    data-bs-placement="bottom" title="链接">
+                    data-bs-custom-class="custom-tooltip" data-bs-placement="bottom" title="链接">
                 <i class="bi bi-link-45deg"></i>
             </button>
             <!--内嵌代码-->
             <button id="tb-inner-code" class="btn btn-control btn-p-sm" data-bs-toggle="tooltip"
-                    data-bs-placement="bottom" title="内嵌代码">
+                    data-bs-custom-class="custom-tooltip" data-bs-placement="bottom" title="内嵌代码">
                 <i class="bi bi-code"></i>
             </button>
             <!--代码块-->
             <button id="tb-code" class="btn btn-control btn-p-sm" data-bs-toggle="tooltip"
-                    data-bs-placement="bottom" title="代码块">
+                    data-bs-custom-class="custom-tooltip" data-bs-placement="bottom" title="代码块">
                 <i class="bi bi-code-square"></i>
             </button>
 
             <!--右侧按钮组-->
             <!--字体大小-->
             <button id="tb-font-decrease" onclick="decreaseFontSize()" class="btn btn-control btn-p-sm ms-auto"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="缩小字体">
+                    data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip" data-bs-placement="bottom" title="缩小字体">
                 <i class="bi bi-fonts"></i>-
             </button>
             <button id="tb-font-increase" onclick="increaseFontSize()" class="btn btn-control btn-p-sm"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="放大字体">
+                    data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip" data-bs-placement="bottom" title="放大字体">
                 <i class="bi bi-fonts"></i>+
             </button>
 
@@ -1047,48 +1486,13 @@
             <div class="dropdown d-inline-block">
                 <div data-bs-toggle="dropdown" aria-expanded="false">
                     <button id="tb-bgColor" class="btn btn-control btn-p-sm dropdown-toggle"
-                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="编辑器背景颜色">
+                            data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip" data-bs-placement="left" title="编辑器背景颜色">
                         <i class="bi bi-palette"></i>
                     </button>
                 </div>
 
                 <ul id="editor-color-dropdown" class="dropdown-menu max-w-200px">
-                    <li>
-                        <button class="btn btn-control btn-p-sm dropdown-item bg-secondary-subtle editor-bg-color"
-                                data-color="#e2e3e5" data-color-dark="#2d2d2d">
-                            浅灰色
-                        </button>
-                    </li>
-                    <li>
-                        <button class="btn btn-control btn-p-sm dropdown-item bg-primary-subtle editor-bg-color"
-                                data-color="#cfe2ff" data-color-dark="#1a3355">
-                            浅蓝色
-                        </button>
-                    </li>
-                    <li>
-                        <button class="btn btn-control btn-p-sm dropdown-item bg-success-subtle editor-bg-color"
-                                data-color="#d1e7dd" data-color-dark="#1a331a">
-                            浅绿色
-                        </button>
-                    </li>
-                    <li>
-                        <button class="btn btn-control btn-p-sm dropdown-item bg-warning-subtle editor-bg-color"
-                                data-color="#fff3cd" data-color-dark="#332d1f">
-                            浅黄色
-                        </button>
-                    </li>
-                    <li>
-                        <button class="btn btn-control btn-p-sm dropdown-item bg-info-subtle editor-bg-color"
-                                data-color="#cff4fc" data-color-dark="#1a3355">
-                            蓝绿色
-                        </button>
-                    </li>
-                    <li>
-                        <button class="btn btn-control btn-p-sm dropdown-item editor-bg-color" data-color=""
-                                data-color-dark="">
-                            无背景
-                        </button>
-                    </li>
+                    <!-- 动态生成颜色选项 -->
                 </ul>
             </div>
         </div>
@@ -1176,11 +1580,6 @@ $$
 $$
 
 方式二：
-\[
-\int_{a}^{b} x^2 \,dx = \frac{b^3}{3} - \frac{a^3}{3}
-\]
-
-方式三：
 $$
 \sum_{i=1}^{n} i = \frac{n(n+1)}{2}
 $$
@@ -1215,18 +1614,73 @@ sequenceDiagram
 ### 自动保存
 编辑器会自动保存内容到浏览器本地存储，刷新页面不会丢失内容。
 
+### 拖拽打开文件
+支持将 `.md` 文件直接拖拽到页面中打开编辑，非常方便快速查看和编辑文件。
+
+**文件名标记：**
+- 拖拽打开的文件会显示 `（拖入）` 标记，如 `document.md （拖入）`
+- 文件内容可正常编辑，该标记仅用于区分打开方式
+
+**保存流程：**
+1. **首次保存**（按 `Ctrl+S`）：
+   - 弹出保存位置选择对话框
+   - 自动填入原文件名（如 `document.md`）
+   - 选择保存位置后确认
+
+2. **后续保存**：
+   - 直接按 `Ctrl+S` 即可保存
+   - 无需重复选择位置
+   - 自动保存到首次选择的位置
+
+**与"打开"按钮的区别：**
+| 打开方式 | 首次保存 | 后续保存 | 文件名标记 |
+|---------|---------|---------|-----------|
+| 拖拽打开 | 需选择位置 | 直接保存 | `（拖入）` |
+| 打开按钮 | 无需选择 | 直接保存 | 无标记 |
+
+**浏览器限制说明：**
+由于浏览器安全限制，拖拽的文件无法直接获取写权限，因此首次保存需要选择位置。这是浏览器的安全机制，确保网页不能随意修改用户本地文件。
+
 ### 快捷键
-- `Ctrl+S`: 保存文件
+#### 文本格式
 - `Ctrl+B`: 粗体
 - `Ctrl+I`: 斜体
+- `Ctrl+U`: 下划线
+- `Ctrl+Shift+S`: 删除线
+
+#### 标题和列表
+- `Ctrl+1` ~ `Ctrl+6`: 插入 1-6 级标题
+- `Ctrl+Shift+Q`: 引用
+- `Ctrl+Shift+[`: 无序列表
+- `Ctrl+Shift+]`: 有序列表
+
+#### 插入元素
 - `Ctrl+Shift+T`: 插入表格
+
+#### 编辑操作
+- `Ctrl+S`: 保存文件
+- `Ctrl+D`: 删除当前行
+- `Ctrl+Z`: 撤销
+- `Ctrl+Y` 或 `Ctrl+Shift+Z`: 重做
 
 ### 导出功能
 支持导出为 PDF、图片、HTML 等多种格式。
 
----
+### 主题和模式
+**主题风格：**
+- GitHub - GitHub 风格（支持浅色/深色）
+- Solarized - Solarized 风格（支持浅色/深色）
+- Atom One Dark - Atom One Dark 风格
+- VS Code - VS Code 风格
+- Nord - Nord 风格
+- Monokai - Monokai 风格
 
-开始你的 Markdown 写作之旅吧！🚀</textarea>
+**深色/浅色模式：**
+- 点击 🌙/☀️ 按钮切换深色/浅色模式
+- 独立于主题，可与任意主题组合
+- 界面颜色、背景色选项会自动适配
+
+            </textarea>
         </div>
         <div class="foot-bar">
             <span>字符：<b id="charCount">0</b></span>
@@ -1253,19 +1707,19 @@ sequenceDiagram
         <!--预览工具栏-->
         <div id="previewToolbar" class="editor-preview-toolbar">
             <button id="p-tb-small" class="btn btn-control btn-p-sm ms-auto"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="宽度 较窄">
+                    data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip" data-bs-placement="bottom" title="宽度 较窄">
                 <span class="letter-icon">S</span>
             </button>
             <button id="p-tb-middle" class="btn btn-control btn-p-sm" data-select="true"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="宽度 中等">
+                    data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip" data-bs-placement="bottom" title="宽度 中等">
                 <span class="letter-icon">M</span>
             </button>
             <button id="p-tb-large" class="btn btn-control btn-p-sm"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="宽度 较宽">
+                    data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip" data-bs-placement="bottom" title="宽度 较宽">
                 <span class="letter-icon">L</span>
             </button>
             <button id="p-tb-full" class="btn btn-control btn-p-sm"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="宽度 拉满">
+                    data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip" data-bs-placement="bottom" title="宽度 拉满">
                 <span class="letter-icon">F</span>
             </button>
 
@@ -1276,53 +1730,19 @@ sequenceDiagram
             <div class="dropdown d-inline-block">
                 <div data-bs-toggle="dropdown" aria-expanded="false">
                     <button id="p-tb-bgColor" class="btn btn-control btn-p-sm dropdown-toggle"
-                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="背景颜色">
+                            data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip" data-bs-placement="right" title="背景颜色">
                         <i class="bi bi-palette"></i>
                     </button>
                 </div>
 
                 <ul id="tb-color-dropdown" class="dropdown-menu max-w-200px">
-                    <li>
-                        <button class="btn btn-control btn-p-sm dropdown-item bg-secondary-subtle"
-                                data-color="#e2e3e5">
-                            浅灰色
-                        </button>
-                    </li>
-                    <li>
-                        <button class="btn btn-control btn-p-sm dropdown-item bg-primary-subtle"
-                                data-color="#cfe2ff">
-                            浅蓝色
-                        </button>
-                    </li>
-                    <li>
-                        <button class="btn btn-control btn-p-sm dropdown-item bg-success-subtle"
-                                data-color="#d1e7dd">
-                            浅绿色
-                        </button>
-                    </li>
-                    <li>
-                        <button class="btn btn-control btn-p-sm dropdown-item bg-warning-subtle"
-                                data-color="#fff3cd">
-                            浅黄色
-                        </button>
-                    </li>
-                    <li>
-                        <button class="btn btn-control btn-p-sm dropdown-item bg-info-subtle"
-                                data-color="#cff4fc">
-                            蓝绿色
-                        </button>
-                    </li>
-                    <li>
-                        <button class="btn btn-control btn-p-sm dropdown-item " data-color="">
-                            无背景
-                        </button>
-                    </li>
+                    <!-- 动态生成颜色选项 -->
                 </ul>
             </div>
 
             <!--同步滚动-->
             <button id="tb-syncScroll" class="btn btn-control btn-p-sm ms-auto sync-scrolling-icon"
-                    data-select="true" data-bs-toggle="tooltip" data-bs-placement="bottom" title="同步滚动">
+                    data-select="true" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip" data-bs-placement="bottom" title="同步滚动">
                 <i class="bi bi-arrows-vertical"></i>
             </button>
         </div>
@@ -1355,6 +1775,80 @@ sequenceDiagram
     let isSyncScroll = localStorage.getItem("mdEditor_syncScroll") !== "false";  // 默认开启
     let lineNumberCounter = 1;
     let selectedLineNumber = 1;
+    let draggedFileName = null;  // 拖拽打开的文件名（无写权限）
+    let currentTheme = localStorage.getItem("mdEditor_theme") || "github";  // 当前主题
+    let isDarkMode = localStorage.getItem("mdEditor_darkMode") === "true";  // 深色模式
+
+    // 主题配置
+    const themes = {
+        'github': {
+            name: 'GitHub',
+            markdownLight: 'https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.min.css',
+            markdownDark: 'https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown-dark.min.css',
+            codeLight: 'https://cdn.jsdelivr.net/npm/highlight.js/styles/github.min.css',
+            codeDark: 'https://cdn.jsdelivr.net/npm/highlight.js/styles/github-dark.min.css',
+            hasDarkVariant: true
+        },
+        'solarized': {
+            name: 'Solarized',
+            markdownLight: 'https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.min.css',
+            markdownDark: 'https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown-dark.min.css',
+            codeLight: 'https://cdn.jsdelivr.net/npm/highlight.js/styles/solarized-light.min.css',
+            codeDark: 'https://cdn.jsdelivr.net/npm/highlight.js/styles/solarized-dark.min.css',
+            hasDarkVariant: true
+        },
+        'atom-one-dark': {
+            name: 'Atom One Dark',
+            markdownLight: 'https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.min.css',
+            markdownDark: 'https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown-dark.min.css',
+            codeLight: 'https://cdn.jsdelivr.net/npm/highlight.js/styles/github.min.css',
+            codeDark: 'https://cdn.jsdelivr.net/npm/highlight.js/styles/atom-one-dark.min.css',
+            hasDarkVariant: false
+        },
+        'vscode': {
+            name: 'VS Code',
+            markdownLight: 'https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.min.css',
+            markdownDark: 'https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown-dark.min.css',
+            codeLight: 'https://cdn.jsdelivr.net/npm/highlight.js/styles/github.min.css',
+            codeDark: 'https://cdn.jsdelivr.net/npm/highlight.js/styles/vs2015.min.css',
+            hasDarkVariant: false
+        },
+        'nord': {
+            name: 'Nord',
+            markdownLight: 'https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.min.css',
+            markdownDark: 'https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown-dark.min.css',
+            codeLight: 'https://cdn.jsdelivr.net/npm/highlight.js/styles/github.min.css',
+            codeDark: 'https://cdn.jsdelivr.net/npm/highlight.js/styles/nord.min.css',
+            hasDarkVariant: false
+        },
+        'monokai': {
+            name: 'Monokai',
+            markdownLight: 'https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.min.css',
+            markdownDark: 'https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown-dark.min.css',
+            codeLight: 'https://cdn.jsdelivr.net/npm/highlight.js/styles/github.min.css',
+            codeDark: 'https://cdn.jsdelivr.net/npm/highlight.js/styles/monokai.min.css',
+            hasDarkVariant: false
+        }
+    };
+
+    // 颜色配置
+    const lightThemeColors = [
+        { name: '无背景', color: '' },
+        { name: '浅灰色', color: '#e2e3e5', bootstrapClass: 'bg-secondary-subtle' },
+        { name: '浅蓝色', color: '#cfe2ff', bootstrapClass: 'bg-primary-subtle' },
+        { name: '浅绿色', color: '#d1e7dd', bootstrapClass: 'bg-success-subtle' },
+        { name: '浅黄色', color: '#fff3cd', bootstrapClass: 'bg-warning-subtle' },
+        { name: '蓝绿色', color: '#cff4fc', bootstrapClass: 'bg-info-subtle' }
+    ];
+
+    const darkThemeColors = [
+        { name: '无背景', color: '' },
+        { name: '深灰色', color: '#30363d' },
+        { name: '深炭色', color: '#161b22' },
+        { name: '深蓝色', color: '#0d1117' },
+        { name: '暗紫色', color: '#1f1f2e' },
+        { name: '暗绿色', color: '#0d2d12' }
+    ];
 
     // 工具栏和状态栏显示状态
     let isToolbarVisible = localStorage.getItem("mdEditor_toolbarVisible") !== "false";
@@ -1436,47 +1930,120 @@ sequenceDiagram
             const btn = e.target.closest(".editor-bg-color");
             if (btn) {
                 const color = btn.dataset.color;
-                const colorDark = btn.dataset.colorDark;
-                setEditorBackgroundColor(color, colorDark);
+                const isDark = document.body.classList.contains("dark");
+
+                // 保存到对应的主题存储
+                if (isDark) {
+                    localStorage.setItem("mdEditor_bgColor_dark", color);
+                } else {
+                    localStorage.setItem("mdEditor_bgColor_light", color);
+                }
+
+                // 应用颜色
+                const editorTextarea = document.getElementById("editor");
+                const lineNumbers = document.getElementById("lineNumbers");
+                const bgColorBtn = document.getElementById("tb-bgColor");
+
+                editorTextarea.style.backgroundColor = color;
+                lineNumbers.style.backgroundColor = color;
+                bgColorBtn.style.backgroundColor = color || "";
             }
         };
     }
 
-    /* 设置编辑器背景颜色 */
-    function setEditorBackgroundColor(color, darkColor) {
-        const editorTextarea = document.getElementById("editor");
-        const lineNumbers = document.getElementById("lineNumbers");
-        const bgColorBtn = document.getElementById("tb-bgColor");
+    /* 初始化预览背景颜色 */
+    function initPreviewBackgroundColor() {
+        const isDark = document.body.classList.contains("dark");
 
-        editorTextarea.style.backgroundColor = color;
-        lineNumbers.style.backgroundColor = color;
+        // 生成颜色选项
+        generatePreviewColorOptions(isDark);
 
-        // 更新按钮背景色
-        bgColorBtn.style.backgroundColor = color || "";
+        // 应用保存的颜色
+        const colorKey = isDark ? "mdEditor_previewBgColor_dark" : "mdEditor_previewBgColor_light";
+        const savedColor = localStorage.getItem(colorKey);
 
-        // 如果是暗色主题，使用暗色背景
-        if (document.body.classList.contains("dark")) {
-            editorTextarea.style.backgroundColor = darkColor;
-            lineNumbers.style.backgroundColor = darkColor;
-            bgColorBtn.style.backgroundColor = darkColor || "";
+        if (savedColor !== null) {
+            const preview = document.getElementById("preview");
+            const bgColorBtn = document.getElementById("p-tb-bgColor");
+
+            preview.style.backgroundColor = savedColor;
+            bgColorBtn.style.backgroundColor = savedColor || "";
         }
+    }
 
-        // 保存到 localStorage
-        localStorage.setItem("mdEditor_bgColor", color);
-        localStorage.setItem("mdEditor_bgColor_dark", darkColor);
+    /* 动态生成编辑器颜色选项 */
+    function generateEditorColorOptions(isDark) {
+        const dropdown = document.getElementById('editor-color-dropdown');
+        dropdown.innerHTML = '';  // 清空现有选项
+
+        const colors = isDark ? darkThemeColors : lightThemeColors;
+
+        colors.forEach(colorItem => {
+            const li = document.createElement('li');
+            const button = document.createElement('button');
+
+            button.className = 'btn btn-control btn-p-sm dropdown-item editor-bg-color';
+            if (colorItem.bootstrapClass) {
+                button.classList.add(colorItem.bootstrapClass);
+            }
+            if (colorItem.color && !colorItem.bootstrapClass) {
+                button.style.backgroundColor = colorItem.color;
+            }
+
+            button.textContent = colorItem.name;
+            button.dataset.color = colorItem.color;
+
+            li.appendChild(button);
+            dropdown.appendChild(li);
+        });
+    }
+
+    /* 动态生成预览颜色选项 */
+    function generatePreviewColorOptions(isDark) {
+        const dropdown = document.getElementById('tb-color-dropdown');
+        dropdown.innerHTML = '';  // 清空现有选项
+
+        const colors = isDark ? darkThemeColors : lightThemeColors;
+
+        colors.forEach(colorItem => {
+            const li = document.createElement('li');
+            const button = document.createElement('button');
+
+            button.className = 'btn btn-control btn-p-sm dropdown-item preview-bg-color';
+            if (colorItem.bootstrapClass) {
+                button.classList.add(colorItem.bootstrapClass);
+            }
+            if (colorItem.color && !colorItem.bootstrapClass) {
+                button.style.backgroundColor = colorItem.color;
+            }
+
+            button.textContent = colorItem.name;
+            button.dataset.color = colorItem.color;
+
+            li.appendChild(button);
+            dropdown.appendChild(li);
+        });
     }
 
     /* 初始化编辑器背景颜色 */
     function initEditorBackgroundColor() {
-        const savedColor = localStorage.getItem("mdEditor_bgColor");
-        const savedColorDark = localStorage.getItem("mdEditor_bgColor_dark");
+        const isDark = document.body.classList.contains("dark");
 
-        if (savedColor && savedColorDark) {
-            setEditorBackgroundColor(savedColor, savedColorDark);
-        } else {
-            // 默认不设置背景色（使用 CSS 默认值）
+        // 生成颜色选项
+        generateEditorColorOptions(isDark);
+
+        // 应用保存的颜色
+        const colorKey = isDark ? "mdEditor_bgColor_dark" : "mdEditor_bgColor_light";
+        const savedColor = localStorage.getItem(colorKey);
+
+        if (savedColor !== null) {
+            const editorTextarea = document.getElementById("editor");
+            const lineNumbers = document.getElementById("lineNumbers");
             const bgColorBtn = document.getElementById("tb-bgColor");
-            bgColorBtn.style.backgroundColor = "";
+
+            editorTextarea.style.backgroundColor = savedColor;
+            lineNumbers.style.backgroundColor = savedColor;
+            bgColorBtn.style.backgroundColor = savedColor || "";
         }
     }
 
@@ -1498,12 +2065,23 @@ sequenceDiagram
 
         // 背景颜色
         document.getElementById("tb-color-dropdown").onclick = function(e) {
-            const btn = e.target.closest("[data-color]");
-            const color = btn?.dataset.color;
-            if (color !== undefined) {
-                preview.style.backgroundColor = color;
-                // 更新按钮背景色
+            const btn = e.target.closest(".preview-bg-color");
+            if (btn) {
+                const color = btn.dataset.color;
+                const isDark = document.body.classList.contains("dark");
+
+                // 保存到对应的主题存储
+                if (isDark) {
+                    localStorage.setItem("mdEditor_previewBgColor_dark", color);
+                } else {
+                    localStorage.setItem("mdEditor_previewBgColor_light", color);
+                }
+
+                // 应用颜色
+                const preview = document.getElementById("preview");
                 const bgColorBtn = document.getElementById("p-tb-bgColor");
+
+                preview.style.backgroundColor = color;
                 bgColorBtn.style.backgroundColor = color || "";
             }
         };
@@ -1612,17 +2190,87 @@ sequenceDiagram
     }
 
     function codeAction() {
-        insertTextAtLineStart("```\n```\n");
+        const start = editor.selectionStart;
+        const end = editor.selectionEnd;
+        const value = editor.value;
+
+        // 如果有选中内容
+        if (start !== end) {
+            // 找到选中内容起始位置所在行的行首
+            let lineStart = start;
+            while (lineStart > 0 && value[lineStart - 1] !== "\n") {
+                lineStart--;
+            }
+
+            // 找到选中内容结束位置所在行的行尾
+            let lineEnd = end;
+            while (lineEnd < value.length && value[lineEnd] !== "\n") {
+                lineEnd++;
+            }
+
+            // 在选中内容的上一行和下一行插入 ```
+            const before = value.substring(0, lineStart);
+            const selected = value.substring(start, end);
+            const after = value.substring(lineEnd);
+
+            editor.value = before + "```\n" + value.substring(lineStart, end) + "\n```" + after;
+
+            // 重新定位光标和选中区域
+            editor.selectionStart = lineStart + 4; // ```\n 的长度
+            editor.selectionEnd = lineStart + 4 + (end - start);
+            editor.focus();
+        } else {
+            // 没有选中内容，使用原有逻辑
+            insertTextAtLineStart("```\n```\n");
+        }
+
+        updateLineNumbers();
+        updateEditorFootBar();
+        render();
+    }
+
+    function deleteCurrentLine() {
+        const value = editor.value;
+        const start = editor.selectionStart;
+
+        // 找到当前行的起始位置
+        let lineStart = start;
+        while (lineStart > 0 && value[lineStart - 1] !== "\n") {
+            lineStart--;
+        }
+
+        // 找到当前行的结束位置
+        let lineEnd = start;
+        while (lineEnd < value.length && value[lineEnd] !== "\n") {
+            lineEnd++;
+        }
+
+        // 如果行尾有换行符，也要选中删除
+        if (lineEnd < value.length && value[lineEnd] === "\n") {
+            lineEnd++;
+        }
+
+        // 选中整行内容
+        editor.selectionStart = lineStart;
+        editor.selectionEnd = lineEnd;
+        editor.focus();
+
+        // 使用浏览器的删除命令，这样可以使用 Ctrl+Z 撤销
+        document.execCommand('delete');
+
+        // 更新行号和状态栏（使用防抖延迟更新，确保删除操作完成）
+        setTimeout(() => {
+            updateLineNumbers();
+            updateEditorFootBar();
+            render();
+        }, 0);
     }
 
     /* 在光标位置插入文本 */
     function insertText(text) {
-        const start = editor.selectionStart;
-        const end = editor.selectionEnd;
-        const value = editor.value;
-        editor.value = value.substring(0, start) + text + value.substring(end);
-        editor.selectionStart = editor.selectionEnd = start + text.length;
         editor.focus();
+        // 使用 execCommand 支持撤销
+        document.execCommand('insertText', false, text);
         updateLineNumbers();
         updateEditorFootBar();
         debouncedRender();  // 使用防抖渲染
@@ -1634,9 +2282,22 @@ sequenceDiagram
         const end = editor.selectionEnd;
         const value = editor.value;
         const selected = value.substring(start, end);
-        editor.value = value.substring(0, start) + before + selected + after + value.substring(end);
-        editor.selectionStart = editor.selectionEnd = start + before.length + selected.length;
+
+        // 组合新的文本
+        const newText = before + selected + after;
+
+        // 选中要替换的文本
+        editor.selectionStart = start;
+        editor.selectionEnd = end;
         editor.focus();
+
+        // 使用 execCommand 支持撤销
+        document.execCommand('insertText', false, newText);
+
+        // 调整光标位置（在结束标记之前）
+        const newCursorPos = start + before.length + selected.length;
+        editor.selectionStart = editor.selectionEnd = newCursorPos;
+
         updateLineNumbers();
         updateEditorFootBar();
         render();
@@ -1646,14 +2307,25 @@ sequenceDiagram
     function insertTextAtLineStart(text) {
         const value = editor.value;
         const start = editor.selectionStart;
+
+        // 找到行首
         let lineStart = start;
         while (lineStart > 0 && value[lineStart - 1] !== "\n") {
             lineStart--;
         }
-        editor.value = value.substring(0, lineStart) + text + value.substring(lineStart);
+
+        // 选中行首位置（实际上不选中任何内容，只是定位）
+        editor.selectionStart = lineStart;
+        editor.selectionEnd = lineStart;
+        editor.focus();
+
+        // 使用 execCommand 支持撤销
+        document.execCommand('insertText', false, text);
+
+        // 移动光标到插入文本的末尾
         const newPos = lineStart + text.length;
         editor.selectionStart = editor.selectionEnd = newPos;
-        editor.focus();
+
         updateLineNumbers();
         updateEditorFootBar();
         render();
@@ -1724,6 +2396,9 @@ sequenceDiagram
         } else if (ctrl && shift && e.key === "T") {
             e.preventDefault();
             tableAction();
+        } else if (ctrl && e.key === "d") {
+            e.preventDefault();
+            deleteCurrentLine();
         }
     });
 
@@ -1858,7 +2533,15 @@ sequenceDiagram
     // 初始化
     updateLineNumbers();
     updateEditorFootBar();
+
+    // 初始化主题和深色模式
+    // 先生成主题选项（根据当前深色模式状态）
+    generateThemeOptions(isDarkMode);
+    // 然后应用主题
+    applyTheme();
+
     initEditorBackgroundColor();
+    initPreviewBackgroundColor();
 
     // 初始化工具栏显示状态
     if (!isToolbarVisible) {
@@ -2060,29 +2743,165 @@ sequenceDiagram
         resizerContainer.style.display = "none";
     }
 
-    /* 主题 */
-    function changeTheme(theme) {
+    /* 选择主题 */
+    function selectTheme(themeKey) {
+        const theme = themes[themeKey];
+        if (!theme) return;
+
+        currentTheme = themeKey;
+        localStorage.setItem("mdEditor_theme", themeKey);
+
+        // 如果在浅色模式下选择了不支持浅色的主题，自动切换到深色模式
+        if (!isDarkMode && !theme.hasDarkVariant) {
+            isDarkMode = true;
+            localStorage.setItem("mdEditor_darkMode", "true");
+        }
+
+        applyTheme();
+    }
+
+    /* 切换深色/浅色模式 */
+    function toggleDarkMode() {
+        isDarkMode = !isDarkMode;
+        localStorage.setItem("mdEditor_darkMode", isDarkMode ? "true" : "false");
+
+        // 先检查当前主题是否支持新模式
+        const theme = themes[currentTheme];
+        if (theme && !isDarkMode && !theme.hasDarkVariant) {
+            // 浅色模式下，当前主题不支持，自动切换到 GitHub
+            currentTheme = 'github';
+            localStorage.setItem("mdEditor_theme", currentTheme);
+        }
+
+        applyTheme();
+    }
+
+    /* 应用主题和深色模式 */
+    function applyTheme() {
+        const theme = themes[currentTheme];
+        if (!theme) return;
+
         const body = document.body;
         const mdTheme = document.getElementById("markdownTheme");
         const codeTheme = document.getElementById("codeTheme");
-        body.classList.remove("dark");
-        if (theme === "dark") {
+
+        // 应用深色/浅色模式到body
+        if (isDarkMode) {
             body.classList.add("dark");
-            mdTheme.href = "https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown-dark.min.css";
-            codeTheme.href = "https://cdn.jsdelivr.net/npm/highlight.js/styles/github-dark.min.css";
-        } else if (theme === "solarized") {
-            mdTheme.href = "https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.min.css";
-            codeTheme.href = "https://cdn.jsdelivr.net/npm/highlight.js/styles/solarized-light.min.css";
         } else {
-            mdTheme.href = "https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.min.css";
-            codeTheme.href = "https://cdn.jsdelivr.net/npm/highlight.js/styles/github.min.css";
+            body.classList.remove("dark");
         }
 
-        // 更新编辑器背景颜色
-        const savedColor = localStorage.getItem("mdEditor_bgColor");
-        const savedColorDark = localStorage.getItem("mdEditor_bgColor_dark");
-        if (savedColor && savedColorDark) {
-            setEditorBackgroundColor(savedColor, savedColorDark);
+        // 重新生成主题选项（根据深色/浅色模式）
+        generateThemeOptions(isDarkMode);
+
+        // 更新主题按钮文字
+        const themeBtn = document.getElementById("tb-theme");
+        if (themeBtn) {
+            themeBtn.innerHTML = '<i class="bi bi-markdown"></i> ' + theme.name;
+        }
+
+        // 应用主题CSS
+        if (isDarkMode && theme.markdownDark) {
+            mdTheme.href = theme.markdownDark;
+        } else {
+            mdTheme.href = theme.markdownLight;
+        }
+
+        if (isDarkMode && theme.codeDark) {
+            codeTheme.href = theme.codeDark;
+        } else {
+            codeTheme.href = theme.codeLight;
+        }
+
+        // 更新深色模式按钮图标
+        const darkModeIcon = document.getElementById("darkModeIcon");
+        if (isDarkMode) {
+            darkModeIcon.className = "bi bi-sun";
+        } else {
+            darkModeIcon.className = "bi bi-moon";
+        }
+
+        // 重新生成颜色选项
+        generateEditorColorOptions(isDarkMode);
+        generatePreviewColorOptions(isDarkMode);
+
+        // 应用编辑器背景颜色
+        const editorColorKey = isDarkMode ? "mdEditor_bgColor_dark" : "mdEditor_bgColor_light";
+        const savedEditorColor = localStorage.getItem(editorColorKey);
+        if (savedEditorColor !== null) {
+            const editorTextarea = document.getElementById("editor");
+            const lineNumbers = document.getElementById("lineNumbers");
+            const bgColorBtn = document.getElementById("tb-bgColor");
+
+            editorTextarea.style.backgroundColor = savedEditorColor;
+            lineNumbers.style.backgroundColor = savedEditorColor;
+            bgColorBtn.style.backgroundColor = savedEditorColor || "";
+        }
+
+        // 应用预览背景颜色
+        const previewColorKey = isDarkMode ? "mdEditor_previewBgColor_dark" : "mdEditor_previewBgColor_light";
+        const savedPreviewColor = localStorage.getItem(previewColorKey);
+        if (savedPreviewColor !== null) {
+            const preview = document.getElementById("preview");
+            const bgColorBtn = document.getElementById("p-tb-bgColor");
+
+            preview.style.backgroundColor = savedPreviewColor;
+            bgColorBtn.style.backgroundColor = savedPreviewColor || "";
+        }
+    }
+
+    /* 生成主题下拉选项 */
+    function generateThemeOptions(isDark) {
+        const themeDropdown = document.getElementById("theme-dropdown");
+        themeDropdown.innerHTML = "";
+
+        for (const [key, theme] of Object.entries(themes)) {
+            // 浅色模式下，只显示有浅色变体的主题（hasDarkVariant: true）
+            if (!isDark && !theme.hasDarkVariant) {
+                continue;
+            }
+
+            const li = document.createElement("li");
+            const button = document.createElement("button");
+            button.className = "btn btn-control btn-p-sm dropdown-item";
+            button.dataset.theme = key;
+            button.innerHTML = theme.name;
+            button.onclick = function() {
+                selectTheme(key);
+            };
+
+            // 标记当前选中的主题
+            if (key === currentTheme) {
+                button.classList.add("active");
+            }
+
+            li.appendChild(button);
+            themeDropdown.appendChild(li);
+        }
+
+        // 如果当前主题不在选项中（浅色模式下选择了深色主题），自动切换到第一个可用主题
+        let themeExists = false;
+        for (const [key, theme] of Object.entries(themes)) {
+            if (key === currentTheme && (isDark || theme.hasDarkVariant)) {
+                themeExists = true;
+                break;
+            }
+        }
+
+        if (!themeExists) {
+            const firstButton = themeDropdown.querySelector("button");
+            if (firstButton) {
+                const firstTheme = firstButton.dataset.theme;
+                currentTheme = firstTheme;
+                localStorage.setItem("mdEditor_theme", currentTheme);
+
+                // 更新active状态
+                themeDropdown.querySelectorAll("button").forEach(btn => {
+                    btn.classList.remove("active");
+                });
+                firstButton.classList.add("active");
+            }
         }
     }
 
@@ -2183,6 +3002,7 @@ sequenceDiagram
             });
 
             currentFileHandle = fileHandle;
+            draggedFileName = null;  // 清除拖拽文件标记
             const file = await fileHandle.getFile();
             const contents = await file.text();
 
@@ -2198,18 +3018,184 @@ sequenceDiagram
         }
     }
 
-    /* 拖拽插入图片 */
-    editor.addEventListener("dragover", e => e.preventDefault());
+    /* 打开拖拽的文件 */
+    async function openDroppedFile(file) {
+        // 检查是否是 Markdown 文件
+        if (!file.name.endsWith('.md') && file.type !== 'text/markdown') {
+            showToast('请拖入 Markdown 文件 (.md)', 'error');
+            return false;
+        }
+
+        try {
+            const contents = await file.text();
+
+            editor.value = contents;
+            currentFileHandle = null;  // 拖拽的文件没有可写句柄
+            draggedFileName = file.name;  // 保存文件名用于后续保存
+            updateFileName(file.name + ' （拖入）');  // 标记为拖入状态
+            render();
+            showToast(`已打开: ${file.name}\n按 Ctrl+S 保存时将选择位置`, 5000);
+            return true;
+        } catch (err) {
+            console.error('打开拖拽文件失败:', err);
+            showToast('打开文件失败', 'error');
+            return false;
+        }
+    }
+
+    /* 容器拖拽事件 */
+    const container = document.querySelector('.container');
+    const dragOverlay = document.getElementById('dragOverlay');
+    let dragCounter = 0;  // 用于跟踪拖拽进入/离开次数
+
+    // 在 body 上监听拖拽进入事件
+    document.body.addEventListener('dragenter', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dragCounter++;
+        dragOverlay.classList.add('show');
+    });
+
+    // 监听拖拽离开事件
+    document.body.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dragCounter--;
+        if (dragCounter <= 0) {
+            dragCounter = 0;
+            dragOverlay.classList.remove('show');
+        }
+    });
+
+    // 监听拖拽结束（取消拖拽时会触发）
+    document.addEventListener('dragend', (e) => {
+        dragCounter = 0;
+        dragOverlay.classList.remove('show');
+    });
+
+    // 监听 drop 事件（拖拽成功放下）
+    document.addEventListener('drop', (e) => {
+        dragCounter = 0;
+        dragOverlay.classList.remove('show');
+    });
+
+    // 监听 ESC 键（取消拖拽、关闭模态框）
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            dragCounter = 0;
+            dragOverlay.classList.remove('show');
+            hideAboutModal();  // 关闭 About 模态框
+        }
+    });
+
+    // 在 overlay 上阻止 dragleave
+    dragOverlay.addEventListener('dragenter', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dragCounter++;
+    });
+
+    dragOverlay.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
+    // 处理文件拖放（在 overlay 上）
+    dragOverlay.addEventListener('drop', async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dragOverlay.classList.remove('show');
+
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            const file = files[0];
+            await openDroppedFile(file);
+        }
+    });
+
+    // 处理文件拖放（在 container 上）
+    container.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
+    container.addEventListener('drop', async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dragOverlay.classList.remove('show');
+
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            const file = files[0];
+            await openDroppedFile(file);
+        }
+    });
+
+    // 防止默认拖拽行为
+    document.body.addEventListener('dragover', (e) => {
+        e.preventDefault();
+    });
+
+    document.body.addEventListener('drop', (e) => {
+        e.preventDefault();
+    });
+
+    /* 拖拽事件 - 编辑器区域不允许拖放（由容器统一处理） */
+    editor.addEventListener("dragover", e => {
+        e.preventDefault();
+        e.stopPropagation();
+    });
     editor.addEventListener("drop", e => {
         e.preventDefault();
+        e.stopPropagation();
+
+        // 先隐藏拖拽提示层
+        dragOverlay.classList.remove('show');
+
         const file = e.dataTransfer.files[0];
-        if (file && file.type.startsWith("image/")) {
-            const reader = new FileReader();
-            reader.onload = ev => {
-                editor.value += "\n![](" + ev.target.result + ")\n";
-                render();
-            };
-            reader.readAsDataURL(file);
+        if (file) {
+            // 如果是 Markdown 文件，打开文件
+            if (file.name.endsWith('.md') || file.type === 'text/markdown') {
+                openDroppedFile(file);
+            }
+            else {
+                showToast('请拖入 Markdown 文件 (.md)', 'error');
+            }
+        }
+    });
+
+    /* 粘贴图片 */
+    editor.addEventListener("paste", e => {
+        const items = e.clipboardData.items;
+
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+
+            // 检查是否为图片
+            if (item.type.indexOf("image") !== -1) {
+                e.preventDefault();
+                const file = item.getAsFile();
+                const reader = new FileReader();
+
+                reader.onload = function(ev) {
+                    const base64 = ev.target.result;
+                    const start = editor.selectionStart;
+                    const end = editor.selectionEnd;
+                    const value = editor.value;
+
+                    // 在光标位置插入图片
+                    editor.value = value.substring(0, start) + "\n![](" + base64 + ")\n" + value.substring(end);
+
+                    // 重新定位光标
+                    editor.selectionStart = editor.selectionEnd = start + base64.length + 9;
+                    editor.focus();
+
+                    render();
+                };
+
+                reader.readAsDataURL(file);
+                return;
+            }
         }
     });
 
@@ -2221,8 +3207,36 @@ sequenceDiagram
             await writable.close();
             updateFileName(currentFileHandle.name);
             showToast('保存成功！');
+        } else if (draggedFileName) {
+            // 拖拽打开的文件，首次保存需要选择位置
+            showToast('请选择保存位置（已自动填入原文件名）', 'success', 3000);
+            await saveAsWithSuggestedName(draggedFileName);
         } else {
             await saveAs();
+        }
+    }
+
+    /* 另存为（带建议文件名） */
+    async function saveAsWithSuggestedName(suggestedName) {
+        try {
+            currentFileHandle = await window.showSaveFilePicker({
+                suggestedName: suggestedName,
+                types: [{
+                    description: 'Markdown文件',
+                    accept: {'text/markdown': ['.md']}
+                }]
+            });
+            const writable = await currentFileHandle.createWritable();
+            await writable.write(editor.value);
+            await writable.close();
+            updateFileName(currentFileHandle.name);  // 更新文件名（去掉"只读"标记）
+            draggedFileName = null;  // 清除拖拽文件标记
+            showToast('保存成功！\n后续保存将直接写入此文件', 3000);
+        } catch (err) {
+            if (err.name !== 'AbortError') {
+                console.error('保存失败:', err);
+                showToast('保存失败', 'error');
+            }
         }
     }
 
@@ -2255,7 +3269,7 @@ sequenceDiagram
     }
 
     /* Toast提示 */
-    function showToast(message, type = 'success') {
+    function showToast(message, type = 'success', duration = 2000) {
         const toast = document.getElementById('toast');
         toast.textContent = message;
         toast.className = 'toast ' + type;
@@ -2263,7 +3277,7 @@ sequenceDiagram
 
         setTimeout(() => {
             toast.classList.remove('show');
-        }, 2000);
+        }, duration);
     }
 
     /* 新建文件 */
@@ -2271,6 +3285,7 @@ sequenceDiagram
         if (confirm('新建文件将清空当前内容，确定继续吗？')) {
             editor.value = "";
             currentFileHandle = null;
+            draggedFileName = null;
             localStorage.setItem("mdEditor_content", "");
             updateFileName("未命名文件");
             render();
@@ -2279,6 +3294,8 @@ sequenceDiagram
 
     /* PDF */
     function exportPDF() {
+        showToast('正在生成 PDF，请稍候...', 'success');
+
         const fileName = document.getElementById("currentFileName").textContent;
         const pdfFileName = fileName.replace(/\.md$/, '') + '.pdf';
 
@@ -2299,7 +3316,12 @@ sequenceDiagram
             pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
         };
 
-        html2pdf().set(opt).from(preview).save();
+        html2pdf().set(opt).from(preview).save().then(() => {
+            showToast('PDF 导出成功！');
+        }).catch(err => {
+            console.error('PDF导出失败:', err);
+            showToast('PDF 导出失败', 'error');
+        });
     }
 
     /* 打印 */
@@ -2318,12 +3340,40 @@ sequenceDiagram
 
     /* 导出图片 */
     function exportImage() {
-        html2canvas(previewContentWrapper || preview, {scale: 2, useCORS: true}).then(canvas => {
+        showToast('正在生成图片，请稍候...', 'success');
+
+        // 使用 onclone 回调来修改克隆的元素，移除高度和滚动限制
+        html2canvas(preview, {
+            scale: 2,
+            useCORS: true,
+            windowHeight: preview.scrollHeight,
+            windowWidth: preview.scrollWidth,
+            onclone: function(clonedDoc) {
+                const clonedPreview = clonedDoc.getElementById('preview');
+                if (clonedPreview) {
+                    // 移除所有高度和宽度限制，让内容完全展开
+                    clonedPreview.style.height = 'auto';
+                    clonedPreview.style.maxHeight = 'none';
+                    clonedPreview.style.maxWidth = 'none';
+                    clonedPreview.style.overflow = 'visible';
+                }
+                const clonedWrapper = clonedDoc.querySelector('.preview-content-wrapper');
+                if (clonedWrapper) {
+                    clonedWrapper.style.height = 'auto';
+                    clonedWrapper.style.maxHeight = 'none';
+                    clonedWrapper.style.overflow = 'visible';
+                }
+            }
+        }).then(canvas => {
             const link = document.createElement("a");
             const fileName = document.getElementById("currentFileName").textContent || "document";
             link.download = fileName.replace(/\.md$/, '') + ".png";
             link.href = canvas.toDataURL();
             link.click();
+            showToast('图片导出成功！');
+        }).catch(err => {
+            console.error('导出图片失败:', err);
+            showToast('导出图片失败', 'error');
         });
     }
 
@@ -2450,6 +3500,50 @@ sequenceDiagram
             delete settingBtn.dataset.select;
         }
     }
+
+    /* 重置所有设置 */
+    function resetAllSettings() {
+        if (confirm('确定要重置所有设置吗？这将清除所有保存的设置和偏好。')) {
+            // 清除所有 localStorage 中的 mdEditor 相关数据
+            const keysToRemove = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('mdEditor_')) {
+                    keysToRemove.push(key);
+                }
+            }
+
+            // 删除所有找到的键
+            keysToRemove.forEach(key => {
+                localStorage.removeItem(key);
+            });
+
+            // 显示提示并刷新页面
+            showToast('设置已重置，页面将重新加载...', 'success', 2000);
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
+        }
+    }
+
+    /* 显示 About 模态框 */
+    function showAboutModal() {
+        const modal = document.getElementById('aboutModal');
+        modal.classList.add('show');
+    }
+
+    /* 隐藏 About 模态框 */
+    function hideAboutModal() {
+        const modal = document.getElementById('aboutModal');
+        modal.classList.remove('show');
+    }
+
+    // 点击模态框外部关闭
+    document.getElementById('aboutModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            hideAboutModal();
+        }
+    });
 
     /* 快捷键监听 */
     document.addEventListener('keydown', function(e) {
