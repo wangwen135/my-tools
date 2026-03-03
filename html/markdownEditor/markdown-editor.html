@@ -760,7 +760,7 @@
             padding: 8px 16px;
             border-radius: 4px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
+            z-index: 10000;
             opacity: 0;
             transition: opacity 0.3s, transform 0.3s;
             font-size: 13px;
@@ -1281,6 +1281,201 @@
         .dark .dropdown-menu .btn-control.dropdown-item:hover {
             background-color: #343a40 !important;
         }
+
+        /* 查找替换浮动面板样式 */
+        #findReplacePanel {
+            display: none;
+            position: fixed;
+            top: 60px;
+            right: 20px;
+            width: 400px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+            cursor: move;
+        }
+
+        .dark #findReplacePanel {
+            background: #161b22;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        #findReplacePanel.show {
+            display: block;
+        }
+
+        #findReplacePanel .panel-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: move;
+            user-select: none;
+            background: #f6f8fa;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .dark #findReplacePanel .panel-header {
+            background: #21262d;
+            border-bottom-color: #30363d;
+        }
+
+        #findReplacePanel .panel-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #24292f;
+        }
+
+        .dark #findReplacePanel .panel-title {
+            color: #c9d1d9;
+        }
+
+        #findReplacePanel .panel-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            line-height: 1;
+            color: #666;
+            cursor: pointer;
+            padding: 0 4px;
+        }
+
+        #findReplacePanel .panel-close:hover {
+            color: #333;
+        }
+
+        .dark #findReplacePanel .panel-close {
+            color: #8b949e;
+        }
+
+        .dark #findReplacePanel .panel-close:hover {
+            color: #c9d1d9;
+        }
+
+        #findReplacePanel .panel-body {
+            padding: 16px;
+        }
+
+        #findReplacePanel .find-replace-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            justify-content: space-between;
+        }
+
+        #findReplacePanel .find-replace-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        #findReplacePanel .find-replace-row:last-child {
+            margin-bottom: 0;
+        }
+
+        #findReplacePanel .find-replace-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .dark #findReplacePanel .find-replace-input {
+            background: #0d1117;
+            border-color: #30363d;
+            color: #c9d1d9;
+        }
+
+        #findReplacePanel .find-replace-input:focus {
+            outline: none;
+            border-color: #228be6;
+            box-shadow: 0 0 0 3px rgba(34, 139, 230, 0.1);
+        }
+
+        #findReplacePanel .find-replace-btn {
+            padding: 8px 14px;
+            font-size: 13px;
+            border: 1px solid #d0d7de;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .dark #findReplacePanel .find-replace-btn {
+            background: #21262d;
+            border-color: #30363d;
+            color: #c9d1d9;
+        }
+
+        #findReplacePanel .find-replace-btn:hover {
+            background: #f3f4f6;
+        }
+
+        .dark #findReplacePanel .find-replace-btn:hover {
+            background: #30363d;
+        }
+
+        #findReplacePanel .find-replace-btn.primary {
+            background: #228be6;
+            color: white;
+            border-color: #228be6;
+        }
+
+        #findReplacePanel .find-replace-btn.primary:hover {
+            background: #1c7ed6;
+        }
+
+        #findReplacePanel .find-replace-info {
+            color: #666;
+            font-size: 13px;
+            white-space: nowrap;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .dark #findReplacePanel .find-replace-info {
+            color: #8b949e;
+        }
+
+        #findReplacePanel .find-replace-shortcuts {
+            display: flex;
+            gap: 2px;
+            font-size: 10px;
+            color: #888;
+        }
+
+        .dark #findReplacePanel .find-replace-shortcuts {
+            color: #8b949e;
+        }
+
+        #findReplacePanel .find-replace-shortcuts span {
+            font-family: Consolas, monospace;
+            background: #f1f3f5;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .dark #findReplacePanel .find-replace-shortcuts span {
+            background: #30363d;
+        }
+
+        #findReplacePanel .find-replace-message {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            min-height: 18px;
+        }
+
+        .dark #findReplacePanel .find-replace-message {
+            color: #8b949e;
+        }
     </style>
 </head>
 
@@ -1438,6 +1633,37 @@ MIT License
                 </li>
             </ul>
         </div>
+    </div>
+</div>
+
+<!-- 查找替换浮动面板 -->
+<div id="findReplacePanel">
+    <div class="panel-header" id="findReplacePanelHeader">
+        <span class="panel-title"><i class="bi bi-search"></i> 查找和替换</span>
+        <button class="panel-close" onclick="closeFindReplacePanel()">&times;</button>
+    </div>
+    <div class="panel-body">
+        <div class="find-replace-row">
+            <input type="text" id="find-input" class="find-replace-input" placeholder="查找内容">
+            <button class="find-replace-btn primary" onclick="performFind()">🔍 查找</button>
+        </div>
+        <div class="find-replace-row">
+            <span class="find-replace-info">第 <span id="find-current">0</span> 个/共 <span id="find-total">0</span> 个</span>
+            <div class="find-replace-controls">
+                <button class="find-replace-btn" onclick="findPrevious()">◀</button>
+                <button class="find-replace-btn" onclick="findNext()">▶</button>
+                <span class="find-replace-shortcuts">
+                    <span>Shift+F3</span>
+                    <span>F3</span>
+                </span>
+            </div>
+        </div>
+        <div class="find-replace-row">
+            <input type="text" id="replace-input" class="find-replace-input" placeholder="替换为">
+            <button class="find-replace-btn" onclick="replaceCurrent()">替换</button>
+            <button class="find-replace-btn" onclick="replaceAll()">全部替换</button>
+        </div>
+        <div class="find-replace-message" id="find-replace-message"></div>
     </div>
 </div>
 
@@ -1818,20 +2044,20 @@ sequenceDiagram
 - `Ctrl+U`: 下划线
 - `Ctrl+Shift+S`: 删除线
 
-#### 标题和列表
+#### 标题和引用
 - `Ctrl+1` ~ `Ctrl+6`: 插入 1-6 级标题
 - `Ctrl+Shift+Q`: 引用
-- `Ctrl+Shift+[`: 无序列表
-- `Ctrl+Shift+]`: 有序列表
-
-#### 插入元素
-- `Ctrl+Shift+T`: 插入表格
 
 #### 编辑操作
+- `Ctrl+F`: 打开查找
+- `Ctrl+H`: 打开查找和替换
 - `Ctrl+S`: 保存文件
 - `Ctrl+D`: 删除当前行
 - `Ctrl+Z`: 撤销
 - `Ctrl+Y` 或 `Ctrl+Shift+Z`: 重做
+
+#### 其他功能
+- 粘贴图片自动转换为 Base64 格式（可在高级设置中关闭）
 
 ### 导出功能
 支持导出为 PDF、图片、HTML 等多种格式。
@@ -2616,6 +2842,306 @@ erDiagram
         render();
     }
 
+    /* ============ 查找替换功能 ============ */
+    let findResults = [];
+    let currentFindIndex = -1;
+    let isFindPanelOpen = false;
+    let isDragging = false;
+    let dragOffsetX = 0;
+    let dragOffsetY = 0;
+
+    // 打开查找面板
+    function openFindPanel() {
+        const panel = document.getElementById('findReplacePanel');
+
+        // 首次打开时，将面板居中并置于工具栏下方
+        const panelWidth = panel.offsetWidth || 400;
+        const panelHeight = panel.offsetHeight || 300;
+        const windowWidth = window.innerWidth;
+
+        panel.style.left = ((windowWidth - panelWidth) / 2) + 'px';
+        panel.style.top = '90px';  // 工具栏下方
+        panel.style.right = 'auto';
+
+        panel.classList.add('show');
+        const findInput = document.getElementById('find-input');
+        findInput.focus();
+        isFindPanelOpen = true;
+
+        // 如果编辑器中有选中文本，自动填充到查找框
+        if (editor.selectionStart !== editor.selectionEnd) {
+            const selectedText = editor.value.substring(editor.selectionStart, editor.selectionEnd);
+            findInput.value = selectedText;
+        }
+    }
+
+    // 打开替换面板（与查找相同）
+    function openReplacePanel() {
+        openFindPanel();
+    }
+
+    // 关闭查找替换面板
+    function closeFindReplacePanel() {
+        const panel = document.getElementById('findReplacePanel');
+        panel.classList.remove('show');
+        document.getElementById('find-input').value = '';
+        document.getElementById('replace-input').value = '';
+        document.getElementById('find-current').textContent = '0';
+        document.getElementById('find-total').textContent = '0';
+        findResults = [];
+        currentFindIndex = -1;
+        isFindPanelOpen = false;
+    }
+
+    // 执行查找
+    function performFind() {
+        const searchText = document.getElementById('find-input').value;
+
+        if (!searchText) {
+            document.getElementById('find-current').textContent = '0';
+            document.getElementById('find-total').textContent = '0';
+            findResults = [];
+            currentFindIndex = -1;
+            return;
+        }
+
+        // 如果已经有查找结果，直接跳到下一个
+        if (findResults.length > 0) {
+            findNext();
+            return;
+        }
+
+        // 首次查找
+        const content = editor.value;
+        findResults = [];
+
+        // 简单查找，不区分大小写
+        const regex = new RegExp(searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+        let match;
+
+        while ((match = regex.exec(content)) !== null) {
+            findResults.push({
+                start: match.index,
+                end: match.index + match[0].length,
+                text: match[0]
+            });
+
+            // 防止无限循环（零宽度匹配）
+            if (match.index === regex.lastIndex) {
+                regex.lastIndex++;
+            }
+        }
+
+        // 显示当前/总数
+        if (findResults.length > 0) {
+            currentFindIndex = 0;
+            document.getElementById('find-current').textContent = currentFindIndex + 1;
+            document.getElementById('find-total').textContent = findResults.length;
+            goToFindResult(0);
+        } else {
+            document.getElementById('find-current').textContent = '0';
+            document.getElementById('find-total').textContent = '0';
+        }
+    }
+
+    // 跳转到指定查找结果
+    function goToFindResult(index) {
+        if (index < 0 || index >= findResults.length) return;
+
+        currentFindIndex = index;
+        const result = findResults[index];
+
+        editor.focus();
+        editor.setSelectionRange(result.start, result.end);
+
+        // 更新计数显示
+        document.getElementById('find-current').textContent = currentFindIndex + 1;
+        document.getElementById('find-total').textContent = findResults.length;
+
+        // 滚动到可见区域
+        const textBefore = editor.value.substring(0, result.start);
+        const linesBefore = textBefore.split('\n').length;
+        // 获取实际行高：字体大小16px * line-height 1.8 = 28.8px
+        const computedStyle = window.getComputedStyle(editor);
+        const fontSize = parseFloat(computedStyle.fontSize);
+        const lineHeight = parseFloat(computedStyle.lineHeight) || (fontSize * 1.8);
+        const scrollPos = (linesBefore - 10) * lineHeight;
+        editor.scrollTop = scrollPos > 0 ? scrollPos : 0;
+    }
+
+    // 查找下一个
+    function findNext() {
+        if (findResults.length === 0) {
+            performFind();
+            return;
+        }
+
+        currentFindIndex++;
+        if (currentFindIndex >= findResults.length) {
+            currentFindIndex = 0;
+        }
+
+        goToFindResult(currentFindIndex);
+    }
+
+    // 查找上一个
+    function findPrevious() {
+        if (findResults.length === 0) {
+            performFind();
+            return;
+        }
+
+        currentFindIndex--;
+        if (currentFindIndex < 0) {
+            currentFindIndex = findResults.length - 1;
+        }
+
+        goToFindResult(currentFindIndex);
+    }
+
+    // 替换当前匹配
+    function replaceCurrent() {
+        if (currentFindIndex < 0 || currentFindIndex >= findResults.length) {
+            showToast('没有找到匹配项', 'warning');
+            return;
+        }
+
+        const result = findResults[currentFindIndex];
+        const replaceText = document.getElementById('replace-input').value;
+        const searchText = document.getElementById('find-input').value;
+
+        const content = editor.value;
+        const before = content.substring(0, result.start);
+        const after = content.substring(result.end);
+
+        editor.value = before + replaceText + after;
+
+        // 重新执行查找以获取新的结果
+        performFind();
+
+        // 更新行号和状态
+        updateLineNumbers();
+        updateEditorFootBar();
+        render();
+
+        // 显示替换提示
+        const messageEl = document.getElementById('find-replace-message');
+        if (findResults.length > 0) {
+            messageEl.textContent = `已替换 1 处，剩余 ${findResults.length} 处`;
+        } else {
+            messageEl.textContent = '已替换所有匹配项';
+        }
+
+        // 3秒后清除提示
+        setTimeout(() => {
+            messageEl.textContent = '';
+        }, 3000);
+    }
+
+    // 全部替换
+    function replaceAll() {
+        if (findResults.length === 0) {
+            showToast('没有找到匹配项', 'warning');
+            return;
+        }
+
+        const replaceText = document.getElementById('replace-input').value;
+        let content = editor.value;
+        let replaceCount = 0;
+
+        // 从后往前替换，避免索引变化问题
+        for (let i = findResults.length - 1; i >= 0; i--) {
+            const result = findResults[i];
+            content = content.substring(0, result.start) + replaceText + content.substring(result.end);
+            replaceCount++;
+        }
+
+        editor.value = content;
+
+        // 清空查找结果
+        findResults = [];
+        currentFindIndex = -1;
+        document.getElementById('find-count').textContent = '0';
+
+        // 更新行号和状态
+        updateLineNumbers();
+        updateEditorFootBar();
+        render();
+
+        showToast(`已全部替换，共 ${replaceCount} 处`, 'success');
+    }
+
+    // 查找面板拖拽和事件监听
+    document.addEventListener('DOMContentLoaded', function() {
+        const panel = document.getElementById('findReplacePanel');
+        const panelHeader = document.getElementById('findReplacePanelHeader');
+        const findInput = document.getElementById('find-input');
+        const replaceInput = document.getElementById('replace-input');
+
+        // 拖拽功能
+        panelHeader.addEventListener('mousedown', function(e) {
+            if (e.target.classList.contains('panel-close')) return;
+            isDragging = true;
+            dragOffsetX = e.clientX - panel.offsetLeft;
+            dragOffsetY = e.clientY - panel.offsetTop;
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (!isDragging) return;
+            const x = e.clientX - dragOffsetX;
+            const y = e.clientY - dragOffsetY;
+
+            // 确保不拖出屏幕
+            const maxX = window.innerWidth - panel.offsetWidth;
+            const maxY = window.innerHeight - panel.offsetHeight;
+
+            panel.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
+            panel.style.top = Math.max(0, Math.min(y, maxY)) + 'px';
+            panel.style.right = 'auto';
+        });
+
+        document.addEventListener('mouseup', function() {
+            isDragging = false;
+        });
+
+        // 查找输入框事件
+        findInput.addEventListener('keydown', function(e) {
+            e.stopPropagation();
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                performFind();
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                closeFindReplacePanel();
+            }
+        });
+
+        findInput.addEventListener('input', function(e) {
+            e.stopPropagation();
+            findResults = [];
+            currentFindIndex = -1;
+            document.getElementById('find-current').textContent = '0';
+            document.getElementById('find-total').textContent = '0';
+        });
+
+        // 替换输入框事件
+        replaceInput.addEventListener('keydown', function(e) {
+            e.stopPropagation();
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                replaceCurrent();
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                closeFindReplacePanel();
+            }
+        });
+
+        replaceInput.addEventListener('input', function(e) {
+            e.stopPropagation();
+        });
+    });
+
     /* 自动保存 */
     editor.value = localStorage.getItem("mdEditor_content") || editor.value;
 
@@ -3296,7 +3822,7 @@ erDiagram
             draggedFileName = file.name;  // 保存文件名用于后续保存
             updateFileName(file.name + ' （拖入）');  // 标记为拖入状态
             render();
-            showToast(`已打开: ${file.name}\n按 Ctrl+S 保存时将选择位置`, 5000);
+            showToast(`已打开: ${file.name}\n按 Ctrl+S 保存时将选择位置`, 'success', 5000);
             return true;
         } catch (err) {
             console.error('打开拖拽文件失败:', err);
@@ -3321,6 +3847,8 @@ erDiagram
     // 显示 overlay 时添加 ESC 监听
     function showDragOverlay() {
         dragOverlay.classList.add('show');
+        // 先移除已存在的监听器，避免重复绑定
+        document.removeEventListener('keydown', handleDragEscape);
         document.addEventListener('keydown', handleDragEscape);
     }
 
@@ -3515,7 +4043,7 @@ erDiagram
             await writable.close();
             updateFileName(currentFileHandle.name);  // 更新文件名（去掉"只读"标记）
             draggedFileName = null;  // 清除拖拽文件标记
-            showToast('保存成功！\n后续保存将直接写入此文件', 3000);
+            showToast('保存成功！\n后续保存将直接写入此文件', 'success', 3000);
         } catch (err) {
             if (err.name !== 'AbortError') {
                 console.error('保存失败:', err);
@@ -3901,6 +4429,19 @@ erDiagram
         if (e.ctrlKey && e.key === 's') {
             e.preventDefault();
             saveFile();
+        } else if (e.ctrlKey && e.key === 'f') {
+            e.preventDefault();
+            openFindPanel();
+        } else if (e.ctrlKey && e.key === 'h') {
+            e.preventDefault();
+            openReplacePanel();
+        } else if (e.key === 'F3') {
+            e.preventDefault();
+            if (e.shiftKey) {
+                findPrevious();
+            } else {
+                findNext();
+            }
         }
     });
 </script>
