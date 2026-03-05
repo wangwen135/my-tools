@@ -38,9 +38,13 @@
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
     <style>
-        body {
+        html, body {
             margin: 0;
             height: 100vh;
+            overflow: hidden;
+        }
+
+        body {
             display: flex;
             flex-direction: column;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI";
@@ -467,7 +471,7 @@
             display: flex;
             overflow: hidden;
             position: relative;
-            height: 100vh;
+            min-height: 0;
             width: 100%;
             max-width: 100%;
             margin: 0;
@@ -1670,21 +1674,6 @@ MIT License
 <div class="container">
     <div class="toc" id="toc"></div>
 
-<script>
-    /* 防抖函数 */
-    function debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    }
-</script>
-
     <div class="editor-container">
         <!--编辑工具栏-->
         <div id="editorToolbar" class="editor-preview-toolbar">
@@ -2158,6 +2147,19 @@ sequenceDiagram
     </div>
 </div>
 <script>
+    /* 防抖函数 */
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
     mermaid.initialize({startOnLoad: false});
 
     const editor = document.getElementById("editor");
