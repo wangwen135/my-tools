@@ -45,12 +45,6 @@ http://your-server/markdownReader/MarkdownReader.html?file=README.md
 - ✅ 本地文件可下载
 - ✅ 目录显示/隐藏切换
 
-### 样式设计
-- ✅ 现代化 UI 设计
-- ✅ 适配中文的系统字体
-- ✅ 流畅的动画效果
-- ✅ 支持减少动画模式（无障碍）
-
 ## 🔧 Nginx 配置示例
 
 ```nginx
@@ -80,16 +74,6 @@ server {
         add_header Access-Control-Allow-Origin *;
     }
 }
-```
-
-### 应用配置
-
-```bash
-# 测试配置
-sudo nginx -t
-
-# 重载 Nginx
-sudo nginx -s reload
 ```
 
 ## 📝 示例
