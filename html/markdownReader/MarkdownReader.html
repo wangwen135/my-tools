@@ -897,6 +897,97 @@
             padding: 24px;
         }
 
+        /* File selection tabs */
+        .file-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .file-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--fg-muted);
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .file-tab:hover {
+            color: var(--fg);
+        }
+
+        .file-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .file-tab-content {
+            display: none;
+        }
+
+        .file-tab-content.active {
+            display: block;
+        }
+
+        .local-file-btn {
+            width: 100%;
+            padding: 20px;
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            background: var(--bg);
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .local-file-btn:hover {
+            border-color: var(--accent);
+            background: var(--accent-light);
+        }
+
+        .local-file-btn svg {
+            width: 24px;
+            height: 24px;
+            color: var(--fg-muted);
+        }
+
+        .local-file-btn span {
+            font-size: 14px;
+            color: var(--fg);
+        }
+
+        .selected-file {
+            margin-top: 12px;
+            padding: 12px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 13px;
+            color: var(--fg);
+            display: none;
+        }
+
+        .selected-file.show {
+            display: block;
+        }
+
+        .selected-file-path {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--fg-muted);
+            word-break: break-all;
+        }
+
+        .selected-file-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
         .url-input {
             width: 100%;
             padding: 12px 16px;
@@ -1128,7 +1219,7 @@
 <div class="modal-overlay" id="modalOverlay"></div>
 <div class="modal" id="urlModal">
     <div class="modal-header">
-        <h3 class="modal-title">输入文件地址</h3>
+        <h3 class="modal-title">打开文件</h3>
         <button class="modal-close" id="modalClose" aria-label="关闭">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                  stroke-linejoin="round">
@@ -1138,7 +1229,28 @@
         </button>
     </div>
     <div class="modal-body">
-        <input type="text" id="urlInput" class="url-input" placeholder="本地路径: README.md 或 远程地址: https://example.com/file.md">
+        <div class="file-tabs">
+            <div class="file-tab active" data-tab="local">本地文件</div>
+            <div class="file-tab" data-tab="remote">远程地址</div>
+        </div>
+        <div class="file-tab-content active" id="localTab">
+            <button class="local-file-btn" id="localFileBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17,8 12,3 7,8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                <span>选择文件</span>
+            </button>
+            <input type="file" id="fileInput" accept=".md,.markdown,.txt" style="display: none;">
+            <div class="selected-file" id="selectedFile">
+                <div class="selected-file-name" id="selectedFileName"></div>
+                <div class="selected-file-path" id="selectedFilePath"></div>
+            </div>
+        </div>
+        <div class="file-tab-content" id="remoteTab">
+            <input type="text" id="urlInput" class="url-input" placeholder="输入远程文件地址，例如: https://example.com/file.md">
+        </div>
         <div class="modal-buttons">
             <button class="btn btn-secondary" id="modalCancel">取消</button>
             <button class="btn btn-primary" id="modalConfirm">打开</button>
@@ -1166,9 +1278,17 @@
     const modalConfirm = document.getElementById('modalConfirm');
     const urlInput = document.getElementById('urlInput');
     const dragOverlay = document.getElementById('dragOverlay');
+    const fileTabs = document.querySelectorAll('.file-tab');
+    const fileTabContents = document.querySelectorAll('.file-tab-content');
+    const localFileBtn = document.getElementById('localFileBtn');
+    const fileInput = document.getElementById('fileInput');
+    const selectedFile = document.getElementById('selectedFile');
+    const selectedFileName = document.getElementById('selectedFileName');
+    const selectedFilePath = document.getElementById('selectedFilePath');
     let currentMarkdownContent = '';
     let currentFilename = '';
     let isDragOver = false;
+    let selectedLocalFile = null;
 
     // ============ Width Selector ============
     const widthToggleBtn = document.getElementById('widthToggle');
@@ -1295,14 +1415,56 @@
     window.openModal = function() {
         modalOverlay.classList.add('visible');
         urlModal.classList.add('visible');
-        urlInput.focus();
+        // Reset to local tab
+        fileTabs.forEach(tab => tab.classList.remove('active'));
+        fileTabs[0].classList.add('active');
+        fileTabContents.forEach(content => content.classList.remove('active'));
+        fileTabContents[0].classList.add('active');
+        // Clear selections
+        selectedLocalFile = null;
+        selectedFile.classList.remove('show');
+        urlInput.value = '';
     };
 
     function closeModal() {
         modalOverlay.classList.remove('visible');
         urlModal.classList.remove('visible');
+        selectedLocalFile = null;
+        selectedFile.classList.remove('show');
         urlInput.value = '';
     }
+
+    // Tab switching
+    fileTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const tabType = tab.dataset.tab;
+            fileTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            fileTabContents.forEach(content => content.classList.remove('active'));
+            if (tabType === 'local') {
+                document.getElementById('localTab').classList.add('active');
+            } else {
+                document.getElementById('remoteTab').classList.add('active');
+                urlInput.focus();
+            }
+        });
+    });
+
+    // Local file selection
+    localFileBtn.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            const file = e.target.files[0];
+            selectedLocalFile = file;
+            selectedFileName.textContent = file.name;
+            // Try to get file path (webkitRelativePath may work in some browsers)
+            selectedFilePath.textContent = file.webkitRelativePath || file.name;
+            selectedFile.classList.add('show');
+        }
+    });
 
     filePathEl.addEventListener('click', () => {
         if (filePathEl.classList.contains('clickable')) {
@@ -1323,10 +1485,18 @@
     });
 
     modalConfirm.addEventListener('click', () => {
-        const url = urlInput.value.trim();
-        if (url) {
-            closeModal();
-            loadMarkdown(url);
+        const activeTab = document.querySelector('.file-tab.active').dataset.tab;
+        if (activeTab === 'local') {
+            if (selectedLocalFile) {
+                closeModal();
+                handleFile(selectedLocalFile);
+            }
+        } else {
+            const url = urlInput.value.trim();
+            if (url) {
+                closeModal();
+                loadMarkdown(url);
+            }
         }
     });
 
@@ -1594,11 +1764,11 @@
               <polyline points="14,2 14,8 20,8"/>
             </svg>
             <div class="empty-title">未选择文档</div>
-            <div class="empty-desc">在 URL 中添加 <code>?file=文档路径.md</code> 或 <code>?file=https://example.com/file.md</code> 来查看 Markdown 文件。<br><br>或点击右上角的「未选择文件」输入文件地址，或直接拖拽 Markdown 文件到页面。</div>
+            <div class="empty-desc">在 URL 中添加 <code>?file=文档路径.md</code> 或 <code>?file=https://example.com/file.md</code> 来查看 Markdown 文件。<br><br>或点击右上角的「请选择文件」打开本地或远程文件，或直接拖拽 Markdown 文件到页面。</div>
             <a href="?file=README.md" class="example-link">查看示例</a>
           </div>
         `;
-            filePathEl.textContent = '未选择文件';
+            filePathEl.textContent = '请选择文件';
             filePathEl.classList.add('clickable');
         }
     }
