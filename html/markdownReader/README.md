@@ -2,6 +2,23 @@
 
 一个简单的 Markdown 阅读器，支持本地文件、远程 URL 和拖拽打开 Markdown 文件。
 
+## 🚀 快速开始
+
+### 方式一：本地使用（推荐）
+
+1. 下载 `MarkdownReader.html` 文件到本地
+2. 双击文件，用浏览器打开即可使用
+3. 支持拖拽本地 Markdown 文件到页面中查看
+
+### 方式二：部署到服务器
+
+将 `MarkdownReader.html` 文件放到 Web 服务器的任意目录下，通过浏览器访问即可。
+
+**示例部署位置：**
+- Nginx: `/var/www/html/markdownReader/MarkdownReader.html`
+- Apache: `/var/www/html/markdownReader/MarkdownReader.html`
+- 访问地址: `http://your-server.com/markdownReader/MarkdownReader.html`
+
 ## 📖 使用方法
 
 ### 方式一：URL 参数
@@ -22,7 +39,7 @@ http://your-server/markdownReader/MarkdownReader.html?file=README.md
 
 ### 方式三：点击选择
 
-1. 点击页面右上角的「请选择文件」
+1. 点击页面左上角的「打开文件」
 2. 在弹出的对话框中选择：
    - **本地文件**：点击「选择文件」按钮，从电脑中选择 Markdown 文件
    - **远程地址**：切换到「远程地址」标签，输入文件 URL
@@ -36,16 +53,38 @@ http://your-server/markdownReader/MarkdownReader.html?file=README.md
 - ✅ 自动生成目录（TOC）
 - ✅ 目录高亮当前阅读位置
 - ✅ 深色/浅色主题切换（自动记忆）
+- ✅ 阅读宽度调节（窄/中/宽/更宽/全宽）
 - ✅ 阅读进度条
 - ✅ 返回顶部按钮
 - ✅ 响应式布局（支持移动端）
 
 ### 文件操作
 - ✅ 支持本地文件
-- ✅ 支持远程 URL（需要代理）
+- ✅ 支持远程 URL
 - ✅ 支持拖拽上传
-- ✅ 本地文件可下载
+- ✅ 下载当前 Markdown 文件
 - ✅ 目录显示/隐藏切换
+
+> **💡 关于远程 URL**：由于浏览器的跨域安全限制（CORS），直接访问外部 URL 通常会被阻止。因此需要通过服务器代理来中转请求，具体配置见下方 Nginx 配置。
+
+## 🛠️ 技术栈
+
+### 核心库
+- **[Marked.js](https://marked.js.org/)** - Markdown 解析和渲染
+- **[Highlight.js](https://highlightjs.org/)** (v11.9.0) - 代码语法高亮，支持 180+ 种编程语言
+
+### 字体
+- **[JetBrains Mono](https://fonts.google.com/specimen/JetBrains+Mono)** - 代码等宽字体
+- **[Source Serif 4](https://fonts.google.com/specimen/Source+Serif+4)** - 正文字体
+
+### 主题样式
+- **GitHub Dark** - 深色模式代码高亮主题
+- **GitHub** - 浅色模式代码高亮主题
+
+### 技术特性
+- 纯 HTML/CSS/JavaScript，无需构建工具
+- 响应式设计，支持桌面和移动端
+- 本地存储主题偏好
 
 ## 🔧 Nginx 配置示例
 
