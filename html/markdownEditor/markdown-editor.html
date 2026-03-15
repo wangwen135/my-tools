@@ -506,6 +506,18 @@
             background-color: #eeeeee;
         }
 
+        /* 目录项选中状态 */
+        .toc-item-active {
+            background-color: #dbeafe !important;
+            color: #0d47a1 !important;
+            font-weight: 500;
+        }
+
+        .dark .toc-item-active {
+            background-color: #1e3a5f !important;
+            color: #93c5fd !important;
+        }
+
         /* 目录项图标 - 使用 Bootstrap Icons */
         .toc-item::before {
             display: inline-block;
@@ -522,30 +534,57 @@
             color: #9696cb;
         }
 
+        /* H1 - 最大、最粗 */
+        .toc-item[data-level="1"] {
+            font-size: 16px;
+            font-weight: bold;
+        }
         .toc-item[data-level="1"]::before {
             content: "\f5f1"; /* H1 icon */
         }
 
+        /* H2 - 稍小一点 */
+        .toc-item[data-level="2"] {
+            font-size: 15px;
+            font-weight: 600;
+        }
         .toc-item[data-level="2"]::before {
             content: "\f5f2"; /* H2 icon */
             margin-left: 0.5rem;
         }
 
+        /* H3 - 保持原有大小 */
+        .toc-item[data-level="3"] {
+            font-size: 14px;
+            font-weight: 500;
+        }
         .toc-item[data-level="3"]::before {
             content: "\f5f3"; /* H3 icon */
             margin-left: 1rem;
         }
 
+        /* H4 - 稍微小一点 */
+        .toc-item[data-level="4"] {
+            font-size: 13px;
+        }
         .toc-item[data-level="4"]::before {
             content: "\f8dc"; /* H4 icon */
             margin-left: 1.5rem;
         }
 
+        /* H5 - 稍微小一点 */
+        .toc-item[data-level="5"] {
+            font-size: 13px;
+        }
         .toc-item[data-level="5"]::before {
             content: "\f8dd"; /* H5 icon */
             margin-left: 2rem;
         }
 
+        /* H6 - 稍微小一点 */
+        .toc-item[data-level="6"] {
+            font-size: 13px;
+        }
         .toc-item[data-level="6"]::before {
             content: "\f8de"; /* H6 icon */
             margin-left: 2.5rem;
@@ -2160,6 +2199,27 @@ sequenceDiagram
         };
     }
 
+    /* 节流函数 - 用于滚动事件，保证流畅性 */
+    function throttle(func, limit) {
+        let inThrottle;
+        let lastArgs;
+        return function executedFunction(...args) {
+            if (!inThrottle) {
+                func.apply(this, args);
+                inThrottle = true;
+                setTimeout(() => {
+                    inThrottle = false;
+                    if (lastArgs) {
+                        func.apply(this, lastArgs);
+                        lastArgs = null;
+                    }
+                }, limit);
+            } else {
+                lastArgs = args;
+            }
+        };
+    }
+
     mermaid.initialize({startOnLoad: false});
 
     const editor = document.getElementById("editor");
@@ -2173,6 +2233,9 @@ sequenceDiagram
     let isSyncScroll = localStorage.getItem("mdEditor_syncScroll") !== "false";  // 默认开启
     let lineNumberCounter = 1;
     let selectedLineNumber = 1;
+    // 目录高亮缓存状态
+    let lastActiveTOCIndex = -1;
+    let tocUpdatePending = false;
     let draggedFileName = null;  // 拖拽打开的文件名（无写权限）
     let currentTheme = localStorage.getItem("mdEditor_theme") || "github";  // 当前主题
     let isDarkMode = localStorage.getItem("mdEditor_darkMode") === "true";  // 深色模式
@@ -3161,16 +3224,53 @@ erDiagram
     });
 
     // 编辑器滚动事件 - 同步行号和预览
-    editor.addEventListener("scroll", () => {
-        // 行号滚动同步
+    const handleEditorScroll = () => {
+        // 行号滚动同步（立即执行，无延迟）
         lineNumbers.scrollTop = editor.scrollTop;
 
-        // 预览区滚动同步
-        if (isSyncScroll && previewContentWrapper) {
-            const scrollPercent = editor.scrollTop / (editor.scrollHeight - editor.clientHeight);
-            previewContentWrapper.scrollTop = scrollPercent * (previewContentWrapper.scrollHeight - previewContentWrapper.clientHeight);
+        // 预览区滚动同步（基于 headingMap 精确匹配）
+        if (isSyncScroll && previewContentWrapper && headingMap.length > 0) {
+            // 计算编辑器当前可见区域对应的行号
+            const editorStyle = window.getComputedStyle(editor);
+            const fontSize = parseFloat(editorStyle.fontSize);
+            const lineHeight = parseFloat(editorStyle.lineHeight) || (fontSize * 1.8);
+            const currentLine = Math.round(editor.scrollTop / lineHeight) + 1;
+
+            // 在 headingMap 中找到对应的预览元素
+            let targetElement = null;
+            for (let i = 0; i < headingMap.length; i++) {
+                if (headingMap[i].lineNum && currentLine >= headingMap[i].lineNum) {
+                    targetElement = headingMap[i].element;
+                } else {
+                    break;
+                }
+            }
+
+            // 滚动预览区到对应元素
+            if (targetElement) {
+                const containerRect = previewContentWrapper.getBoundingClientRect();
+                const elementRect = targetElement.getBoundingClientRect();
+                const relativeTop = elementRect.top - containerRect.top + previewContentWrapper.scrollTop;
+
+                // 将目标元素滚动到可视区域顶部附近
+                const offsetTop = relativeTop - 60; // 留出顶部空间
+                previewContentWrapper.scrollTop = offsetTop > 0 ? offsetTop : 0;
+            }
         }
-    });
+
+        // 目录高亮（立即执行）
+        if (isTOCVisible) {
+            const editorStyle = window.getComputedStyle(editor);
+            const fontSize = parseFloat(editorStyle.fontSize);
+            const lineHeight = parseFloat(editorStyle.lineHeight) || (fontSize * 1.8);
+            const currentLine = Math.round(editor.scrollTop / lineHeight) + 1;
+
+            highlightTOCItem(currentLine);
+        }
+    };
+
+    // 使用节流包装滚动处理（16ms ≈ 60fps）
+    editor.addEventListener("scroll", throttle(handleEditorScroll, 16));
 
     // 编辑器光标位置更新
     const debouncedUpdateCursorInfo = debounce(updateCursorInfo, 50);
@@ -3277,6 +3377,50 @@ erDiagram
         selectedLineNumber = line;
         if (lineNumbers.children[line - 1]) {
             lineNumbers.children[line - 1].classList.add("selected");
+        }
+
+        // 如果目录开启，高亮对应的目录条目
+        if (isTOCVisible) {
+            highlightTOCItem(line);
+        }
+    }
+
+    /* 高亮当前光标位置对应的目录条目 */
+    function highlightTOCItem(line) {
+        // 找到当前行对应的标题（从 headingMap 中查找）
+        let activeIndex = -1;
+        for (let i = 0; i < headingMap.length; i++) {
+            if (headingMap[i].lineNum !== null && line >= headingMap[i].lineNum) {
+                activeIndex = i;
+            } else {
+                break;
+            }
+        }
+
+        // 如果索引没有变化，不做任何操作
+        if (activeIndex === lastActiveTOCIndex) {
+            return;
+        }
+
+        // 使用 requestAnimationFrame 批量更新
+        if (!tocUpdatePending) {
+            tocUpdatePending = true;
+            requestAnimationFrame(() => {
+                const tocItems = toc.querySelectorAll(".toc-item");
+
+                // 移除上一个激活状态
+                if (lastActiveTOCIndex >= 0 && tocItems[lastActiveTOCIndex]) {
+                    tocItems[lastActiveTOCIndex].classList.remove("toc-item-active");
+                }
+
+                // 添加新的激活状态
+                if (activeIndex >= 0 && tocItems[activeIndex]) {
+                    tocItems[activeIndex].classList.add("toc-item-active");
+                }
+
+                lastActiveTOCIndex = activeIndex;
+                tocUpdatePending = false;
+            });
         }
     }
 
@@ -3411,6 +3555,8 @@ erDiagram
     function generateTOC() {
         toc.innerHTML = "";
         headingMap = []; // 清空映射表
+        lastActiveTOCIndex = -1; // 重置目录激活索引
+        tocUpdatePending = false;
 
         const headers = preview.querySelectorAll("h1,h2,h3,h4,h5,h6");
         const editorLines = editor.value.split("\n");
@@ -3473,11 +3619,24 @@ erDiagram
                     behavior: 'smooth'
                 });
 
-                // 滚动编辑器到对应行
+                // 滚动编辑器到对应行并设置光标位置
                 if (targetLineNum !== null) {
-                    const lineHeight = 16 * 1.8; // 字体大小16px，行高1.8
-                    const scrollPosition = (targetLineNum - 1) * lineHeight;
-                    editor.scrollTop = scrollPosition;
+                    // 设置光标到目标行首
+                    const lines = editor.value.split("\n");
+                    let cursorPos = 0;
+                    for (let i = 0; i < targetLineNum - 1; i++) {
+                        cursorPos += lines[i].length + 1; // +1 for newline
+                    }
+                    editor.focus();
+                    editor.setSelectionRange(cursorPos, cursorPos);
+
+                    // 在光标设置完成后滚动（避免 setSelectionRange 触发的自动滚动覆盖）
+                    requestAnimationFrame(() => {
+                        const lineHeight = 16 * 1.8; // 字体大小16px，行高1.8
+                        const scrollPosition = (targetLineNum - 1) * lineHeight;
+                        editor.scrollTop = scrollPosition;
+                    });
+
                     setSelectedLineNumber(targetLineNum);
                 }
             };
