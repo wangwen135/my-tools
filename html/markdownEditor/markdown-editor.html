@@ -1510,9 +1510,9 @@
         }
 
         #findReplacePanel .find-replace-message {
-            font-size: 12px;
+            font-size: 13px;
             color: #666;
-            text-align: center;
+            white-space: nowrap;
             min-height: 18px;
         }
 
@@ -2914,10 +2914,20 @@ erDiagram
     let isDragging = false;
     let dragOffsetX = 0;
     let dragOffsetY = 0;
+    let totalReplaceCount = 0;  // 累计替换次数
+
+    // 清空替换提示信息
+    function clearReplaceMessage() {
+        document.getElementById('find-replace-message').textContent = '';
+        totalReplaceCount = 0;
+    }
 
     // 打开查找面板
     function openFindPanel() {
         const panel = document.getElementById('findReplacePanel');
+
+        // 清空替换提示
+        clearReplaceMessage();
 
         // 首次打开时，将面板居中并置于工具栏下方
         const panelWidth = panel.offsetWidth || 400;
@@ -2956,10 +2966,14 @@ erDiagram
         findResults = [];
         currentFindIndex = -1;
         isFindPanelOpen = false;
+
+        // 清空替换提示
+        clearReplaceMessage();
     }
 
     // 执行查找
-    function performFind() {
+    // shouldFocus: 是否聚焦到编辑器（输入时自动查找不聚焦，点击按钮查找时聚焦）
+    function performFind(shouldFocus = true) {
         const searchText = document.getElementById('find-input').value;
 
         if (!searchText) {
@@ -2970,13 +2984,7 @@ erDiagram
             return;
         }
 
-        // 如果已经有查找结果，直接跳到下一个
-        if (findResults.length > 0) {
-            findNext();
-            return;
-        }
-
-        // 首次查找
+        // 重新执行查找（每次点击查找按钮都重新搜索）
         const content = editor.value;
         findResults = [];
 
@@ -3002,7 +3010,7 @@ erDiagram
             currentFindIndex = 0;
             document.getElementById('find-current').textContent = currentFindIndex + 1;
             document.getElementById('find-total').textContent = findResults.length;
-            goToFindResult(0);
+            goToFindResult(0, shouldFocus);
         } else {
             document.getElementById('find-current').textContent = '0';
             document.getElementById('find-total').textContent = '0';
@@ -3010,18 +3018,24 @@ erDiagram
     }
 
     // 跳转到指定查找结果
-    function goToFindResult(index) {
+    // shouldFocus: 是否聚焦到编辑器
+    function goToFindResult(index, shouldFocus = true) {
         if (index < 0 || index >= findResults.length) return;
 
         currentFindIndex = index;
         const result = findResults[index];
 
-        editor.focus();
+        if (shouldFocus) {
+            editor.focus();
+        }
         editor.setSelectionRange(result.start, result.end);
 
         // 更新计数显示
         document.getElementById('find-current').textContent = currentFindIndex + 1;
         document.getElementById('find-total').textContent = findResults.length;
+
+        // 更新光标位置信息（包括行号高亮和目录高亮）
+        updateCursorInfo();
 
         // 滚动到可见区域
         const textBefore = editor.value.substring(0, result.start);
@@ -3073,15 +3087,16 @@ erDiagram
 
         const result = findResults[currentFindIndex];
         const replaceText = document.getElementById('replace-input').value;
-        const searchText = document.getElementById('find-input').value;
 
-        const content = editor.value;
-        const before = content.substring(0, result.start);
-        const after = content.substring(result.end);
+        // 保存之前的索引位置，用于替换后定位
+        const savedIndex = currentFindIndex;
 
-        editor.value = before + replaceText + after;
+        // 使用 setRangeText 进行替换，这样可以保留撤销历史
+        editor.focus();
+        editor.setRangeText(replaceText, result.start, result.end, 'select');
 
         // 重新执行查找以获取新的结果
+        findResults = [];
         performFind();
 
         // 更新行号和状态
@@ -3089,18 +3104,20 @@ erDiagram
         updateEditorFootBar();
         render();
 
-        // 显示替换提示
-        const messageEl = document.getElementById('find-replace-message');
+        // 尝试保持在相同或下一个位置
         if (findResults.length > 0) {
-            messageEl.textContent = `已替换 1 处，剩余 ${findResults.length} 处`;
-        } else {
-            messageEl.textContent = '已替换所有匹配项';
+            // 如果替换后还有结果，尝试跳到合适的位置
+            if (savedIndex < findResults.length) {
+                goToFindResult(savedIndex);
+            } else {
+                goToFindResult(findResults.length - 1);
+            }
         }
 
-        // 3秒后清除提示
-        setTimeout(() => {
-            messageEl.textContent = '';
-        }, 3000);
+        // 更新累计替换次数并显示提示
+        totalReplaceCount++;
+        const messageEl = document.getElementById('find-replace-message');
+        messageEl.textContent = `总替换数：已替换 ${totalReplaceCount} 处`;
     }
 
     // 全部替换
@@ -3111,29 +3128,40 @@ erDiagram
         }
 
         const replaceText = document.getElementById('replace-input').value;
-        let content = editor.value;
         let replaceCount = 0;
 
+        // 保存当前焦点状态
+        const hadFocus = document.activeElement === editor;
+
         // 从后往前替换，避免索引变化问题
+        // 使用 setRangeText 以保留撤销历史（用户可以多次 Ctrl+Z 逐步撤销）
         for (let i = findResults.length - 1; i >= 0; i--) {
             const result = findResults[i];
-            content = content.substring(0, result.start) + replaceText + content.substring(result.end);
+            editor.setRangeText(replaceText, result.start, result.end, 'end');
             replaceCount++;
         }
 
-        editor.value = content;
+        // 恢复焦点
+        if (hadFocus) {
+            editor.focus();
+        }
 
         // 清空查找结果
         findResults = [];
         currentFindIndex = -1;
-        document.getElementById('find-count').textContent = '0';
+        document.getElementById('find-current').textContent = '0';
+        document.getElementById('find-total').textContent = '0';
 
         // 更新行号和状态
         updateLineNumbers();
         updateEditorFootBar();
         render();
 
-        showToast(`已全部替换，共 ${replaceCount} 处`, 'success');
+        // 更新累计替换次数并显示提示
+        totalReplaceCount += replaceCount;
+        document.getElementById('find-replace-message').textContent = `总替换数：已替换 ${totalReplaceCount} 处`;
+
+        showToast(`已全部替换，共 ${replaceCount} 处（可按 Ctrl+Z 逐步撤销）`, 'success');
     }
 
     // 查找面板拖拽和事件监听
@@ -3184,10 +3212,15 @@ erDiagram
 
         findInput.addEventListener('input', function(e) {
             e.stopPropagation();
+            // 清空旧结果并重新执行查找
             findResults = [];
             currentFindIndex = -1;
             document.getElementById('find-current').textContent = '0';
             document.getElementById('find-total').textContent = '0';
+            // 清空替换提示
+            clearReplaceMessage();
+            // 自动执行查找，但不聚焦编辑器（保持焦点在输入框）
+            performFind(false);
         });
 
         // 替换输入框事件
@@ -3204,6 +3237,8 @@ erDiagram
 
         replaceInput.addEventListener('input', function(e) {
             e.stopPropagation();
+            // 清空替换提示
+            clearReplaceMessage();
         });
     });
 
