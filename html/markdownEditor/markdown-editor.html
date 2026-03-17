@@ -149,6 +149,15 @@
             border-color: #5d5d5d;
         }
 
+        /* 深色模式 - 编辑区域边框 */
+        .dark .editor-area {
+            border-color: #30363d;
+        }
+
+        .dark .editor-area:focus-within {
+            border-color: #484f58;
+        }
+
         /* 行号 */
         .line-numbers {
             padding: 10px 0 50px 0;
@@ -481,7 +490,6 @@
         .toc {
             width: 220px;
             overflow: auto;
-            border-right: 1px solid #ddd;
             padding: 10px;
             background: #fafafa;
             flex-shrink: 0;
@@ -489,6 +497,64 @@
 
         .toc-hidden {
             display: none !important;
+        }
+
+        /* 目录拖拽手柄容器 */
+        .toc-resizer {
+            width: 4px;
+            flex-shrink: 0;
+            cursor: col-resize;
+            border-left: 1px solid #e8e8e8;
+            border-right: 1px solid #e8e8e8;
+            background: #f5f5f5;
+            transition: background 0.2s;
+            position: relative;
+            z-index: 10;
+        }
+
+        .toc-resizer:hover {
+            background: #e8f4ff;
+            border-left-color: #2188ff;
+            border-right-color: #2188ff;
+        }
+
+        .toc-resizer.dragging {
+            cursor: col-resize;
+            background: #d0e6ff;
+            border-left-color: #2188ff;
+            border-right-color: #2188ff;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* 深色模式 */
+        .dark .toc-resizer {
+            border-left-color: #30363d;
+            border-right-color: #30363d;
+            background: #161b22;
+        }
+
+        .dark .toc-resizer:hover {
+            background: #1c2128;
+            border-left-color: #58a6ff;
+            border-right-color: #58a6ff;
+        }
+
+        .dark .toc-resizer.dragging {
+            background: #21262d;
+            border-left-color: #58a6ff;
+            border-right-color: #58a6ff;
+        }
+
+        /* 增大拖拽热区 */
+        .toc-resizer::before {
+            content: '';
+            position: absolute;
+            left: -3px;
+            right: -3px;
+            top: 0;
+            bottom: 0;
+            cursor: col-resize;
         }
 
         /* 目录项 */
@@ -777,6 +843,32 @@
 
         .dark ::-webkit-scrollbar-corner {
             background: #161b22;
+        }
+
+        /* 目录区域滚动条样式 - 更细 */
+        .toc::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .toc::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .toc::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .toc::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        .dark .toc::-webkit-scrollbar-thumb {
+            background: #30363d;
+        }
+
+        .dark .toc::-webkit-scrollbar-thumb:hover {
+            background: #484f58;
         }
 
         /* 下拉菜单深色样式 */
@@ -1713,6 +1805,9 @@ MIT License
 <div class="container">
     <div class="toc" id="toc"></div>
 
+    <!-- 目录拖拽手柄 -->
+    <div class="toc-resizer" id="tocResizer" title="拖拽调整目录宽度"></div>
+
     <div class="editor-container">
         <!--编辑工具栏-->
         <div id="editorToolbar" class="editor-preview-toolbar">
@@ -2239,6 +2334,15 @@ sequenceDiagram
     let draggedFileName = null;  // 拖拽打开的文件名（无写权限）
     let currentTheme = localStorage.getItem("mdEditor_theme") || "github";  // 当前主题
     let isDarkMode = localStorage.getItem("mdEditor_darkMode") === "true";  // 深色模式
+
+    // 目录宽度拖拽相关
+    let isTOCResizing = false;
+    let tocResizeStartX = 0;
+    let tocResizeStartWidth = 0;
+    const TOC_MIN_WIDTH = 150;
+    const TOC_MAX_WIDTH = 500;
+    const TOC_DEFAULT_WIDTH = 220;
+    let currentTOCWidth = parseInt(localStorage.getItem("mdEditor_tocWidth")) || TOC_DEFAULT_WIDTH;
 
     // 主题配置
     const themes = {
@@ -3240,6 +3344,66 @@ erDiagram
             // 清空替换提示
             clearReplaceMessage();
         });
+
+        // 初始化目录宽度拖拽功能
+        function initTOCResizer() {
+            const tocResizer = document.getElementById('tocResizer');
+            const toc = document.getElementById('toc');
+
+            if (!tocResizer || !toc) return;
+
+            // 应用保存的宽度
+            toc.style.width = currentTOCWidth + 'px';
+
+            // 根据目录显示状态初始化拖动条显示/隐藏
+            if (!isTOCVisible) {
+                tocResizer.classList.add('toc-hidden');
+            }
+
+            // 鼠标按下
+            tocResizer.addEventListener('mousedown', function(e) {
+                isTOCResizing = true;
+                tocResizeStartX = e.clientX;
+                tocResizeStartWidth = toc.offsetWidth;
+                tocResizer.classList.add('dragging');
+                document.body.style.cursor = 'col-resize';
+                document.body.style.userSelect = 'none';
+                e.preventDefault();
+                e.stopPropagation();
+            });
+
+            // 鼠标移动
+            document.addEventListener('mousemove', function(e) {
+                if (!isTOCResizing) return;
+                const deltaX = e.clientX - tocResizeStartX;
+                const newWidth = Math.max(TOC_MIN_WIDTH, Math.min(TOC_MAX_WIDTH, tocResizeStartWidth + deltaX));
+                toc.style.width = newWidth + 'px';
+            });
+
+            // 鼠标释放
+            document.addEventListener('mouseup', function() {
+                if (isTOCResizing) {
+                    isTOCResizing = false;
+                    tocResizer.classList.remove('dragging');
+                    document.body.style.cursor = '';
+                    document.body.style.userSelect = '';
+                    const width = toc.offsetWidth;
+                    localStorage.setItem("mdEditor_tocWidth", width);
+                    currentTOCWidth = width;
+                }
+            });
+
+            // 双击重置
+            tocResizer.addEventListener('dblclick', function() {
+                toc.style.width = TOC_DEFAULT_WIDTH + 'px';
+                localStorage.setItem("mdEditor_tocWidth", TOC_DEFAULT_WIDTH);
+                currentTOCWidth = TOC_DEFAULT_WIDTH;
+                showToast('目录宽度已重置', 'info');
+            });
+        }
+
+        // 调用初始化
+        initTOCResizer();
     });
 
     /* 自动保存 */
@@ -3684,12 +3848,16 @@ erDiagram
         isTOCVisible = !isTOCVisible;
         localStorage.setItem("mdEditor_tocVisible", isTOCVisible ? "true" : "false");
 
+        const tocResizer = document.getElementById("tocResizer");
+
         if (isTOCVisible) {
             toc.classList.remove("toc-hidden");
+            if (tocResizer) tocResizer.classList.remove("toc-hidden");
             // 添加选中效果
             document.getElementById("tocToggleBtn").dataset.select = "true";
         } else {
             toc.classList.add("toc-hidden");
+            if (tocResizer) tocResizer.classList.add("toc-hidden");
             // 移除选中效果
             delete document.getElementById("tocToggleBtn").dataset.select;
         }
