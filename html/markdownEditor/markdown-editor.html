@@ -692,6 +692,8 @@
             min-height: 0;
             overflow: auto;
             padding: 0;
+            /* 防止 KaTeX 等渲染内容影响父容器的布局 */
+            contain: layout;
         }
 
         .markdown-body {
