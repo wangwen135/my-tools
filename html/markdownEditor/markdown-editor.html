@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Web Markdown Editor</title>
+    <!-- Favicon: 内联 SVG -->
+    <link rel="icon"
+          href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' x='.05em' font-size='100'>M</text></svg>">
 
     <!-- Markdown 样式 -->
     <link id="markdownTheme" rel="stylesheet"
@@ -579,9 +582,17 @@
             font-weight: 500;
         }
 
+        .dark .toc-item {
+            color: #58a6ff;
+        }
+
         .dark .toc-item-active {
-            background-color: #1e3a5f !important;
-            color: #93c5fd !important;
+            background-color: #1f3d2a !important;
+            color: #58a6ff !important;
+        }
+
+        .dark .toc-item:hover {
+            background-color: #21262d;
         }
 
         /* 目录项图标 - 使用 Bootstrap Icons */
@@ -2019,187 +2030,7 @@ MIT License
             <div class="line-numbers" id="lineNumbers">
                 <span class="selected">1</span>
             </div>
-            <textarea id="editor" class="editor"># Markdown 编辑器 - 功能演示
-
-欢迎使用 Markdown 编辑器！本文档展示了各种 Markdown 语法和编辑器功能。
-
-## 📝 文本格式
-
-### 文本样式
-- **粗体文本**
-- *斜体文本*
-- ***粗斜体文本***
-- <u>下划线文本</u>
-- ~~删除线文本~~
-
-### 引用
-> 这是一段引用文本。
-> 可以有多行。
-
-## 📋 列表
-
-### 无序列表
-- 项目 1
-- 项目 2
-  - 子项目 2.1
-  - 子项目 2.2
-- 项目 3
-
-### 有序列表
-1. 第一项
-2. 第二项
-3. 第三项
-
-### 任务列表
-- [x] 已完成的任务
-- [ ] 未完成的任务
-- [x] 另一个完成的任务
-
-## 🖼️ 图片和链接
-
-### 链接
-[访问 GitHub](https://github.com)
-
-### 图片
-![示例图片](https://picsum.photos/300/200)
-
-## 📊 表格
-
-| 列 1 | 列 2 | 列 3 |
-|------|------|------|
-| 数据 1 | 数据 2 | 数据 3 |
-| 数据 4 | 数据 5 | 数据 6 |
-
-## 💻 代码
-
-### 行内代码
-这是一段 `inline code` 代码。
-
-### 代码块
-```javascript
-function hello() {
-    console.log("Hello, World!");
-}
-```
-
-```python
-def hello():
-    print("Hello, Python!")
-```
-
-## 📐 数学公式
-
-行内公式：$E = mc^2$
-
-块级公式（多种写法）：
-
-方式一（推荐）：
-$$
-\frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
-$$
-
-方式二：
-$$
-\sum_{i=1}^{n} i = \frac{n(n+1)}{2}
-$$
-
-## 📈 Mermaid 图表
-
-### 流程图
-```mermaid
-graph TD
-    A[开始] --> B{判断}
-    B -->|是| C[执行操作A]
-    B -->|否| D[执行操作B]
-    C --> E[结束]
-    D --> E
-```
-
-### 时序图
-```mermaid
-sequenceDiagram
-    participant 用户
-    participant 系统
-    用户->>系统: 发送请求
-    系统-->>用户: 返回响应
-```
-
-## 🔤 分隔线
-
----
-
-## 📌 其他功能
-
-### 自动保存
-编辑器会自动保存内容到浏览器本地存储，刷新页面不会丢失内容。
-
-### 拖拽打开文件
-支持将 `.md` 文件直接拖拽到页面中打开编辑，非常方便快速查看和编辑文件。
-
-**文件名标记：**
-- 拖拽打开的文件会显示 `（拖入）` 标记，如 `document.md （拖入）`
-- 文件内容可正常编辑，该标记仅用于区分打开方式
-
-**保存流程：**
-1. **首次保存**（按 `Ctrl+S`）：
-   - 弹出保存位置选择对话框
-   - 自动填入原文件名（如 `document.md`）
-   - 选择保存位置后确认
-
-2. **后续保存**：
-   - 直接按 `Ctrl+S` 即可保存
-   - 无需重复选择位置
-   - 自动保存到首次选择的位置
-
-**与"打开"按钮的区别：**
-| 打开方式 | 首次保存 | 后续保存 | 文件名标记 |
-|---------|---------|---------|-----------|
-| 拖拽打开 | 需选择位置 | 直接保存 | `（拖入）` |
-| 打开按钮 | 无需选择 | 直接保存 | 无标记 |
-
-**浏览器限制说明：**
-由于浏览器安全限制，拖拽的文件无法直接获取写权限，因此首次保存需要选择位置。这是浏览器的安全机制，确保网页不能随意修改用户本地文件。
-
-### 快捷键
-#### 文本格式
-- `Ctrl+B`: 粗体
-- `Ctrl+I`: 斜体
-- `Ctrl+U`: 下划线
-- `Ctrl+Shift+S`: 删除线
-
-#### 标题和引用
-- `Ctrl+1` ~ `Ctrl+6`: 插入 1-6 级标题
-- `Ctrl+Shift+Q`: 引用
-
-#### 编辑操作
-- `Ctrl+F`: 打开查找
-- `Ctrl+H`: 打开查找和替换
-- `Ctrl+S`: 保存文件
-- `Ctrl+D`: 删除当前行
-- `Ctrl+Z`: 撤销
-- `Ctrl+Y` 或 `Ctrl+Shift+Z`: 重做
-
-#### 其他功能
-- 粘贴图片自动转换为 Base64 格式（可在高级设置中关闭）
-
-### 导出功能
-支持导出为 PDF、图片、HTML 等多种格式。
-
-### 主题和模式
-**主题风格：**
-- GitHub - GitHub 风格（支持浅色/深色）
-- Solarized - Solarized 风格（支持浅色/深色）
-- Atom One Dark - Atom One Dark 风格
-- VS Code - VS Code 风格
-- Nord - Nord 风格
-- Monokai - Monokai 风格
-
-**深色/浅色模式：**
-- 点击 🌙/☀️ 按钮切换深色/浅色模式
-- 独立于主题，可与任意主题组合
-- 界面颜色、背景色选项会自动适配
-
-            </textarea>
+            <textarea id="editor" class="editor"></textarea>
         </div>
         <div class="foot-bar">
             <span>字符：<b id="charCount">0</b></span>
@@ -2316,6 +2147,188 @@ sequenceDiagram
     }
 
     mermaid.initialize({startOnLoad: false});
+
+    // 编辑器默认内容
+    const DEFAULT_CONTENT = `# Markdown 编辑器 - 功能演示
+
+欢迎使用 Markdown 编辑器！本文档展示了各种 Markdown 语法和编辑器功能。
+
+## 📝 文本格式
+
+### 文本样式
+- **粗体文本**
+- *斜体文本*
+- ***粗斜体文本***
+- <u>下划线文本</u>
+- ~~删除线文本~~
+
+### 引用
+> 这是一段引用文本。
+> 可以有多行。
+
+## 📋 列表
+
+### 无序列表
+- 项目 1
+- 项目 2
+  - 子项目 2.1
+  - 子项目 2.2
+- 项目 3
+
+### 有序列表
+1. 第一项
+2. 第二项
+3. 第三项
+
+### 任务列表
+- [x] 已完成的任务
+- [ ] 未完成的任务
+- [x] 另一个完成的任务
+
+## 🖼️ 图片和链接
+
+### 链接
+[访问 GitHub](https://github.com)
+
+### 图片
+![示例图片](https://picsum.photos/300/200)
+
+## 📊 表格
+
+| 列 1 | 列 2 | 列 3 |
+|------|------|------|
+| 数据 1 | 数据 2 | 数据 3 |
+| 数据 4 | 数据 5 | 数据 6 |
+
+## 💻 代码
+
+### 行内代码
+这是一段 \`inline code\` 代码。
+
+### 代码块
+\`\`\`javascript
+function hello() {
+    console.log("Hello, World!");
+}
+\`\`\`
+
+\`\`\`python
+def hello():
+    print("Hello, Python!")
+\`\`\`
+
+## 📐 数学公式
+
+行内公式：$E = mc^2$
+
+块级公式（多种写法）：
+
+方式一（推荐）：
+$$
+\\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}
+$$
+
+方式二：
+$$
+\\sum_{i=1}^{n} i = \\frac{n(n+1)}{2}
+$$
+
+## 📈 Mermaid 图表
+
+### 流程图
+\`\`\`mermaid
+graph TD
+    A[开始] --> B{判断}
+    B -->|是| C[执行操作A]
+    B -->|否| D[执行操作B]
+    C --> E[结束]
+    D --> E
+\`\`\`
+
+### 时序图
+\`\`\`mermaid
+sequenceDiagram
+    participant 用户
+    participant 系统
+    用户->>系统: 发送请求
+    系统-->>用户: 返回响应
+\`\`\`
+
+## 🔤 分隔线
+
+---
+
+## 📌 其他功能
+
+### 自动保存
+编辑器会自动保存内容到浏览器本地存储，刷新页面不会丢失内容。
+
+### 拖拽打开文件
+支持将 \`.md\` 文件直接拖拽到页面中打开编辑，非常方便快速查看和编辑文件。
+
+**文件名标记：**
+- 拖拽打开的文件会显示 \`（拖入）\` 标记，如 \`document.md （拖入）\`
+- 文件内容可正常编辑，该标记仅用于区分打开方式
+
+**保存流程：**
+1. **首次保存**（按 \`Ctrl+S\`）：
+   - 弹出保存位置选择对话框
+   - 自动填入原文件名（如 \`document.md\`）
+   - 选择保存位置后确认
+
+2. **后续保存**：
+   - 直接按 \`Ctrl+S\` 即可保存
+   - 无需重复选择位置
+   - 自动保存到首次选择的位置
+
+**与"打开"按钮的区别：**
+| 打开方式 | 首次保存 | 后续保存 | 文件名标记 |
+|---------|---------|---------|-----------|
+| 拖拽打开 | 需选择位置 | 直接保存 | \`（拖入）\` |
+| 打开按钮 | 无需选择 | 直接保存 | 无标记 |
+
+**浏览器限制说明：**
+由于浏览器安全限制，拖拽的文件无法直接获取写权限，因此首次保存需要选择位置。这是浏览器的安全机制，确保网页不能随意修改用户本地文件。
+
+### 快捷键
+#### 文本格式
+- \`Ctrl+B\`: 粗体
+- \`Ctrl+I\`: 斜体
+- \`Ctrl+U\`: 下划线
+- \`Ctrl+Shift+S\`: 删除线
+
+#### 标题和引用
+- \`Ctrl+1\` ~ \`Ctrl+6\`: 插入 1-6 级标题
+- \`Ctrl+Shift+Q\`: 引用
+
+#### 编辑操作
+- \`Ctrl+F\`: 打开查找
+- \`Ctrl+H\`: 打开查找和替换
+- \`Ctrl+S\`: 保存文件
+- \`Ctrl+D\`: 删除当前行
+- \`Ctrl+Z\`: 撤销
+- \`Ctrl+Y\` 或 \`Ctrl+Shift+Z\`: 重做
+
+#### 其他功能
+- 粘贴图片自动转换为 Base64 格式（可在高级设置中关闭）
+
+### 导出功能
+支持导出为 PDF、图片、HTML 等多种格式。
+
+### 主题和模式
+**主题风格：**
+- GitHub - GitHub 风格（支持浅色/深色）
+- Solarized - Solarized 风格（支持浅色/深色）
+- Atom One Dark - Atom One Dark 风格
+- VS Code - VS Code 风格
+- Nord - Nord 风格
+- Monokai - Monokai 风格
+
+**深色/浅色模式：**
+- 点击 🌙/☀️ 按钮切换深色/浅色模式
+- 独立于主题，可与任意主题组合
+- 界面颜色、背景色选项会自动适配
+`;
 
     const editor = document.getElementById("editor");
     const preview = document.getElementById("preview");
@@ -2748,7 +2761,7 @@ sequenceDiagram
     }
 
     function linkAction() {
-        insertText("[链接](https://)");
+        insertText("[链接](https://www.example.com)");
     }
 
     function innerCodeAction() {
@@ -3407,7 +3420,7 @@ erDiagram
     });
 
     /* 自动保存 */
-    editor.value = localStorage.getItem("mdEditor_content") || editor.value;
+    editor.value = localStorage.getItem("mdEditor_content") || DEFAULT_CONTENT;
 
     // 防抖渲染（300ms 延迟）
     const debouncedRender = debounce(function() {
