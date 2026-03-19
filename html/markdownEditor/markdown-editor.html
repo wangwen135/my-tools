@@ -1255,11 +1255,10 @@
             color: #8b949e;
         }
 
+        /* 打印样式 */
         @media print {
             body {
-                background: white;
-                height: auto;
-                overflow: visible;
+                background: white !important;
             }
 
             /* 隐藏不需要打印的元素 */
@@ -1278,62 +1277,42 @@
             #toast,
             .foot-bar,
             .modal,
-            #dragOverlay {
+            #dragOverlay,
+            #findReplacePanel,
+            .context-menu {
                 display: none !important;
             }
 
-            /* 隐藏编辑器部分 */
-            .editor-area,
-            #editorToolbar,
-            .editor-toolbar {
-                display: none !important;
-            }
-
-            /* 显示预览内容 */
-            .preview-content-wrapper {
+            /* 只显示预览区域 */
+            .preview-wrapper {
                 display: block !important;
+                position: static !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                height: auto !important;
                 overflow: visible !important;
             }
 
-            .container {
-                display: block;
-                height: auto;
-                overflow: visible;
-                width: 100%;
-            }
-
-            .preview-wrapper {
-                width: 100%;
-                margin: 0;
-                padding: 0;
-                height: auto;
-                overflow: visible;
-                display: block;
-                border: none;
-                flex-direction: column;
-            }
-
-            #previewToolbar {
-                display: none !important;
-            }
-
-            /* 覆盖内联样式，确保打印时宽度填满 */
-            #preview {
+            .preview-content-wrapper {
+                display: block !important;
+                width: 100% !important;
                 max-width: 100% !important;
             }
 
-            .markdown-body {
-                max-width: 100%;
-                padding: 20px;
-                height: auto;
-                overflow: visible;
-                margin: 0;
-                background: white !important;
-                /* 打印时移除内容宽度边框 */
-                border-left: none !important;
-                border-right: none !important;
+            #preview {
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 20px !important;
+                overflow: visible !important;
             }
 
+            /* 强制浅色模式 */
+            .markdown-body {
+                background: white !important;
+                color: black !important;
+            }
+
+            /* 避免分页断行 */
             h1, h2, h3, h4, h5, h6 {
                 page-break-after: avoid;
             }
@@ -4002,25 +3981,34 @@ erDiagram
         // 应用编辑器背景颜色
         const editorColorKey = isDarkMode ? "mdEditor_bgColor_dark" : "mdEditor_bgColor_light";
         const savedEditorColor = localStorage.getItem(editorColorKey);
-        if (savedEditorColor !== null) {
-            const editorTextarea = document.getElementById("editor");
-            const lineNumbers = document.getElementById("lineNumbers");
-            const bgColorBtn = document.getElementById("tb-bgColor");
+        const editorTextarea = document.getElementById("editor");
+        const lineNumbers = document.getElementById("lineNumbers");
+        const editorBgColorBtn = document.getElementById("tb-bgColor");
 
+        if (savedEditorColor !== null) {
             editorTextarea.style.backgroundColor = savedEditorColor;
             lineNumbers.style.backgroundColor = savedEditorColor;
-            bgColorBtn.style.backgroundColor = savedEditorColor || "";
+            editorBgColorBtn.style.backgroundColor = savedEditorColor || "";
+        } else {
+            // 清除自定义背景色，使用默认样式
+            editorTextarea.style.backgroundColor = "";
+            lineNumbers.style.backgroundColor = "";
+            editorBgColorBtn.style.backgroundColor = "";
         }
 
         // 应用预览背景颜色
         const previewColorKey = isDarkMode ? "mdEditor_previewBgColor_dark" : "mdEditor_previewBgColor_light";
         const savedPreviewColor = localStorage.getItem(previewColorKey);
-        if (savedPreviewColor !== null) {
-            const previewWrapper = document.querySelector(".preview-content-wrapper");
-            const bgColorBtn = document.getElementById("p-tb-bgColor");
+        const previewWrapper = document.querySelector(".preview-content-wrapper");
+        const previewBgColorBtn = document.getElementById("p-tb-bgColor");
 
+        if (savedPreviewColor !== null) {
             previewWrapper.style.backgroundColor = savedPreviewColor;
-            bgColorBtn.style.backgroundColor = savedPreviewColor || "";
+            previewBgColorBtn.style.backgroundColor = savedPreviewColor || "";
+        } else {
+            // 清除自定义背景色，使用默认样式
+            previewWrapper.style.backgroundColor = "";
+            previewBgColorBtn.style.backgroundColor = "";
         }
     }
 
@@ -4517,6 +4505,32 @@ erDiagram
 
     /* 打印 */
     function printDocument() {
+        // 保存当前主题状态
+        const mdTheme = document.getElementById("markdownTheme");
+        const codeTheme = document.getElementById("codeTheme");
+        const originalMdTheme = mdTheme.href;
+        const originalCodeTheme = codeTheme.href;
+        const wasDarkMode = isDarkMode;
+        const theme = themes[currentTheme];
+
+        // 临时切换到浅色主题
+        if (wasDarkMode) {
+            isDarkMode = false;
+            mdTheme.href = theme.markdownLight;
+            codeTheme.href = theme.codeLight;
+        }
+
+        // 监听打印完成，恢复主题
+        const afterPrint = () => {
+            if (wasDarkMode) {
+                isDarkMode = wasDarkMode;
+                mdTheme.href = originalMdTheme;
+                codeTheme.href = originalCodeTheme;
+            }
+            window.removeEventListener('afterprint', afterPrint);
+        };
+
+        window.addEventListener('afterprint', afterPrint);
         window.print();
     }
 
