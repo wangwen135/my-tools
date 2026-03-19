@@ -703,15 +703,11 @@
             font-size: 16px;
             line-height: 1.8;
             padding: 1rem;
-            background-color: #ffffff;
-        }
-
-        .markdown-content {
-            margin-left: auto;
-            margin-right: auto;
-            min-height: 100%;
-            font-size: 16px;
-            line-height: 1.8;
+            /* 覆盖外部 CSS 的背景色设置，由父容器控制 */
+            background-color: transparent !important;
+            /* 左右边框标记内容宽度 */
+            border-left: 1px solid #d0d7de;
+            border-right: 1px solid #d0d7de;
         }
 
         /* 拖动条容器 */
@@ -814,7 +810,10 @@
         }
 
         .dark .markdown-body {
-            background-color: #0d1117;
+            /* 背景色由父容器 .preview-content-wrapper 控制 */
+            /* 深色模式下的内容宽度边框 */
+            border-left-color: #30363d;
+            border-right-color: #30363d;
         }
 
         .dark .resizer {
@@ -1318,6 +1317,11 @@
                 display: none !important;
             }
 
+            /* 覆盖内联样式，确保打印时宽度填满 */
+            #preview {
+                max-width: 100% !important;
+            }
+
             .markdown-body {
                 max-width: 100%;
                 padding: 20px;
@@ -1325,11 +1329,9 @@
                 overflow: visible;
                 margin: 0;
                 background: white !important;
-            }
-
-            .markdown-content {
-                margin: 0;
-                padding: 0;
+                /* 打印时移除内容宽度边框 */
+                border-left: none !important;
+                border-right: none !important;
             }
 
             h1, h2, h3, h4, h5, h6 {
@@ -2101,7 +2103,7 @@ MIT License
 
         <!-- 预览内容容器 -->
         <div class="preview-content-wrapper">
-            <article id="preview" class="markdown-body markdown-content"></article>
+            <article id="preview" class="markdown-body"></article>
         </div>
 
         <!-- 预览底部状态栏 -->
@@ -2544,10 +2546,10 @@ sequenceDiagram
         const savedColor = localStorage.getItem(colorKey);
 
         if (savedColor !== null) {
-            const preview = document.getElementById("preview");
+            const previewWrapper = document.querySelector(".preview-content-wrapper");
             const bgColorBtn = document.getElementById("p-tb-bgColor");
 
-            preview.style.backgroundColor = savedColor;
+            previewWrapper.style.backgroundColor = savedColor;
             bgColorBtn.style.backgroundColor = savedColor || "";
         }
     }
@@ -2659,10 +2661,10 @@ sequenceDiagram
                 }
 
                 // 应用颜色
-                const preview = document.getElementById("preview");
+                const previewWrapper = document.querySelector(".preview-content-wrapper");
                 const bgColorBtn = document.getElementById("p-tb-bgColor");
 
-                preview.style.backgroundColor = color;
+                previewWrapper.style.backgroundColor = color;
                 bgColorBtn.style.backgroundColor = color || "";
             }
         };
@@ -2685,10 +2687,8 @@ sequenceDiagram
 
     /* 设置预览宽度 */
     function setPreviewWidth(width, btn) {
+        // #preview 本身有 .markdown-body 类，只需设置一次
         preview.style.maxWidth = width;
-        // 同时更新 markdown-body 的 max-width
-        const markdownBody = document.querySelector(".markdown-body");
-        markdownBody.style.maxWidth = width;
 
         // 保存同步滚动按钮的当前状态
         const syncScrollBtn = document.getElementById("tb-syncScroll");
@@ -4016,10 +4016,10 @@ erDiagram
         const previewColorKey = isDarkMode ? "mdEditor_previewBgColor_dark" : "mdEditor_previewBgColor_light";
         const savedPreviewColor = localStorage.getItem(previewColorKey);
         if (savedPreviewColor !== null) {
-            const preview = document.getElementById("preview");
+            const previewWrapper = document.querySelector(".preview-content-wrapper");
             const bgColorBtn = document.getElementById("p-tb-bgColor");
 
-            preview.style.backgroundColor = savedPreviewColor;
+            previewWrapper.style.backgroundColor = savedPreviewColor;
             bgColorBtn.style.backgroundColor = savedPreviewColor || "";
         }
     }
@@ -4546,19 +4546,24 @@ erDiagram
     function exportImage() {
         showToast('正在生成图片，请稍候...', 'success');
 
-        // 使用 onclone 回调来修改克隆的元素，移除高度和滚动限制
-        html2canvas(preview, {
+        const previewWrapper = document.querySelector('.preview-content-wrapper');
+
+        // 导出图片的逻辑：
+        // 1. 捕获整个 .preview-content-wrapper（包含背景色）
+        // 2. 使用当前预览宽度（用户选择的 S/M/L/F）
+        // 3. 在克隆中移除高度限制，确保内容完整显示
+        html2canvas(previewWrapper, {
             scale: 2,
             useCORS: true,
             windowHeight: preview.scrollHeight,
-            windowWidth: preview.scrollWidth,
+            windowWidth: previewWrapper.scrollWidth,
+            backgroundColor: window.getComputedStyle(previewWrapper).backgroundColor,
             onclone: function(clonedDoc) {
                 const clonedPreview = clonedDoc.getElementById('preview');
                 if (clonedPreview) {
-                    // 移除所有高度和宽度限制，让内容完全展开
+                    // 保持当前的宽度设置，只移除高度限制
                     clonedPreview.style.height = 'auto';
                     clonedPreview.style.maxHeight = 'none';
-                    clonedPreview.style.maxWidth = 'none';
                     clonedPreview.style.overflow = 'visible';
                 }
                 const clonedWrapper = clonedDoc.querySelector('.preview-content-wrapper');
