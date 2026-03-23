@@ -431,10 +431,6 @@
             display: inline-block;
         }
 
-        .d-none {
-            display: none !important;
-        }
-
         /* 暗色主题下的文本颜色 */
         .dark .text-black-50 {
             color: rgba(255, 255, 255, 0.5);
@@ -1257,8 +1253,18 @@
 
         /* 打印样式 */
         @media print {
-            body {
+            /* 设置打印页面 */
+            @page {
+                size: A4;
+                margin: 15mm;
+            }
+
+            html, body {
                 background: white !important;
+                height: auto !important;
+                overflow: visible !important;
+                font-size: 16px !important;
+                line-height: 1.8 !important;
             }
 
             /* 隐藏不需要打印的元素 */
@@ -1279,37 +1285,59 @@
             .modal,
             #dragOverlay,
             #findReplacePanel,
-            .context-menu {
+            .context-menu,
+            .tooltip {
                 display: none !important;
+            }
+
+            /* container 需要显示但移除 overflow 限制 */
+            .container {
+                display: block !important;
+                overflow: visible !important;
+                height: auto !important;
+                min-height: 0 !important;
             }
 
             /* 只显示预览区域 */
             .preview-wrapper {
                 display: block !important;
                 position: static !important;
-                width: 100% !important;
-                max-width: 100% !important;
+                width: auto !important;
+                max-width: none !important;
                 height: auto !important;
                 overflow: visible !important;
             }
 
             .preview-content-wrapper {
                 display: block !important;
-                width: 100% !important;
-                max-width: 100% !important;
-            }
-
-            #preview {
-                max-width: 100% !important;
-                margin: 0 !important;
-                padding: 20px !important;
+                width: auto !important;
+                max-width: none !important;
+                height: auto !important;
                 overflow: visible !important;
             }
 
-            /* 强制浅色模式 */
-            .markdown-body {
+            /* 强制使用固定宽度，忽略 S/M/L 设置 */
+            #preview {
+                max-width: none !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: visible !important;
+                height: auto !important;
                 background: white !important;
                 color: black !important;
+                border: none !important;
+            }
+
+            /* markdown-body 打印样式 */
+            .markdown-body {
+                font-size: 16px !important;
+                line-height: 1.8 !important;
+                padding: 20px !important;
+                max-width: none !important;
+                background: white !important;
+                color: black !important;
+                border: none !important;
             }
 
             /* 避免分页断行 */
@@ -1321,8 +1349,14 @@
                 page-break-inside: avoid;
             }
 
-            table, img {
+            table, img, .mermaid {
                 page-break-inside: avoid;
+            }
+
+            /* 确保长内容完整打印 */
+            pre {
+                white-space: pre-wrap;
+                word-wrap: break-word;
             }
         }
 
@@ -2313,23 +2347,43 @@ sequenceDiagram
 - 界面颜色、背景色选项会自动适配
 `;
 
+    // localStorage 工具对象
+    const Storage = {
+        PREFIX: 'mdEditor_',
+        get(key, defaultValue = null) {
+            const value = localStorage.getItem(this.PREFIX + key);
+            return value !== null ? value : defaultValue;
+        },
+        set(key, value) {
+            localStorage.setItem(this.PREFIX + key, value);
+        },
+        getBool(key, defaultVal = false) {
+            const val = this.get(key);
+            if (val === null) return defaultVal;
+            return val === 'true';
+        },
+        setBool(key, value) {
+            this.set(key, value ? 'true' : 'false');
+        }
+    };
+
     const editor = document.getElementById("editor");
     const preview = document.getElementById("preview");
     const previewContentWrapper = document.querySelector(".preview-content-wrapper");
     const toc = document.getElementById("toc");
 
     let currentMode = "edit";
-    let isTOCVisible = localStorage.getItem("mdEditor_tocVisible") !== "false";  // 默认开启
+    let isTOCVisible = Storage.getBool('tocVisible', true);
     let currentFileHandle = null;
-    let isSyncScroll = localStorage.getItem("mdEditor_syncScroll") !== "false";  // 默认开启
+    let isSyncScroll = Storage.getBool('syncScroll', true);
     let lineNumberCounter = 1;
     let selectedLineNumber = 1;
     // 目录高亮缓存状态
     let lastActiveTOCIndex = -1;
     let tocUpdatePending = false;
     let draggedFileName = null;  // 拖拽打开的文件名（无写权限）
-    let currentTheme = localStorage.getItem("mdEditor_theme") || "github";  // 当前主题
-    let isDarkMode = localStorage.getItem("mdEditor_darkMode") === "true";  // 深色模式
+    let currentTheme = Storage.get('theme', 'github');
+    let isDarkMode = Storage.getBool('darkMode', false);
 
     // 目录宽度拖拽相关
     let isTOCResizing = false;
@@ -2338,7 +2392,7 @@ sequenceDiagram
     const TOC_MIN_WIDTH = 150;
     const TOC_MAX_WIDTH = 500;
     const TOC_DEFAULT_WIDTH = 220;
-    let currentTOCWidth = parseInt(localStorage.getItem("mdEditor_tocWidth")) || TOC_DEFAULT_WIDTH;
+    let currentTOCWidth = parseInt(Storage.get('tocWidth', TOC_DEFAULT_WIDTH.toString()));
 
     // 主题配置
     const themes = {
@@ -2412,9 +2466,9 @@ sequenceDiagram
     ];
 
     // 工具栏和状态栏显示状态
-    let isToolbarVisible = localStorage.getItem("mdEditor_toolbarVisible") !== "false";
-    let isFootBarVisible = localStorage.getItem("mdEditor_footBarVisible") !== "false";
-    let pasteImageAsBase64 = localStorage.getItem("mdEditor_pasteImageAsBase64") !== "false";  // 默认开启
+    let isToolbarVisible = Storage.getBool('toolbarVisible', true);
+    let isFootBarVisible = Storage.getBool('footBarVisible', true);
+    let pasteImageAsBase64 = Storage.getBool('pasteImageAsBase64', true);
 
     // 标题映射表：预览标题元素 ↔ 编辑器行号
     let headingMap = [];
@@ -2496,9 +2550,9 @@ sequenceDiagram
 
                 // 保存到对应的主题存储
                 if (isDark) {
-                    localStorage.setItem("mdEditor_bgColor_dark", color);
+                    Storage.set('bgColor_dark', color);
                 } else {
-                    localStorage.setItem("mdEditor_bgColor_light", color);
+                    Storage.set('bgColor_light', color);
                 }
 
                 // 应用颜色
@@ -2521,8 +2575,8 @@ sequenceDiagram
         generatePreviewColorOptions(isDark);
 
         // 应用保存的颜色
-        const colorKey = isDark ? "mdEditor_previewBgColor_dark" : "mdEditor_previewBgColor_light";
-        const savedColor = localStorage.getItem(colorKey);
+        const colorKey = isDark ? "previewBgColor_dark" : "previewBgColor_light";
+        const savedColor = Storage.get(colorKey);
 
         if (savedColor !== null) {
             const previewWrapper = document.querySelector(".preview-content-wrapper");
@@ -2533,9 +2587,9 @@ sequenceDiagram
         }
     }
 
-    /* 动态生成编辑器颜色选项 */
-    function generateEditorColorOptions(isDark) {
-        const dropdown = document.getElementById('editor-color-dropdown');
+    /* 动态生成颜色选项（通用函数） */
+    function generateColorOptions(dropdownId, buttonClass, isDark) {
+        const dropdown = document.getElementById(dropdownId);
         dropdown.innerHTML = '';  // 清空现有选项
 
         const colors = isDark ? darkThemeColors : lightThemeColors;
@@ -2544,7 +2598,7 @@ sequenceDiagram
             const li = document.createElement('li');
             const button = document.createElement('button');
 
-            button.className = 'btn btn-control btn-p-sm dropdown-item editor-bg-color';
+            button.className = `btn btn-control btn-p-sm dropdown-item ${buttonClass}`;
             if (colorItem.bootstrapClass) {
                 button.classList.add(colorItem.bootstrapClass);
             }
@@ -2560,31 +2614,14 @@ sequenceDiagram
         });
     }
 
+    /* 动态生成编辑器颜色选项 */
+    function generateEditorColorOptions(isDark) {
+        generateColorOptions('editor-color-dropdown', 'editor-bg-color', isDark);
+    }
+
     /* 动态生成预览颜色选项 */
     function generatePreviewColorOptions(isDark) {
-        const dropdown = document.getElementById('tb-color-dropdown');
-        dropdown.innerHTML = '';  // 清空现有选项
-
-        const colors = isDark ? darkThemeColors : lightThemeColors;
-
-        colors.forEach(colorItem => {
-            const li = document.createElement('li');
-            const button = document.createElement('button');
-
-            button.className = 'btn btn-control btn-p-sm dropdown-item preview-bg-color';
-            if (colorItem.bootstrapClass) {
-                button.classList.add(colorItem.bootstrapClass);
-            }
-            if (colorItem.color && !colorItem.bootstrapClass) {
-                button.style.backgroundColor = colorItem.color;
-            }
-
-            button.textContent = colorItem.name;
-            button.dataset.color = colorItem.color;
-
-            li.appendChild(button);
-            dropdown.appendChild(li);
-        });
+        generateColorOptions('tb-color-dropdown', 'preview-bg-color', isDark);
     }
 
     /* 初始化编辑器背景颜色 */
@@ -2595,8 +2632,8 @@ sequenceDiagram
         generateEditorColorOptions(isDark);
 
         // 应用保存的颜色
-        const colorKey = isDark ? "mdEditor_bgColor_dark" : "mdEditor_bgColor_light";
-        const savedColor = localStorage.getItem(colorKey);
+        const colorKey = isDark ? "bgColor_dark" : "bgColor_light";
+        const savedColor = Storage.get(colorKey);
 
         if (savedColor !== null) {
             const editorTextarea = document.getElementById("editor");
@@ -2634,9 +2671,9 @@ sequenceDiagram
 
                 // 保存到对应的主题存储
                 if (isDark) {
-                    localStorage.setItem("mdEditor_previewBgColor_dark", color);
+                    Storage.set('previewBgColor_dark', color);
                 } else {
-                    localStorage.setItem("mdEditor_previewBgColor_light", color);
+                    Storage.set('previewBgColor_light', color);
                 }
 
                 // 应用颜色
@@ -2651,7 +2688,7 @@ sequenceDiagram
         // 同步滚动
         syncScrollBtn.onclick = function() {
             isSyncScroll = !isSyncScroll;
-            localStorage.setItem("mdEditor_syncScroll", isSyncScroll ? "true" : "false");
+            Storage.setBool('syncScroll', isSyncScroll);
             syncScrollBtn.dataset.select = isSyncScroll ? "true" : "false";
 
             // 更新设置菜单中的按钮状态
@@ -3382,7 +3419,7 @@ erDiagram
                     document.body.style.cursor = '';
                     document.body.style.userSelect = '';
                     const width = toc.offsetWidth;
-                    localStorage.setItem("mdEditor_tocWidth", width);
+                    Storage.set('tocWidth', width);
                     currentTOCWidth = width;
                 }
             });
@@ -3390,7 +3427,7 @@ erDiagram
             // 双击重置
             tocResizer.addEventListener('dblclick', function() {
                 toc.style.width = TOC_DEFAULT_WIDTH + 'px';
-                localStorage.setItem("mdEditor_tocWidth", TOC_DEFAULT_WIDTH);
+                Storage.set('tocWidth', TOC_DEFAULT_WIDTH);
                 currentTOCWidth = TOC_DEFAULT_WIDTH;
                 showToast('目录宽度已重置', 'info');
             });
@@ -3401,7 +3438,7 @@ erDiagram
     });
 
     /* 自动保存 */
-    editor.value = localStorage.getItem("mdEditor_content") || DEFAULT_CONTENT;
+    editor.value = Storage.get('content', DEFAULT_CONTENT);
 
     // 防抖渲染（300ms 延迟）
     const debouncedRender = debounce(function() {
@@ -3410,7 +3447,7 @@ erDiagram
     }, 300);
 
     editor.addEventListener("input", () => {
-        localStorage.setItem("mdEditor_content", editor.value);
+        Storage.set('content', editor.value);
         updateLineNumbers();
         updateEditorFootBar();
         debouncedRender();  // 使用防抖渲染
@@ -3726,6 +3763,9 @@ erDiagram
         setPreviewWidth("1020px", middleBtn);
     }
 
+    // 初始化编辑模式（设置初始状态的内联样式）
+    setEditMode();
+
     // 修改 render 函数以更新预览状态栏
     const originalRender = render;
     render = function() {
@@ -3840,7 +3880,7 @@ erDiagram
     /* 目录显示/隐藏 */
     function toggleTOC() {
         isTOCVisible = !isTOCVisible;
-        localStorage.setItem("mdEditor_tocVisible", isTOCVisible ? "true" : "false");
+        Storage.setBool('tocVisible', isTOCVisible);
 
         const tocResizer = document.getElementById("tocResizer");
 
@@ -3901,12 +3941,12 @@ erDiagram
         if (!theme) return;
 
         currentTheme = themeKey;
-        localStorage.setItem("mdEditor_theme", themeKey);
+        Storage.set('theme', themeKey);
 
         // 如果在浅色模式下选择了不支持浅色的主题，自动切换到深色模式
         if (!isDarkMode && !theme.hasDarkVariant) {
             isDarkMode = true;
-            localStorage.setItem("mdEditor_darkMode", "true");
+            Storage.set('darkMode', 'true');
         }
 
         applyTheme();
@@ -3915,14 +3955,14 @@ erDiagram
     /* 切换深色/浅色模式 */
     function toggleDarkMode() {
         isDarkMode = !isDarkMode;
-        localStorage.setItem("mdEditor_darkMode", isDarkMode ? "true" : "false");
+        Storage.setBool('darkMode', isDarkMode);
 
         // 先检查当前主题是否支持新模式
         const theme = themes[currentTheme];
         if (theme && !isDarkMode && !theme.hasDarkVariant) {
             // 浅色模式下，当前主题不支持，自动切换到 GitHub
             currentTheme = 'github';
-            localStorage.setItem("mdEditor_theme", currentTheme);
+            Storage.set('theme', currentTheme);
         }
 
         applyTheme();
@@ -3979,8 +4019,8 @@ erDiagram
         generatePreviewColorOptions(isDarkMode);
 
         // 应用编辑器背景颜色
-        const editorColorKey = isDarkMode ? "mdEditor_bgColor_dark" : "mdEditor_bgColor_light";
-        const savedEditorColor = localStorage.getItem(editorColorKey);
+        const editorColorKey = isDarkMode ? "bgColor_dark" : "bgColor_light";
+        const savedEditorColor = Storage.get(editorColorKey);
         const editorTextarea = document.getElementById("editor");
         const lineNumbers = document.getElementById("lineNumbers");
         const editorBgColorBtn = document.getElementById("tb-bgColor");
@@ -3997,8 +4037,8 @@ erDiagram
         }
 
         // 应用预览背景颜色
-        const previewColorKey = isDarkMode ? "mdEditor_previewBgColor_dark" : "mdEditor_previewBgColor_light";
-        const savedPreviewColor = localStorage.getItem(previewColorKey);
+        const previewColorKey = isDarkMode ? "previewBgColor_dark" : "previewBgColor_light";
+        const savedPreviewColor = Storage.get(previewColorKey);
         const previewWrapper = document.querySelector(".preview-content-wrapper");
         const previewBgColorBtn = document.getElementById("p-tb-bgColor");
 
@@ -4055,7 +4095,7 @@ erDiagram
             if (firstButton) {
                 const firstTheme = firstButton.dataset.theme;
                 currentTheme = firstTheme;
-                localStorage.setItem("mdEditor_theme", currentTheme);
+                Storage.set('theme', currentTheme);
 
                 // 更新active状态
                 themeDropdown.querySelectorAll("button").forEach(btn => {
@@ -4073,7 +4113,7 @@ erDiagram
     // 顶部按钮 - 隐藏/显示工具栏
     resizerTop.addEventListener("click", function() {
         isToolbarVisible = !isToolbarVisible;
-        localStorage.setItem("mdEditor_toolbarVisible", isToolbarVisible ? "true" : "false");
+        Storage.setBool('toolbarVisible', isToolbarVisible);
 
         const editorToolbar = document.getElementById("editorToolbar");
         const previewToolbar = document.getElementById("previewToolbar");
@@ -4121,7 +4161,7 @@ erDiagram
     resizerBottom.addEventListener("click", function() {
         isFootBarHidden = !isFootBarHidden;
         isFootBarVisible = !isFootBarHidden;
-        localStorage.setItem("mdEditor_footBarVisible", isFootBarVisible ? "true" : "false");
+        Storage.setBool('footBarVisible', isFootBarVisible);
 
         // 同时隐藏/显示编辑器和预览区域的底部状态栏
         const editorFootBar = document.querySelector(".editor-container .foot-bar");
@@ -4465,7 +4505,8 @@ erDiagram
             editor.value = "";
             currentFileHandle = null;
             draggedFileName = null;
-            localStorage.setItem("mdEditor_content", "");
+            // 删除存储的内容，这样刷新后会显示默认内容
+            localStorage.removeItem(Storage.PREFIX + 'content');
             updateFileName("未命名文件");
             render();
         }
@@ -4513,13 +4554,6 @@ erDiagram
         const wasDarkMode = isDarkMode;
         const theme = themes[currentTheme];
 
-        // 临时切换到浅色主题
-        if (wasDarkMode) {
-            isDarkMode = false;
-            mdTheme.href = theme.markdownLight;
-            codeTheme.href = theme.codeLight;
-        }
-
         // 监听打印完成，恢复主题
         const afterPrint = () => {
             if (wasDarkMode) {
@@ -4531,6 +4565,19 @@ erDiagram
         };
 
         window.addEventListener('afterprint', afterPrint);
+
+        // 如果是深色模式，临时切换到浅色主题
+        if (wasDarkMode) {
+            isDarkMode = false;
+            mdTheme.href = theme.markdownLight;
+            codeTheme.href = theme.codeLight;
+        }
+
+        // 移除焦点，避免 :focus 样式影响打印
+        if (document.activeElement) {
+            document.activeElement.blur();
+        }
+
         window.print();
     }
 
@@ -4658,7 +4705,7 @@ erDiagram
     /* 切换工具栏显示/隐藏 */
     function toggleToolbar() {
         isToolbarVisible = !isToolbarVisible;
-        localStorage.setItem("mdEditor_toolbarVisible", isToolbarVisible ? "true" : "false");
+        Storage.setBool('toolbarVisible', isToolbarVisible);
 
         const editorToolbar = document.getElementById("editorToolbar");
         const previewToolbar = document.getElementById("previewToolbar");
@@ -4684,7 +4731,7 @@ erDiagram
     /* 切换状态栏显示/隐藏 */
     function toggleFootBar() {
         isFootBarVisible = !isFootBarVisible;
-        localStorage.setItem("mdEditor_footBarVisible", isFootBarVisible ? "true" : "false");
+        Storage.setBool('footBarVisible', isFootBarVisible);
 
         const footBars = document.querySelectorAll(".foot-bar");
         const switchEl = document.getElementById("switch-footbar");
@@ -4705,7 +4752,7 @@ erDiagram
     /* 切换同步滚动 */
     function toggleSyncScrollSetting() {
         isSyncScroll = !isSyncScroll;
-        localStorage.setItem("mdEditor_syncScroll", isSyncScroll ? "true" : "false");
+        Storage.setBool('syncScroll', isSyncScroll);
 
         // 更新预览区域的同步滚动按钮状态
         const syncScrollBtn = document.getElementById("tb-syncScroll");
@@ -4723,7 +4770,7 @@ erDiagram
     /* 切换粘贴图片为Base64 */
     function togglePasteImageAsBase64() {
         pasteImageAsBase64 = !pasteImageAsBase64;
-        localStorage.setItem("mdEditor_pasteImageAsBase64", pasteImageAsBase64 ? "true" : "false");
+        Storage.setBool('pasteImageAsBase64', pasteImageAsBase64);
 
         const switchEl = document.getElementById("paste-image-base64");
         if (pasteImageAsBase64) {
