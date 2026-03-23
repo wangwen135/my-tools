@@ -15,9 +15,9 @@
 
     <!-- Markdown & Highlight -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js/highlight.min.js"></script>
     <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css"
+          href="https://cdn.jsdelivr.net/npm/highlight.js/styles/github-dark.min.css"
           id="hljs-theme">
 
     <style>
@@ -52,6 +52,24 @@
             --code-bg: #0f172a;
             --blockquote-border: #38bdf8;
             --link-color: #fff;
+        }
+
+        /* TOC Sidebar scrollbar */
+        .toc-sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .toc-sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .toc-sidebar::-webkit-scrollbar-thumb {
+            background: var(--fg-muted);
+            border-radius: 4px;
+        }
+
+        .toc-sidebar::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
         }
 
         * {
@@ -1594,8 +1612,8 @@
         // Update highlight.js theme
         const hljsTheme = document.getElementById('hljs-theme');
         hljsTheme.href = isDark
-            ? 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css'
-            : 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css';
+            ? 'https://cdn.jsdelivr.net/npm/highlight.js/styles/github-dark.min.css'
+            : 'https://cdn.jsdelivr.net/npm/highlight.js/styles/github.min.css';
 
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
     }
