@@ -698,12 +698,11 @@
             margin-right: auto;
             font-size: 16px;
             line-height: 1.8;
-            padding: 1rem;
-            /* 覆盖外部 CSS 的背景色设置，由父容器控制 */
-            background-color: transparent !important;
+            padding: 2rem;
             /* 左右边框标记内容宽度 */
             border-left: 1px solid #d0d7de;
             border-right: 1px solid #d0d7de;
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
         }
 
         /* 拖动条容器 */
@@ -2579,10 +2578,9 @@ sequenceDiagram
         const savedColor = Storage.get(colorKey);
 
         if (savedColor !== null) {
-            const previewWrapper = document.querySelector(".preview-content-wrapper");
             const bgColorBtn = document.getElementById("p-tb-bgColor");
 
-            previewWrapper.style.backgroundColor = savedColor;
+            preview.style.backgroundColor = savedColor;
             bgColorBtn.style.backgroundColor = savedColor || "";
         }
     }
@@ -2677,10 +2675,9 @@ sequenceDiagram
                 }
 
                 // 应用颜色
-                const previewWrapper = document.querySelector(".preview-content-wrapper");
                 const bgColorBtn = document.getElementById("p-tb-bgColor");
 
-                previewWrapper.style.backgroundColor = color;
+                preview.style.backgroundColor = color;
                 bgColorBtn.style.backgroundColor = color || "";
             }
         };
@@ -4039,15 +4036,14 @@ erDiagram
         // 应用预览背景颜色
         const previewColorKey = isDarkMode ? "previewBgColor_dark" : "previewBgColor_light";
         const savedPreviewColor = Storage.get(previewColorKey);
-        const previewWrapper = document.querySelector(".preview-content-wrapper");
         const previewBgColorBtn = document.getElementById("p-tb-bgColor");
 
         if (savedPreviewColor !== null) {
-            previewWrapper.style.backgroundColor = savedPreviewColor;
+            preview.style.backgroundColor = savedPreviewColor;
             previewBgColorBtn.style.backgroundColor = savedPreviewColor || "";
         } else {
             // 清除自定义背景色，使用默认样式
-            previewWrapper.style.backgroundColor = "";
+            preview.style.backgroundColor = "";
             previewBgColorBtn.style.backgroundColor = "";
         }
     }
@@ -4519,8 +4515,43 @@ erDiagram
         const fileName = document.getElementById("currentFileName").textContent;
         const pdfFileName = fileName.replace(/\.md$/, '') + '.pdf';
 
+        // 保存当前样式，用于导出后恢复
+        const markdownBody = document.querySelector('.markdown-body');
+        const originalBorderLeft = markdownBody.style.borderLeft;
+        const originalBorderRight = markdownBody.style.borderRight;
+        const originalBoxShadow = markdownBody.style.boxShadow;
+
+        // 获取需要设置分页避免的元素
+        const headings = markdownBody.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        const blocks = markdownBody.querySelectorAll('p, pre, blockquote');
+        const tables = markdownBody.querySelectorAll('table, img, .mermaid');
+
+        // 保存原始的分页样式
+        const originalPageBreakAfter = [];
+        const originalPageBreakInside = [];
+
+        headings.forEach(el => {
+            originalPageBreakAfter.push({ el, value: el.style.pageBreakAfter });
+            el.style.pageBreakAfter = 'avoid';
+        });
+
+        blocks.forEach(el => {
+            originalPageBreakInside.push({ el, value: el.style.pageBreakInside });
+            el.style.pageBreakInside = 'avoid';
+        });
+
+        tables.forEach(el => {
+            originalPageBreakInside.push({ el, value: el.style.pageBreakInside });
+            el.style.pageBreakInside = 'avoid';
+        });
+
+        // 移除左右边框和阴影（保留背景色）
+        markdownBody.style.borderLeft = 'none';
+        markdownBody.style.borderRight = 'none';
+        markdownBody.style.boxShadow = 'none';
+
         const opt = {
-            margin:       [15, 15, 15, 15],
+            margin:       0,
             filename:     pdfFileName,
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  {
@@ -4536,11 +4567,27 @@ erDiagram
             pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
         };
 
+        // 恢复样式的函数
+        const restoreStyles = () => {
+            markdownBody.style.borderLeft = originalBorderLeft;
+            markdownBody.style.borderRight = originalBorderRight;
+            markdownBody.style.boxShadow = originalBoxShadow;
+
+            originalPageBreakAfter.forEach(item => {
+                item.el.style.pageBreakAfter = item.value;
+            });
+            originalPageBreakInside.forEach(item => {
+                item.el.style.pageBreakInside = item.value;
+            });
+        };
+
         html2pdf().set(opt).from(preview).save().then(() => {
             showToast('PDF 导出成功！');
+            restoreStyles();
         }).catch(err => {
             console.error('PDF导出失败:', err);
             showToast('PDF 导出失败', 'error');
+            restoreStyles();
         });
     }
 
@@ -4607,31 +4654,25 @@ erDiagram
     function exportImage() {
         showToast('正在生成图片，请稍候...', 'success');
 
-        const previewWrapper = document.querySelector('.preview-content-wrapper');
+        const markdownBody = document.querySelector('.markdown-body');
 
         // 导出图片的逻辑：
-        // 1. 捕获整个 .preview-content-wrapper（包含背景色）
+        // 1. 捕获 #preview 元素（包含背景色）
         // 2. 使用当前预览宽度（用户选择的 S/M/L/F）
-        // 3. 在克隆中移除高度限制，确保内容完整显示
-        html2canvas(previewWrapper, {
+        // 3. 在克隆中移除边框和高度限制，确保内容完整显示
+        html2canvas(preview, {
             scale: 2,
             useCORS: true,
             windowHeight: preview.scrollHeight,
-            windowWidth: previewWrapper.scrollWidth,
-            backgroundColor: window.getComputedStyle(previewWrapper).backgroundColor,
+            windowWidth: preview.scrollWidth,
+            backgroundColor: window.getComputedStyle(preview).backgroundColor,
             onclone: function(clonedDoc) {
-                const clonedPreview = clonedDoc.getElementById('preview');
-                if (clonedPreview) {
-                    // 保持当前的宽度设置，只移除高度限制
-                    clonedPreview.style.height = 'auto';
-                    clonedPreview.style.maxHeight = 'none';
-                    clonedPreview.style.overflow = 'visible';
-                }
-                const clonedWrapper = clonedDoc.querySelector('.preview-content-wrapper');
-                if (clonedWrapper) {
-                    clonedWrapper.style.height = 'auto';
-                    clonedWrapper.style.maxHeight = 'none';
-                    clonedWrapper.style.overflow = 'visible';
+                const clonedBody = clonedDoc.querySelector('.markdown-body');
+                if (clonedBody) {
+                    // 移除边框和阴影
+                    clonedBody.style.borderLeft = 'none';
+                    clonedBody.style.borderRight = 'none';
+                    clonedBody.style.boxShadow = 'none';
                 }
             }
         }).then(canvas => {
