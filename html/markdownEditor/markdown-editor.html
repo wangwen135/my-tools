@@ -1857,7 +1857,7 @@ MIT License
 </div>
 
 <!-- 查找替换浮动面板 -->
-<div id="findReplacePanel">
+<div id="findReplacePanel" tabindex="0">
     <div class="panel-header" id="findReplacePanelHeader">
         <span class="panel-title"><i class="bi bi-search"></i> 查找和替换</span>
         <button class="panel-close" onclick="closeFindReplacePanel()">&times;</button>
@@ -1865,18 +1865,11 @@ MIT License
     <div class="panel-body">
         <div class="find-replace-row">
             <input type="text" id="find-input" class="find-replace-input" placeholder="查找内容">
-            <button class="find-replace-btn primary" onclick="performFind()">🔍 查找</button>
+            <button class="find-replace-btn" onclick="findPrevious()" title="上一个 (Shift+F3)">◀</button>
+            <button class="find-replace-btn" onclick="findNext()" title="下一个 (F3)">▶</button>
         </div>
         <div class="find-replace-row">
             <span class="find-replace-info">第 <span id="find-current">0</span> 个/共 <span id="find-total">0</span> 个</span>
-            <div class="find-replace-controls">
-                <button class="find-replace-btn" onclick="findPrevious()">◀</button>
-                <button class="find-replace-btn" onclick="findNext()">▶</button>
-                <span class="find-replace-shortcuts">
-                    <span>Shift+F3</span>
-                    <span>F3</span>
-                </span>
-            </div>
         </div>
         <div class="find-replace-row">
             <input type="text" id="replace-input" class="find-replace-input" placeholder="替换为">
@@ -3288,7 +3281,7 @@ erDiagram
 
         // 重新执行查找以获取新的结果
         findResults = [];
-        performFind();
+        performFind(false);
 
         // 更新行号和状态
         updateLineNumbers();
@@ -3297,11 +3290,10 @@ erDiagram
 
         // 尝试保持在相同或下一个位置
         if (findResults.length > 0) {
-            // 如果替换后还有结果，尝试跳到合适的位置
             if (savedIndex < findResults.length) {
-                goToFindResult(savedIndex);
+                goToFindResult(savedIndex, false);
             } else {
-                goToFindResult(findResults.length - 1);
+                goToFindResult(findResults.length - 1, false);
             }
         }
 
@@ -3309,6 +3301,9 @@ erDiagram
         totalReplaceCount++;
         const messageEl = document.getElementById('find-replace-message');
         messageEl.textContent = `总替换数：已替换 ${totalReplaceCount} 处`;
+
+        // 确保焦点在编辑器上，这样 Ctrl+Z 会撤销编辑器的内容
+        editor.focus();
     }
 
     // 全部替换
@@ -3321,20 +3316,13 @@ erDiagram
         const replaceText = document.getElementById('replace-input').value;
         let replaceCount = 0;
 
-        // 保存当前焦点状态
-        const hadFocus = document.activeElement === editor;
-
         // 从后往前替换，避免索引变化问题
         // 使用 setRangeText 以保留撤销历史（用户可以多次 Ctrl+Z 逐步撤销）
+        editor.focus();
         for (let i = findResults.length - 1; i >= 0; i--) {
             const result = findResults[i];
             editor.setRangeText(replaceText, result.start, result.end, 'end');
             replaceCount++;
-        }
-
-        // 恢复焦点
-        if (hadFocus) {
-            editor.focus();
         }
 
         // 清空查找结果
@@ -3352,7 +3340,10 @@ erDiagram
         totalReplaceCount += replaceCount;
         document.getElementById('find-replace-message').textContent = `总替换数：已替换 ${totalReplaceCount} 处`;
 
-        showToast(`已全部替换，共 ${replaceCount} 处（可按 Ctrl+Z 逐步撤销）`, 'success');
+        showToast(`已全部替换，共 ${replaceCount} 处`, 'success');
+
+        // 确保焦点在编辑器上，这样 Ctrl+Z 会撤销编辑器的内容
+        editor.focus();
     }
 
     // 查找面板拖拽和事件监听
@@ -3391,6 +3382,12 @@ erDiagram
 
         // 查找输入框事件
         findInput.addEventListener('keydown', function(e) {
+            // Ctrl+F 不阻止冒泡，让弹框处理
+            if (e.ctrlKey && e.key === 'f') {
+                e.preventDefault();
+                return;  // 不调用 stopPropagation，让事件冒泡
+            }
+
             e.stopPropagation();
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -3416,12 +3413,27 @@ erDiagram
 
         // 替换输入框事件
         replaceInput.addEventListener('keydown', function(e) {
+            // Ctrl+F 不阻止冒泡，让弹框处理
+            if (e.ctrlKey && e.key === 'f') {
+                e.preventDefault();
+                return;  // 不调用 stopPropagation，让事件冒泡
+            }
+
             e.stopPropagation();
             if (e.key === 'Enter') {
                 e.preventDefault();
                 replaceCurrent();
             } else if (e.key === 'Escape') {
                 e.preventDefault();
+                closeFindReplacePanel();
+            }
+        });
+
+        // 弹框整体事件：Ctrl+F 关闭弹框
+        panel.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'f') {
+                e.preventDefault();
+                e.stopPropagation();
                 closeFindReplacePanel();
             }
         });
@@ -3589,6 +3601,14 @@ erDiagram
         } else if (ctrl && e.key === "d") {
             e.preventDefault();
             deleteCurrentLine();
+        } else if (ctrl && e.key === "f") {
+            e.preventDefault();
+            // 如果面板已打开则关闭，否则打开
+            if (isFindPanelOpen) {
+                closeFindReplacePanel();
+            } else {
+                openFindPanel();
+            }
         }
     });
 
@@ -5016,9 +5036,6 @@ erDiagram
         if (e.ctrlKey && e.key === 's') {
             e.preventDefault();
             saveFile();
-        } else if (e.ctrlKey && e.key === 'f') {
-            e.preventDefault();
-            openFindPanel();
         } else if (e.ctrlKey && e.key === 'h') {
             e.preventDefault();
             openReplacePanel();
